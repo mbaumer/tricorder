@@ -7,29 +7,48 @@ import sys
 import numpy as np
 import time
 
-def run3pt(set1='d',set2='d',set3='d'):
-    data = fits.getdata('/scratch/PI/kipac/mbaumer/des/data/redmagic_sv_data.fits')
-    randoms = fits.getdata('/scratch/PI/kipac/mbaumer/des/data/redmagic_sv_randoms.fits')
-    #data = fits.getdata('/scratch/PI/kipac/mbaumer/des/data/redmagic_Y1_sims_data.fits')
-    #randoms = fits.getdata('/scratch/PI/kipac/mbaumer/des/data/redmagic_Y1_sims_randoms.fits')
-    #mask = [np.random.uniform(size=len(randoms)) < 0.05]
-    #randoms = randoms[mask]
-    cat = treecorr.Catalog(ra=data['RA'], dec=data['DEC'], ra_units='degrees', dec_units='degrees')
-    random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], ra_units='degrees', dec_units='degrees')
-    setdict = {'d':cat,'r':random_cat}
-    nnn = treecorr.NNNCorrelation(min_sep=1, max_sep=50, nbins=11, min_u=0.9, 
-      max_u=1.0, nubins=1, min_v=-0.1, max_v=0.1, nvbins=1, bin_slop=0.01, sep_units='arcmin')
-    print 'starting processing!'
-    toc = time.time()
-    if ((set1 == set2) and (set2 == set3)):
-        nnn.process(setdict[set1])
-        #this saves time even though it shouldn't in theory...
-    else:
-        nnn.process(setdict[set1],setdict[set2],setdict[set3])
-    tic = time.time()
-    print 'that took', tic-toc
-    fname = '/scratch/PI/kipac/mbaumer/des/3pt_results/'+set1+set2+set3+'sv_test.out'
-    nnn.write(fname,nnn)
+class NNNHandler (object):
+
+    def __init__(self,runname):
+        self.runname = runname
+        self.datapath = '/scratch/PI/kipac/mbaumer/des/data/redmagic_sv_data.fits'
+        self.randompath = '/scratch/PI/kipac/mbaumer/des/data/redmagic_sv_randoms.fits'
+        self.outdir = '/scratch/PI/kipac/mbaumer/des/3pt_results/'
+
+        self.min_r = 1
+        self.max_r = 50
+        self.n_rbins = 11
+        
+        self.min_u = 0.9
+        self.max_u = 1.0
+        self.n_ubins = 1
+        
+        self.min_v = -0.1
+        self.max_v = 0.1
+        self.n_vbins = 1
+
+    def run(self,set1,set2,set3):
+        data = fits.getdata(self.datapath)
+        randoms = fits.getdata(self.randompath)
+
+        cat = treecorr.Catalog(ra=data['RA'], dec=data['DEC'], ra_units='degrees', dec_units='degrees')
+        random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], ra_units='degrees', dec_units='degrees')
+        setdict = {'d':cat,'r':random_cat}
+        nnn = treecorr.NNNCorrelation(min_sep=self.min_r, max_sep=self.max_r, nbins=self.n_rbins, min_u=self.min_u, 
+          max_u=self.max_u, nubins=self.n_ubins, min_v=self.min_v, max_v=self.max_v, nvbins=self.n_vbins, bin_slop=0.01, sep_units='arcmin')
+        
+        print 'starting processing!'
+        toc = time.time()
+        if ((set1 == set2) and (set2 == set3)):
+            nnn.process(setdict[set1])
+            #this saves time even though it shouldn't in theory...
+        else:
+            nnn.process(setdict[set1],setdict[set2],setdict[set3])
+        tic = time.time()
+        print 'that took', tic-toc
+        fname = self.outdir+self.runname+set1+set2+set3+'.out'
+        nnn.write(fname,nnn)
 
 if __name__ == '__main__':
-    run3pt(sys.argv[1], sys.argv[2], sys.argv[3])
+    handler = NNNHandler(sys.argv[4])
+    handler.run(sys.argv[1], sys.argv[2], sys.argv[3])
