@@ -1,8 +1,9 @@
+#!/home/mbaumer/anaconda2/bin/python
 import os, sys
 
 def runall(runname):
 	logdir = '/home/mbaumer/tricorder/tricorder/logs/'
-	runstrs = ['d d d']#,'d r r','r d r','r r d','d d r','d r d','r d d','r r r']
+	runstrs = ['d d d','d r r','r d r','r r d','d d r','d r d','r d d','r r r']
 	for runstr in runstrs:
 		runchars = runstr.replace(" ","")
 		f = open('temp.sbatch','w')
@@ -17,7 +18,7 @@ def runall(runname):
 			'#SBATCH --job-name='+runname+'_'+runchars+' \n',
 			'#SBATCH --output='+logdir+runname+'_'+runchars+'.out'+' \n',
 			'#SBATCH --error='+logdir+runname+'_'+runchars+'.err'+' \n',
-			'srun python tricorder.py '+runstr+' '+runname+' \n' ]
+			'srun /home/mbaumer/anaconda2/bin/python2.7 tricorder.py '+runstr+' '+runname+' \n' ]
 		f.writelines(configstrs)
 		f.close()
 		os.system('sbatch temp.sbatch')
