@@ -35,7 +35,7 @@ class NNNHandler (object):
         random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], ra_units='degrees', dec_units='degrees')
         setdict = {'d':cat,'r':random_cat}
         nnn = treecorr.NNNCorrelation(min_sep=self.min_r, max_sep=self.max_r, nbins=self.n_rbins, min_u=self.min_u, 
-          max_u=self.max_u, nubins=self.n_ubins, min_v=self.min_v, max_v=self.max_v, nvbins=self.n_vbins, bin_slop=0.01, sep_units='arcmin')
+          max_u=self.max_u, nubins=self.n_ubins, min_v=self.min_v, max_v=self.max_v, nvbins=self.n_vbins, bin_slop=1, sep_units='arcmin')
         
         print 'starting processing!'
         toc = time.time()
