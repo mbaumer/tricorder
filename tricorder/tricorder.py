@@ -1,11 +1,12 @@
 #!/home/mbaumer/anaconda2/bin/python2.7
-import sys
+import sys, os.path
 sys.path.append('/home/mbaumer/anaconda2/bin/')
 from astropy.io import fits
 import treecorr
 import sys
 import numpy as np
 import time
+import json
 
 class NNNHandler (object):
 
@@ -15,26 +16,43 @@ class NNNHandler (object):
         self.randompath = '/scratch/PI/kipac/mbaumer/des/data/redmagic_sv_randoms.fits'
         self.outdir = '/scratch/PI/kipac/mbaumer/des/3pt_results/'
         #write config file
+        config_fname = outdir+runname+'.config'
 
-        configdict = {}
-        configdict['min_r'] = 1
-        configdict['max_r'] = 50
-        configdict['n_rbins'] = 11
-        
-        configdict['min_u'] = 0.9
-        configdict['max_u'] = 1.0
-        configdict['n_ubins'] = 1
-        
-        configdict['min_v'] = -0.1
-        configdict['max_v'] = 0.1
-        configdict['n_vbins'] = 1
+        #if runname is already done, read in results
+        if os.path.exists(config_fname):
+            with open(config_fname) as f:
+                configdict = json.loads(f.read())
+        #otherwise, make a new one
+        else:
+            configdict = {}
+            configdict['min_sep'] = 1
+            configdict['max_sep'] = 50
+            configdict['nbins'] = 11
+            
+            configdict['min_u'] = 0.9
+            configdict['max_u'] = 1.0
+            configdict['nubins'] = 1
+            
+            configdict['min_v'] = -0.1
+            configdict['max_v'] = 0.1
+            configdict['nvbins'] = 1
+
+            configdict['bin_slop'] = 0.1
+            configdict['sep_units'] = 'arcmin'
+
+            #rest of this is for other parts of analysis; treecorr doesn't care
+            configdict['min_z'] = .5
+            configdict['max_z'] = .6
+
+            #write it out so we remember what we did
+            f = open(config_fname,'w')
+            f.write(json.dumps(configdict))
+            f.close()
 
         self.config = configdict
 
-    def load(self,runname):
-        self.config = None #TODO load config dict!
-        [ddd,ddr,drd,rdd,drr,rdr,rrd,rrr] = 8*[treecorr.NNNCorrelation(min_sep=self.config['min_r'], max_sep=self.config['max_r'], nbins=self.config['n_rbins'], min_u=self.config['min_u'], 
-          max_u=self.config['max_u'], nubins=self.config['n_ubins'], min_v=self.config['min_v'], max_v=self.config['max_v'], nvbins=self.config['n_vbins'], bin_slop=1, sep_units='arcmin')]
+    def load(self):
+        [ddd,ddr,drd,rdd,drr,rdr,rrd,rrr] = 8*[treecorr.NNNCorrelation(config=self.config)]
         for nnn in [ddd,ddr,drd,rdd,drr,rdr,rrd,rrr]:
             #do something
 
@@ -45,8 +63,7 @@ class NNNHandler (object):
         cat = treecorr.Catalog(ra=data['RA'], dec=data['DEC'], ra_units='degrees', dec_units='degrees')
         random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], ra_units='degrees', dec_units='degrees')
         setdict = {'d':cat,'r':random_cat}
-        nnn = treecorr.NNNCorrelation(min_sep=self.config['min_r'], max_sep=self.config['max_r'], nbins=self.config['n_rbins'], min_u=self.config['min_u'], 
-          max_u=self.config['max_u'], nubins=self.config['n_ubins'], min_v=self.config['min_v'], max_v=self.config['max_v'], nvbins=self.config['n_vbins'], bin_slop=1, sep_units='arcmin')
+        nnn = treecorr.NNNCorrelation(config=self.config)
         
         #TODO:
         #write out config dict used for processing runname
