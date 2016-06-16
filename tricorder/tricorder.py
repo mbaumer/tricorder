@@ -28,7 +28,6 @@ class NNNProcessor (object):
 
     def __init__(self,runname):
         config_fname = outdir+runname+'.config'
-        assert os.path.exists(config_fname) is False, runname+' is already processed; delete to re-run'
         
         configdict = {}
         #treecorr ignores irrelevant keys
