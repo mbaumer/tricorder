@@ -33,27 +33,35 @@ class NNNProcessor (object):
         #treecorr ignores irrelevant keys
         configdict['runname'] = runname
         configdict['datapath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_sv_data.fits'
-        configdict['randompath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_sv_randoms.fits'
+        configdict['randompath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_sv_5x_randoms.fits'
+	#configdict['datapath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_Y1_sims_data.fits'
+        #configdict['randompath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_Y1_sims_5x_randoms.fits'
 
         configdict['min_z'] = .5
         configdict['max_z'] = .7
-        #SPT-E footprint
+        #SV SPT-E footprint
         configdict['min_ra'] = 60
         configdict['max_ra'] = 92
         configdict['min_dec'] = -61
         configdict['max_dec'] = -40
+	#Y1 main footprint
+	#configdict['min_ra'] = 0
+        #configdict['max_ra'] = 360
+        #configdict['min_dec'] = -70
+        #configdict['max_dec'] = -35
 
-        configdict['min_sep'] = 9
-        configdict['max_sep'] = 15
-        configdict['nbins'] = 1
+
+        configdict['min_sep'] = 1
+        configdict['max_sep'] = 25
+        configdict['nbins'] = 200
         
-        configdict['min_u'] = 0.375
-        configdict['max_u'] = 0.625
-        configdict['nubins'] = 1
+        configdict['min_u'] = 0
+        configdict['max_u'] = 1
+        configdict['nubins'] = 100
         
         configdict['min_v'] = -1
         configdict['max_v'] = 1
-        configdict['nvbins'] = 15
+        configdict['nvbins'] = 200
 
         configdict['bin_slop'] = 0.1
         configdict['sep_units'] = 'arcmin'

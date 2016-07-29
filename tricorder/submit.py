@@ -4,8 +4,8 @@ import os, sys
 def runall(runname):
 	logdir = '/home/mbaumer/tricorder/tricorder/logs/'
 	#rundict = {'d d d': 3}
-	#rundict = {'d d d': 1, 'd r r': 12,'r d r' : 12,'r r d': 12,'d d r': 2,'d r d' : 2,'r d d' : 2 ,'r r r' : 47}
-	rundict = {'d d d': 1, 'd r r': 1,'r d r' : 1,'r r d': 1,'d d r': 1,'d r d' : 1,'r d d' : 1 ,'r r r' : 12}
+	rundict = {'d d d': 1, 'd r r': 12,'r d r' : 12,'r r d': 12,'d d r': 2,'d r d' : 2,'r d d' : 2 ,'r r r' : 47}
+	#rundict = {'d d d': 1, 'd r r': 1,'r d r' : 1,'r r d': 1,'d d r': 1,'d r d' : 1,'r d d' : 1 ,'r r r' : 12}
 	for runstr in rundict.keys():
 		timestr = '#SBATCH --time='+str(rundict[runstr])+':00:00 \n'
 		runchars = runstr.replace(" ","")
