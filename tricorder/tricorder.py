@@ -7,22 +7,10 @@ import sys
 import numpy as np
 import time
 import json
+from sklearn.cluster import KMeans
+from sklearn.neighbors import KNeighborsRegressor
 
 outdir = '/scratch/PI/kipac/mbaumer/des/3pt_results/'
-
-class NNNPlotter (object):
-    def __init__(self,runname):
-        config_fname = outdir+runname+'.config'
-        try: 
-            with open(config_fname) as f:
-                configdict = json.loads(f.read())
-        except IOError:
-            print 'results for '+runname+' not found in '+outdir
-
-    def load(self):
-        [ddd,ddr,drd,rdd,drr,rdr,rrd,rrr] = 8*[treecorr.NNNCorrelation(config=self.config)]
-        for nnn in [ddd,ddr,drd,rdd,drr,rdr,rrd,rrr]:
-            pass
 
 class NNNProcessor (object):
 
@@ -36,20 +24,6 @@ class NNNProcessor (object):
         configdict['randompath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_sv_5x_randoms.fits'
 	#configdict['datapath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_Y1_sims_data.fits'
         #configdict['randompath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_Y1_sims_5x_randoms.fits'
-
-        configdict['min_z'] = .5
-        configdict['max_z'] = .7
-        #SV SPT-E footprint
-        configdict['min_ra'] = 60
-        configdict['max_ra'] = 92
-        configdict['min_dec'] = -61
-        configdict['max_dec'] = -40
-	#Y1 main footprint
-	#configdict['min_ra'] = 0
-        #configdict['max_ra'] = 360
-        #configdict['min_dec'] = -70
-        #configdict['max_dec'] = -35
-
 
         configdict['min_sep'] = 1
         configdict['max_sep'] = 25
@@ -72,22 +46,6 @@ class NNNProcessor (object):
         f.close()
 
         self.config = configdict
-
-    def prepareCatalog(self):
-        data = fits.getdata(self.config['datapath'])
-        randoms = fits.getdata(self.config['randompath'])
-
-        data = data[((data['ZREDMAGIC'] > self.config['min_z']) & (data['ZREDMAGIC'] < self.config['max_z']))]
-        data = data[((data['RA'] > self.config['min_ra']) & (data['RA'] < self.config['max_ra']))]
-        data = data[((data['DEC'] > self.config['min_dec']) & (data['DEC'] < self.config['max_dec']))]
-
-        randoms = randoms[((randoms['Z'] > self.config['min_z']) & (randoms['Z'] < self.config['max_z']))]
-        randoms = randoms[((randoms['RA'] > self.config['min_ra']) & (randoms['RA'] < self.config['max_ra']))]
-        randoms = randoms[((randoms['DEC'] > self.config['min_dec']) & (randoms['DEC'] < self.config['max_dec']))]
-
-        cat = treecorr.Catalog(ra=data['RA'], dec=data['DEC'], ra_units='degrees', dec_units='degrees')
-        random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], ra_units='degrees', dec_units='degrees')
-        return cat, random_cat
 
     def run(self,set1,set2,set3):
         cat, random_cat = self.prepareCatalog()
