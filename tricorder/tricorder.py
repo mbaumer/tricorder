@@ -7,23 +7,16 @@ import sys
 import numpy as np
 import time
 import json
-from sklearn.cluster import KMeans
-from sklearn.neighbors import KNeighborsRegressor
 
 outdir = '/scratch/PI/kipac/mbaumer/des/3pt_results/'
 
 class NNNProcessor (object):
 
     def __init__(self,runname):
-        config_fname = outdir+runname+'.config'
         
         configdict = {}
         #treecorr ignores irrelevant keys
         configdict['runname'] = runname
-        configdict['datapath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_sv_data.fits'
-        configdict['randompath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_sv_5x_randoms.fits'
-	#configdict['datapath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_Y1_sims_data.fits'
-        #configdict['randompath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_Y1_sims_5x_randoms.fits'
 
         configdict['min_sep'] = 1
         configdict['max_sep'] = 25
@@ -39,11 +32,6 @@ class NNNProcessor (object):
 
         configdict['bin_slop'] = 0.1
         configdict['sep_units'] = 'arcmin'
-
-        #write it out so we remember what we did
-        f = open(config_fname,'w')
-        f.write(json.dumps(configdict))
-        f.close()
 
         self.config = configdict
 
