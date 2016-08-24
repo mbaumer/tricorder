@@ -1,4 +1,5 @@
 #!/home/mbaumer/anaconda2/bin/python2.7
+from __future__ import division
 import sys, os.path
 sys.path.append('/home/mbaumer/anaconda2/bin/')
 from astropy.io import fits
@@ -60,7 +61,7 @@ class NNNProcessor (object):
         #write it out so we remember what we did
         config_fname = outdir+self.runname+'.config'
         #if (!os.path.exists(config_fname)): #not atomic; hard code for now
-        if (self.random_set_id == 0): #just write out for first one
+        if (random_set_id == '0'): #just write out for first one
             f = open(config_fname,'w')
             f.write(json.dumps(self.config))
             f.close()
