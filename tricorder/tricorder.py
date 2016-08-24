@@ -31,7 +31,7 @@ class NNNProcessor (object):
         #treecorr ignores irrelevant keys
 
         self.runname = runname
-        self.random_set_id = random_set_id
+        self.random_set_id = int(random_set_id)
 
         configdict['datapath'] = datapath+'data.fits'
         configdict['randompath'] = datapath+'randoms_'+str(self.random_set_id)+'.fits'
@@ -61,7 +61,7 @@ class NNNProcessor (object):
         #write it out so we remember what we did
         config_fname = outdir+self.runname+'.config'
         #if (!os.path.exists(config_fname)): #not atomic; hard code for now
-        if (random_set_id == '0'): #just write out for first one
+        if (self.random_set_id == 0): #just write out for first one
             f = open(config_fname,'w')
             f.write(json.dumps(self.config))
             f.close()
@@ -84,9 +84,13 @@ class NNNProcessor (object):
 
         joint_ra_table = np.hstack([data['RA'],randoms['RA']])
         joint_dec_table = np.hstack([data['DEC'],randoms['DEC']])  
+
+        print joint_ra_table.shape
         
         wt_factor = len(data['RA'])/len(randoms['RA'])
         weights = np.hstack([np.ones_like(data['RA']),-(wt_factor)*np.ones_like(randoms['RA'])])
+
+        print np.sum(weights)
 
         joint_cat = treecorr.Catalog(ra=joint_ra_table, dec=joint_dec_table, ra_units='degrees', dec_units='degrees', w=weights)
         random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], ra_units='degrees', dec_units='degrees')
