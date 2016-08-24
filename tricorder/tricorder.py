@@ -8,16 +8,44 @@ import numpy as np
 import time
 import json
 
+datapath = '/scratch/PI/kipac/mbaumer/des/data/redmagic_'
 outdir = '/scratch/PI/kipac/mbaumer/des/3pt_results/'
+runType = 'Y1_sims'
+
+#define footprint dicts
+sv_spt_footprint['min_ra'] = 60
+sv_spt_footprint['max_ra'] = 92
+sv_spt_footprint['min_dec'] = -61
+sv_spt_footprint['max_dec'] = -40
+
+y1_main_footprint['min_ra'] = 0
+y1_main_footprint['max_ra'] = 360
+y1_main_footprint['min_dec'] = -70
+y1_main_footprint['max_dec'] = -35
 
 class NNNProcessor (object):
 
-    def __init__(self,runname):
+    def __init__(self,runname, random_set_id):
         
         configdict = {}
         #treecorr ignores irrelevant keys
-        configdict['runname'] = runname
 
+        self.runname = runname
+        self.random_set_id = random_set_id
+        configdict['runType'] = runType
+
+        if configdict['runType'] == 'Y1_sims':
+            configdict['datapath'] = datapath+'_data.fits'
+            configdict['randompath'] = datapath+'_randoms_'+str(self.random_set_id)+'.fits'
+            self.footprint = y1_main_footprint
+
+        else:
+            raise IOError('invalid runType')
+    
+        configdict['min_z'] = .5
+        configdict['max_z'] = .7
+
+        configdict['runname'] = runname
         configdict['min_sep'] = 1
         configdict['max_sep'] = 25
         configdict['nbins'] = 200
@@ -35,26 +63,60 @@ class NNNProcessor (object):
 
         self.config = configdict
 
-    def run(self,set1,set2,set3):
-        cat, random_cat = self.prepareCatalog()
-        setdict = {'d':cat,'r':random_cat}
+        self.cat = None
+        self.random_cat = None
+
+        #write it out so we remember what we did
+        config_fname = outdir+self.runname+'.config'
+        #if (!os.path.exists(config_fname)): #not atomic; hard code for now
+        if (self.random_set_id == 0): #just write out for first one
+            f = open(config_fname,'w')
+            f.write(json.dumps(self.config))
+            f.close()
+
+    def applyCuts(self,cat):
+        cat = cat[((cat['ZREDMAGIC'] > self.config['min_z']) & (cat['ZREDMAGIC'] < self.config['max_z']))]
+        cat = cat[((cat['RA'] > self.footprint['min_ra']) & (cat['RA'] < self.footprint['max_ra']))]
+        cat = cat[((cat['DEC'] > self.footprint['min_dec']) & (cat['DEC'] < self.footprint['max_dec']))]
+        #later, color, magnitude cuts...
+        return cat
+
+    def prepareCatalogs(self):
+        data = applyCuts(fits.getdata(self.config['datapath']))
+        randoms = applyCuts(fits.getdata(self.config['randompath']))
+
+        joint_ra_table = np.hstack([data['RA'],randoms['RA']])
+        joint_dec_table = np.hstack([data['DEC'],randoms['DEC']])  
+        
+        wt_factor = len(data['RA'])/len(randoms['RA'])
+        weights = np.hstack([np.ones_like(data['RA']),-(wt_factor)*np.ones_like(randoms['RA'])])
+
+        joint_cat = treecorr.Catalog(ra=joint_ra_table, dec=joint_dec_table, ra_units='degrees', dec_units='degrees', w=weights)
+        random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], ra_units='degrees', dec_units='degrees')
+
+        return joint_cat, random_cat
+
+    def run_iteration(self):
+        joint_cat, random_cat = self.prepareCatalogs()
+
         nnn = treecorr.NNNCorrelation(config=self.config)
+        rrr = treecorr.NNNCorrelation(config=self.config)
 
-        print 'starting processing!'
+        print 'starting numerator!'
         toc = time.time()
-
-        if ((set1 == set2) and (set2 == set3)):
-            #this is faster even though it shouldn't in theory...
-            nnn.process(setdict[set1])
-        else:
-            nnn.process(setdict[set1],setdict[set2],setdict[set3])
-
+        nnn.process(joint_cat)
         tic = time.time()
-        print 'that took', tic-toc
+        print 'numerator took', tic-toc
 
-        fname = outdir+self.config['runname']+set1+set2+set3+'.out'
-        nnn.write(fname,nnn)
+        print 'starting denominator!'
+        toc = time.time()
+        rrr.process(random_cat)
+        tic = time.time()
+        print 'denominator took', tic-toc
+
+        fname = outdir+self.config['runname']+str(self.random_set_id)+'.out'
+        nnn.write(fname,nnn,rrr=rrr,file_type='FITS')
 
 if __name__ == '__main__':
-    handler = NNNProcessor(sys.argv[4])
-    handler.run(sys.argv[1], sys.argv[2], sys.argv[3])
+    handler = NNNProcessor(sys.argv[1],sys.argv[2])
+    handler.run()
