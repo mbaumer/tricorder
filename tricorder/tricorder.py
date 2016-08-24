@@ -12,12 +12,7 @@ datapath = '/scratch/PI/kipac/mbaumer/des/data/redmagic_'
 outdir = '/scratch/PI/kipac/mbaumer/des/3pt_results/'
 runType = 'Y1_sims'
 
-#define footprint dicts
-sv_spt_footprint['min_ra'] = 60
-sv_spt_footprint['max_ra'] = 92
-sv_spt_footprint['min_dec'] = -61
-sv_spt_footprint['max_dec'] = -40
-
+y1_main_footprint = {}
 y1_main_footprint['min_ra'] = 0
 y1_main_footprint['max_ra'] = 360
 y1_main_footprint['min_dec'] = -70
