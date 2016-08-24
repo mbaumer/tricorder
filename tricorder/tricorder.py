@@ -30,8 +30,8 @@ class NNNProcessor (object):
         configdict['runType'] = runType
 
         if configdict['runType'] == 'Y1_sims':
-            configdict['datapath'] = datapath+'_data.fits'
-            configdict['randompath'] = datapath+'_randoms_'+str(self.random_set_id)+'.fits'
+            configdict['datapath'] = datapath+'data.fits'
+            configdict['randompath'] = datapath+'randoms_'+str(self.random_set_id)+'.fits'
             self.footprint = y1_main_footprint
 
         else:
