@@ -10,11 +10,11 @@ import json
 import platform
 
 datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/redmagic_'
-outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_results/'
+outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
 
-if 'sh-' in platform.node():
-    datapath = '/scratch/PI/kipac/mbaumer/des/data/redmagic_'
-    outdir = '/scratch/PI/kipac/mbaumer/des/3pt_results/'
+#if 'sh-' in platform.node():
+#    datapath = '/scratch/PI/kipac/mbaumer/des/data/redmagic_'
+#    outdir = '/scratch/PI/kipac/mbaumer/des/3pt_results/'
 
 runType = 'Y1_sims'
 
