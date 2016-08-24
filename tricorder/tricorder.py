@@ -35,9 +35,6 @@ class NNNProcessor (object):
         configdict['datapath'] = datapath+'data.fits'
         configdict['randompath'] = datapath+'randoms_'+str(self.random_set_id)+'.fits'
         self.footprint = y1_main_footprint
-
-        else:
-            raise IOError('invalid runType')
     
         configdict['min_z'] = .5
         configdict['max_z'] = .7
