@@ -10,7 +10,7 @@ import json
 import platform
 
 if 'ki-ls' in platform.node():
-    datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/'
+    datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/redmagic_'
     outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_results/'
 
 if 'sh-' in platform.node():
