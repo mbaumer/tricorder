@@ -77,8 +77,8 @@ class NNNProcessor (object):
         return cat
 
     def prepareCatalogs(self):
-        data = applyCuts(fits.getdata(self.config['datapath']))
-        randoms = applyCuts(fits.getdata(self.config['randompath']))
+        data = self.applyCuts(fits.getdata(self.config['datapath']))
+        randoms = self.applyCuts(fits.getdata(self.config['randompath']))
 
         joint_ra_table = np.hstack([data['RA'],randoms['RA']])
         joint_dec_table = np.hstack([data['DEC'],randoms['DEC']])  
