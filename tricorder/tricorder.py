@@ -91,7 +91,7 @@ class NNNProcessor (object):
 
         return joint_cat, random_cat
 
-    def run_iteration(self):
+    def run(self):
         joint_cat, random_cat = self.prepareCatalogs()
 
         nnn = treecorr.NNNCorrelation(config=self.config)
