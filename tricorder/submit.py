@@ -6,7 +6,7 @@ logdir = '/home/mbaumer/tricorder/tricorder/logs/'
 def runall(runname):
 	if 'ki-ls' in platform.node():
 		for random_set_id in range(31):
-			os.system('bsub -W 02:00:00 python tricorder.py '+runname+' '+str(random_set_id))
+			os.system('bsub -W 02:00 python tricorder.py '+runname+' '+str(random_set_id))
 	elif 'sh-' in platform.node():
 		for random_set_id in range(31):
 			f = open('temp.sbatch','w')
