@@ -41,8 +41,8 @@ class NNNProcessor (object):
         configdict['max_z'] = .7
 
         configdict['runname'] = runname
-        configdict['min_sep'] = 1
-        configdict['max_sep'] = 2
+        configdict['min_sep'] = 3
+        configdict['max_sep'] = 25
         configdict['nbins'] = 200
         
         configdict['min_u'] = 0
@@ -85,12 +85,11 @@ class NNNProcessor (object):
         joint_ra_table = np.hstack([data['RA'],randoms['RA']])
         joint_dec_table = np.hstack([data['DEC'],randoms['DEC']])  
 
-        print joint_ra_table.shape
+        print 'joint cat has ', joint_ra_table.shape
+        print 'randoms have ', len(randoms['RA'])
         
         wt_factor = len(data['RA'])/len(randoms['RA'])
         weights = np.hstack([np.ones_like(data['RA']),-(wt_factor)*np.ones_like(randoms['RA'])])
-
-        print np.sum(weights)
 
         joint_cat = treecorr.Catalog(ra=joint_ra_table, dec=joint_dec_table, ra_units='degrees', dec_units='degrees', w=weights)
         random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], ra_units='degrees', dec_units='degrees')
@@ -101,19 +100,12 @@ class NNNProcessor (object):
         joint_cat, random_cat = self.prepareCatalogs()
 
         nnn = treecorr.NNNCorrelation(config=self.config)
-        rrr = treecorr.NNNCorrelation(config=self.config)
 
         print 'starting numerator!'
         toc = time.time()
         nnn.process(joint_cat)
         tic = time.time()
         print 'numerator took', tic-toc
-
-        print 'starting denominator!'
-        toc = time.time()
-        rrr.process(random_cat)
-        tic = time.time()
-        print 'denominator took', tic-toc
 
         fname = outdir+self.config['runname']+str(self.random_set_id)+'.out'
         nnn.write(fname,file_type='FITS')
