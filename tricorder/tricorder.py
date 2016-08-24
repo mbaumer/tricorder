@@ -122,7 +122,7 @@ class NNNProcessor (object):
         print 'denominator took', tic-toc
 
         fname = outdir+self.config['runname']+str(self.random_set_id)+'.out'
-        nnn.write(fname,nnn,rrr=rrr,file_type='FITS')
+        nnn.write(fname,rrr=rrr,file_type='FITS')
 
 if __name__ == '__main__':
     handler = NNNProcessor(sys.argv[1],sys.argv[2])
