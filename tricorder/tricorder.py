@@ -77,7 +77,12 @@ class NNNProcessor (object):
             f.close()
 
     def applyCuts(self,cat):
-        cat = cat[((cat['ZREDMAGIC'] > self.config['min_z']) & (cat['ZREDMAGIC'] < self.config['max_z']))]
+        if 'ZREDMAGIC' in cat.keys():
+            cat = cat[((cat['ZREDMAGIC'] > self.config['min_z']) & (cat['ZREDMAGIC'] < self.config['max_z']))]
+        elif 'Z' in cat.keys():
+            cat = cat[((cat['Z'] > self.config['min_z']) & (cat['Z'] < self.config['max_z']))]
+        else:
+            print 'one or more input cats have no redshift data'
         cat = cat[((cat['RA'] > self.footprint['min_ra']) & (cat['RA'] < self.footprint['max_ra']))]
         cat = cat[((cat['DEC'] > self.footprint['min_dec']) & (cat['DEC'] < self.footprint['max_dec']))]
         #later, color, magnitude cuts...
