@@ -77,9 +77,9 @@ class NNNProcessor (object):
             f.close()
 
     def applyCuts(self,cat):
-        if 'ZREDMAGIC' in cat.keys():
+        if 'ZREDMAGIC' in cat.columns:
             cat = cat[((cat['ZREDMAGIC'] > self.config['min_z']) & (cat['ZREDMAGIC'] < self.config['max_z']))]
-        elif 'Z' in cat.keys():
+        elif 'Z' in cat.columns:
             cat = cat[((cat['Z'] > self.config['min_z']) & (cat['Z'] < self.config['max_z']))]
         else:
             print 'one or more input cats have no redshift data'
