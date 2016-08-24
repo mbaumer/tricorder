@@ -7,9 +7,16 @@ import sys
 import numpy as np
 import time
 import json
+import platform
 
-datapath = '/scratch/PI/kipac/mbaumer/des/data/redmagic_'
-outdir = '/scratch/PI/kipac/mbaumer/des/3pt_results/'
+if 'ki-ls' in platform.node():
+    datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/'
+    outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_results/'
+
+if 'sh-' in platform.node():
+    datapath = '/scratch/PI/kipac/mbaumer/des/data/redmagic_'
+    outdir = '/scratch/PI/kipac/mbaumer/des/3pt_results/'
+
 runType = 'Y1_sims'
 
 y1_main_footprint = {}
