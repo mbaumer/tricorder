@@ -16,8 +16,6 @@ outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
 #    datapath = '/scratch/PI/kipac/mbaumer/des/data/redmagic_'
 #    outdir = '/scratch/PI/kipac/mbaumer/des/3pt_results/'
 
-runType = 'Y1_sims'
-
 y1_main_footprint = {}
 y1_main_footprint['min_ra'] = 0
 y1_main_footprint['max_ra'] = 360
@@ -33,12 +31,10 @@ class NNNProcessor (object):
 
         self.runname = runname
         self.random_set_id = random_set_id
-        configdict['runType'] = runType
 
-        if configdict['runType'] == 'Y1_sims':
-            configdict['datapath'] = datapath+'data.fits'
-            configdict['randompath'] = datapath+'randoms_'+str(self.random_set_id)+'.fits'
-            self.footprint = y1_main_footprint
+        configdict['datapath'] = datapath+'data.fits'
+        configdict['randompath'] = datapath+'randoms_'+str(self.random_set_id)+'.fits'
+        self.footprint = y1_main_footprint
 
         else:
             raise IOError('invalid runType')
@@ -48,7 +44,7 @@ class NNNProcessor (object):
 
         configdict['runname'] = runname
         configdict['min_sep'] = 1
-        configdict['max_sep'] = 25
+        configdict['max_sep'] = 2
         configdict['nbins'] = 200
         
         configdict['min_u'] = 0
@@ -63,9 +59,6 @@ class NNNProcessor (object):
         configdict['sep_units'] = 'arcmin'
 
         self.config = configdict
-
-        self.cat = None
-        self.random_cat = None
 
         #write it out so we remember what we did
         config_fname = outdir+self.runname+'.config'
@@ -121,7 +114,7 @@ class NNNProcessor (object):
         print 'denominator took', tic-toc
 
         fname = outdir+self.config['runname']+str(self.random_set_id)+'.out'
-        nnn.write(fname,rrr=rrr,file_type='FITS')
+        nnn.write(fname,file_type='FITS')
 
 if __name__ == '__main__':
     handler = NNNProcessor(sys.argv[1],sys.argv[2])
