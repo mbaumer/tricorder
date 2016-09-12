@@ -124,7 +124,7 @@ class NNNProcessor (object):
         fname = outdir+self.config['runname']+str(self.random_set_id)+'.out'
         nnn.write(fname,file_type='FITS')
 
-         if self.random_set_id == 0:
+        if self.random_set_id == 0:
             print 'also doing denominator'
             rrr = treecorr.NNNCorrelation(config=self.config)
             toc = time.time()
