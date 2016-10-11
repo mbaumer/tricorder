@@ -21,7 +21,10 @@ y1_main['max_dec'] = -35
 footprint = y1_main
 datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/redmagic_'
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
-metric = 'Rperp'
+metric = 'Euclidean'
+data_z_var = 'Z_SPEC'
+random_z_var = 'Z'
+do3D = False
 
 #if 'sh-' in platform.node():
 #    datapath = '/scratch/PI/kipac/mbaumer/des/data/redmagic_'
@@ -36,6 +39,10 @@ class NNNProcessor (object):
 
         self.runname = runname
         self.random_set_id = int(random_set_id)
+
+        self.data_z_var = data_z_var
+        self.random_z_var = random_z_var
+        self.do3D = do3D
 
         configdict['datapath'] = datapath+'data.fits'
         configdict['randompath'] = datapath+'randoms_'+str(self.random_set_id)+'.fits'
@@ -53,16 +60,19 @@ class NNNProcessor (object):
         configdict['max_sep'] = 25
         configdict['nbins'] = 200
         
-        configdict['min_u'] = .4
+        configdict['min_u'] = 0
         configdict['max_u'] = 1
-        configdict['nubins'] = 60
+        configdict['nubins'] = 100
         
-        configdict['min_v'] = 0
+        configdict['min_v'] = -1
         configdict['max_v'] = 1
-        configdict['nvbins'] = 100
+        configdict['nvbins'] = 200
 
         configdict['bin_slop'] = 1
-        configdict['sep_units'] = 'arcmin'
+        if not self.do3D:
+            configdict['sep_units'] = 'arcmin'
+        else: 
+            configdict['sep_units'] = 
 
         self.config = configdict
 
@@ -74,67 +84,90 @@ class NNNProcessor (object):
             f.write(json.dumps(self.config))
             f.close()
 
-    def applyCuts(self,cat):
-        if 'ZREDMAGIC' in cat.dtype.names:
-            cat = cat[((cat['ZREDMAGIC'] > self.config['min_z']) & (cat['ZREDMAGIC'] < self.config['max_z']))]
-        elif 'Z' in cat.dtype.names:
-            cat = cat[((cat['Z'] > self.config['min_z']) & (cat['Z'] < self.config['max_z']))]
-        else:
-            print 'one or more input cats have no redshift data'
+    def applyCuts(self,cat,zvar):
+        try:
+            cat = cat[((cat[zvar] > self.config['min_z']) & (cat[zvar] < self.config['max_z']))]
+        except KeyError:
+            print 'specified zvar: ', zvar, 'not found in ', cat.columns
+            raise
         cat = cat[((cat['RA'] > footprint['min_ra']) & (cat['RA'] < footprint['max_ra']))]
         cat = cat[((cat['DEC'] > footprint['min_dec']) & (cat['DEC'] < footprint['max_dec']))]
         #later, color, magnitude cuts...
         return cat
 
-    def prepareCatalogs(self):
-        data = self.applyCuts(fits.getdata(self.config['datapath']))
-        randoms = self.applyCuts(fits.getdata(self.config['randompath']))
+    def prepare_data_cat(self):
+        data = self.applyCuts(fits.getdata(self.config['datapath']),self.data_z_var)
+
+        if self.do3D: 
+            data_cat = treecorr.Catalog(ra=data['RA'], dec=data['DEC'], 
+                ra_units='degrees', dec_units='degrees',
+                r=cosmo.comoving_distance(data[self.data_z_var])/cosmo.h)
+        else: 
+            data_cat = treecorr.Catalog(ra=data['RA'], dec=data['DEC'], 
+                ra_units='degrees', dec_units='degrees')
+            
+        return data_cat
+
+    def prepare_random_cat(self):
+        randoms = self.applyCuts(fits.getdata(self.config['randompath']),self.random_z_var)
+        if self.do3D:
+            random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], 
+                ra_units='degrees', dec_units='degrees',
+                r=cosmo.comoving_distance(randoms[self.random_z_var])/cosmo.h)
+        else:
+            random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], 
+                ra_units='degrees', dec_units='degrees')
+        return random_cat
+
+    def prepare_joint_cat(self):
+        data = self.applyCuts(fits.getdata(self.config['datapath']),self.data_z_var)
+        randoms = self.applyCuts(fits.getdata(self.config['randompath']),self.random_z_var)
 
         joint_ra_table = np.hstack([data['RA'],randoms['RA']])
         joint_dec_table = np.hstack([data['DEC'],randoms['DEC']])  
-        joint_z_table = np.hstack([data['ZREDMAGIC'],randoms['Z']])
+        joint_z_table = np.hstack([data[self.data_z_var],randoms[self.random_z_var]])
 
-        print 'joint cat has ', joint_ra_table.shape
-        print 'randoms have ', len(randoms['RA'])
+        print 'joint cat shape: ', joint_ra_table.shape
+        print 'randoms len: ', len(randoms['RA'])
         
-        wt_factor = len(data['RA'])/len(randoms['RA'])
+        wt_factor = float(len(data['RA']))/float(len(randoms['RA']))
         weights = np.hstack([np.ones_like(data['RA']),-(wt_factor)*np.ones_like(randoms['RA'])])
         print 'sum of weights (should be close to zero): ', np.sum(weights)
 
-        joint_cat = treecorr.Catalog(ra=joint_ra_table, dec=joint_dec_table, 
-            ra_units='degrees', dec_units='degrees',  
-            r=cosmo.comoving_distance(joint_z_table)/cosmo.h, w=weights)
-        random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], 
-            ra_units='degrees', dec_units='degrees',
-            r=cosmo.comoving_distance(randoms['Z'])/cosmo.h)
+        if self.do3D:
+            joint_cat = treecorr.Catalog(ra=joint_ra_table, dec=joint_dec_table, 
+                ra_units='degrees', dec_units='degrees',  
+                r=cosmo.comoving_distance(joint_z_table)/cosmo.h, w=weights)
+        else:
+            joint_cat = treecorr.Catalog(ra=joint_ra_table, dec=joint_dec_table, 
+                ra_units='degrees', dec_units='degrees', w=weights)
 
-        return joint_cat, random_cat
+        return joint_cat
 
-    def run(self):
-        joint_cat, random_cat = self.prepareCatalogs()
+    def run(self,set1,set2,set3):
 
+        cat = self.prepare_data_cat()
+        random_cat = self.prepare_random_cat()
+        joint_cat = self.prepare_joint_cat()
+
+        setdict = {'d':cat,'r':random_cat,'n':joint_cat}
         nnn = treecorr.NNNCorrelation(config=self.config)
 
-        print 'starting numerator!'
+        print 'starting processing!'
         toc = time.time()
-        nnn.process(joint_cat,metric=metric)
-        tic = time.time()
-        print 'numerator took', tic-toc
 
-        fname = outdir+self.config['runname']+str(self.random_set_id)+'.out'
+        if ((set1 == set2) and (set2 == set3)):
+            #this is faster even though it shouldn't in theory...
+            nnn.process(setdict[set1],metric=metric)
+        else:
+            nnn.process(setdict[set1],setdict[set2],setdict[set3],metric=metric)
+
+        tic = time.time()
+        print 'that took', tic-toc
+
+        fname = outdir+self.config['runname']+'_'+str(self.random_set_id)+'_'+set1+set2+set3+'.out'
         nnn.write(fname,file_type='FITS')
 
-        if self.random_set_id == 0:
-            print 'also doing denominator'
-            rrr = treecorr.NNNCorrelation(config=self.config)
-            toc = time.time()
-            rrr.process(random_cat,metric=metric)
-            tic = time.time()
-            print 'denominator took', tic-toc
-            fname = outdir+self.config['runname']+'RRR'+str(self.random_set_id)+'.out'
-            rrr.write(fname,file_type='FITS')
-
-
-if __name__ == '__main__':
-    handler = NNNProcessor(sys.argv[1],sys.argv[2])
-    handler.run()
+    def run_3pt_ana(self, runname, random_set_id, set1, set2, set3):
+        handler = NNNProcessor(runname,random_set_id)
+        handler.run(set1,set2,set3)
