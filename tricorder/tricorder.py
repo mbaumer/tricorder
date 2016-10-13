@@ -22,7 +22,7 @@ footprint = y1_main
 datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/redmagic_'
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
 metric = 'Euclidean'
-data_z_var = 'Z_SPEC'
+data_z_var = 'ZSPEC'
 random_z_var = 'Z'
 do3D = False
 
@@ -135,7 +135,7 @@ class NNNProcessor (object):
         
         wt_factor = float(len(data['RA']))/float(len(randoms['RA']))
         weights = np.hstack([np.ones_like(data['RA']),-(wt_factor)*np.ones_like(randoms['RA'])])
-        print 'sum of weights (should be close to zero): ', np.sum(weights)
+        print 'sum of weights (should be close to zero; only matters for NNN): ', np.sum(weights)
 
         if self.do3D:
             joint_cat = treecorr.Catalog(ra=joint_ra_table, dec=joint_dec_table, 

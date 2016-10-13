@@ -2,7 +2,7 @@
 import sys, subprocess
 
 Nrandoms = 1
-method = 'DDD' # or NNN
+method = 'NNN' # or NNN
 if method == 'DDD':
 	setlist = ['\'d\',\'d\',\'d\'','\'d\',\'d\',\'r\'','\'d\',\'r\',\'d\'','\'r\',\'d\',\'d\'',
 	'\'r\',\'r\',\'d\'','\'d\',\'r\',\'r\'','\'r\',\'d\',\'r\'','\'r\',\'r\',\'r\'']
