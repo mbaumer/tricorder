@@ -1,7 +1,5 @@
 #!/home/mbaumer/anaconda2/bin/python
-import os, sys
-import platform
-logdir = '/home/mbaumer/tricorder/tricorder/logs/'
+import sys, subprocess
 
 Nrandoms = 1
 method = 'DDD' # or NNN
@@ -16,7 +14,7 @@ else:
 def runall(runname):
 	for random_set_id in range(Nrandoms):
 		for this_set in setlist:
-			os.system('python -c \'import tricorder; tricorder.run_3pt_ana(\''+runname+'\','+str(random_set_id)+','+this_set+')\'')
+			subprocess.call(["python", "-c" ,"import tricorder; tricorder.run_3pt_ana('"+runname+"',"+str(random_set_id)+","+this_set+")"])
 
 if __name__ == '__main__':
 	runall(sys.argv[1])
