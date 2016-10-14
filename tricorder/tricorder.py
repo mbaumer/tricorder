@@ -21,10 +21,10 @@ y1_main['max_dec'] = -35
 footprint = y1_main
 datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/randoms1.0x/redmagic_'
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
-metric = 'Euclidean'
 data_z_var = 'ZSPEC'
 random_z_var = 'Z'
-do3D = False
+do3D = True
+metric = 'Rperp'
 
 #if 'sh-' in platform.node():
 #    datapath = '/scratch/PI/kipac/mbaumer/des/data/redmagic_'
