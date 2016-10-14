@@ -19,7 +19,7 @@ y1_main['max_dec'] = -35
 
 ##User settings!
 footprint = y1_main
-datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/redmagic_'
+datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/randoms1.0x/redmagic_'
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
 metric = 'Euclidean'
 data_z_var = 'ZSPEC'
