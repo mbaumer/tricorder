@@ -133,9 +133,10 @@ class NNNProcessor (object):
         print 'joint cat shape: ', joint_ra_table.shape
         print 'randoms len: ', len(randoms['RA'])
         
-        wt_factor = float(len(data['RA']))/float(len(randoms['RA']))
-        weights = np.hstack([np.ones_like(data['RA']),-(wt_factor)*np.ones_like(randoms['RA'])])
-        print 'sum of weights (should be close to zero; only matters for NNN): ', np.sum(weights)
+        wt_factor = len(data['RA'])/len(randoms['RA']) #using future division
+        #need longs for numerical precision below
+        weights = np.hstack([np.ones_like(data['RA'],dtype='l'),-(wt_factor)*np.ones_like(randoms['RA'],dtype='l')])
+        print ('sum of weights (should be close to zero (~1e-9); only matters for NNN): ', np.sum(weights))
 
         if self.do3D:
             joint_cat = treecorr.Catalog(ra=joint_ra_table, dec=joint_dec_table, 
