@@ -17,14 +17,22 @@ y1_main['max_ra'] = 360
 y1_main['min_dec'] = -70
 y1_main['max_dec'] = -35
 
+dm_octant = {}
+dm_octant['min_ra'] = 0
+dm_octant['max_ra'] = 90
+dm_octant['min_dec'] = 0
+dm_octant['max_dec'] = 90
+
 ##User settings!
-footprint = y1_main
-datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/randoms1.0x/redmagic_'
+#footprint = y1_main
+#datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/randoms5x/redmagic_'
+footprint = dm_octant
+datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/dm_cat_'
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
 data_z_var = 'ZSPEC'
 random_z_var = 'Z'
-do3D = True
-metric = 'Rperp'
+do3D = False
+metric = 'Euclidean'
 
 #if 'sh-' in platform.node():
 #    datapath = '/scratch/PI/kipac/mbaumer/des/data/redmagic_'
@@ -58,7 +66,7 @@ class NNNProcessor (object):
         configdict['runname'] = runname
         configdict['min_sep'] = 1
         configdict['max_sep'] = 25
-        configdict['nbins'] = 200
+        configdict['nbins'] = 100
         
         configdict['min_u'] = 0
         configdict['max_u'] = 1
@@ -66,9 +74,9 @@ class NNNProcessor (object):
         
         configdict['min_v'] = -1
         configdict['max_v'] = 1
-        configdict['nvbins'] = 200
+        configdict['nvbins'] = 400
 
-        configdict['bin_slop'] = 1
+        configdict['bin_slop'] = .1
         if not self.do3D:
             configdict['sep_units'] = 'arcmin'
         else: 
@@ -134,7 +142,9 @@ class NNNProcessor (object):
         print 'randoms len: ', len(randoms['RA'])
         
         wt_factor = float(len(data['RA']))/float(len(randoms['RA']))
-        weights = np.hstack([np.ones_like(data['RA']),-(wt_factor)*np.ones_like(randoms['RA'])])
+        wt_factor += np.finfo(float).eps 
+	#treecorr complains if weights sum exactly to zerp
+	weights = np.hstack([np.ones_like(data['RA']),-(wt_factor)*np.ones_like(randoms['RA'])])
         print 'sum of weights (should be close to zero; only matters for NNN): ', np.sum(weights)
 
         if self.do3D:
