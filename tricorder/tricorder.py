@@ -96,7 +96,7 @@ class NNNProcessor (object):
             f.write(json.dumps(self.config))
             f.close()
 
-    def applyCuts(self,cat,zvar):
+    def applyCuts(self,cat,zvar,isData=False):
         try:
             cat = cat[((cat[zvar] > self.config['min_z']) & (cat[zvar] < self.config['max_z']))]
         except KeyError:
@@ -105,16 +105,20 @@ class NNNProcessor (object):
         cat = cat[((cat['RA'] > footprint['min_ra']) & (cat['RA'] < footprint['max_ra']))]
         cat = cat[((cat['DEC'] > footprint['min_dec']) & (cat['DEC'] < footprint['max_dec']))]
 
+        print 'data', len(cat)
+        if isData:
+            jk_inds = np.load(datapath+'data_jk_inds.npy')
+        else: 
+            jk_inds = np.load(datapath+'random_'+str(self.random_set_id)+'_jk_inds.npy')
+        print 'len jk inds', len(jk_inds)
+        cat = cat[np.where(jk_inds != self.leave_out_jk_id)]
+        print 'data after jk:', len(cat)
+
         #later, color, magnitude cuts...
         return cat
 
     def prepare_data_cat(self):
-        data = self.applyCuts(fits.getdata(self.config['datapath']),self.data_z_var)
-        
-        print 'data', len(data)
-        jk_inds = np.load(datapath+'data_jk_inds.npy')
-        data = data[np.where(jk_inds != self.leave_out_jk_id)]
-        print 'data after jk:', len(data)
+        data = self.applyCuts(fits.getdata(self.config['datapath']),self.data_z_var,isData=True)
 
         if self.do3D: 
             data_cat = treecorr.Catalog(ra=data['RA'], dec=data['DEC'], 
@@ -127,12 +131,7 @@ class NNNProcessor (object):
         return data_cat
 
     def prepare_random_cat(self):
-        randoms = self.applyCuts(fits.getdata(self.config['randompath']),self.random_z_var)
-
-        print 'randoms', len(randoms)
-        jk_inds = np.load(datapath+'random_'+str(self.random_set_id)+'_jk_inds.npy')
-        randoms = randoms[np.where(jk_inds != self.leave_out_jk_id)]
-        print 'randoms after jk:', len(randoms)
+        randoms = self.applyCuts(fits.getdata(self.config['randompath']),self.random_z_var,isData=False)
 
         if self.do3D:
             random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], 
@@ -144,8 +143,8 @@ class NNNProcessor (object):
         return random_cat
 
     def prepare_joint_cat(self):
-        data = self.applyCuts(fits.getdata(self.config['datapath']),self.data_z_var)
-        randoms = self.applyCuts(fits.getdata(self.config['randompath']),self.random_z_var)
+        data = self.applyCuts(fits.getdata(self.config['datapath']),self.data_z_var,isData=True)
+        randoms = self.applyCuts(fits.getdata(self.config['randompath']),self.random_z_var,isData=False)
 
         joint_ra_table = np.hstack([data['RA'],randoms['RA']])
         joint_dec_table = np.hstack([data['DEC'],randoms['DEC']])  
