@@ -111,10 +111,10 @@ class NNNProcessor (object):
     def prepare_data_cat(self):
         data = self.applyCuts(fits.getdata(self.config['datapath']),self.data_z_var)
         
-        print len(cat)
+        print 'data', len(data)
         jk_inds = np.load(self.config['datapath']+'data_jk_inds.npy')
-        cat = cat[np.where(jk_inds != self.leave_out_jk_id)]
-        print 'after jk:', len(cat)
+        data = data[np.where(jk_inds != self.leave_out_jk_id)]
+        print 'data after jk:', len(data)
 
         if self.do3D: 
             data_cat = treecorr.Catalog(ra=data['RA'], dec=data['DEC'], 
@@ -129,10 +129,10 @@ class NNNProcessor (object):
     def prepare_random_cat(self):
         randoms = self.applyCuts(fits.getdata(self.config['randompath']),self.random_z_var)
 
-        print len(cat)
+        print 'randoms', len(randoms)
         jk_inds = np.load(self.config['datapath']+'random_'+str(self.random_set_id)+'_jk_inds.npy')
-        cat = cat[np.where(jk_inds != self.leave_out_jk_id)]
-        print 'after jk:', len(cat)
+        randoms = randoms[np.where(jk_inds != self.leave_out_jk_id)]
+        print 'randoms after jk:', len(randoms)
 
         if self.do3D:
             random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], 
