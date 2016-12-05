@@ -25,7 +25,7 @@ dm_octant['max_dec'] = 90
 
 ##User settings!
 footprint = y1_main
-datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/randoms5x/redmagic_'
+datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/jackknife_randoms5x/redmagic_'
 #footprint = dm_octant
 #datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/dm_cat_'
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
