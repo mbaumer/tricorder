@@ -194,6 +194,6 @@ class NNNProcessor (object):
         fname = outdir+self.config['runname']+'_'+str(self.random_set_id)+'_'+str(self.leave_out_jk_id)+'_'+set1+set2+set3+'.out'
         nnn.write(fname,file_type='FITS')
 
-def run_3pt_ana(runname, random_set_id, set1, set2, set3):
-        handler = NNNProcessor(runname,random_set_id)
+def run_3pt_ana(runname, random_set_id, jk_id, set1, set2, set3):
+        handler = NNNProcessor(runname,random_set_id, jk_id)
         handler.run(set1,set2,set3)
