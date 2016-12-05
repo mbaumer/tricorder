@@ -112,7 +112,7 @@ class NNNProcessor (object):
         data = self.applyCuts(fits.getdata(self.config['datapath']),self.data_z_var)
         
         print 'data', len(data)
-        jk_inds = np.load(self.config['datapath']+'data_jk_inds.npy')
+        jk_inds = np.load(datapath+'data_jk_inds.npy')
         data = data[np.where(jk_inds != self.leave_out_jk_id)]
         print 'data after jk:', len(data)
 
@@ -130,7 +130,7 @@ class NNNProcessor (object):
         randoms = self.applyCuts(fits.getdata(self.config['randompath']),self.random_z_var)
 
         print 'randoms', len(randoms)
-        jk_inds = np.load(self.config['datapath']+'random_'+str(self.random_set_id)+'_jk_inds.npy')
+        jk_inds = np.load(datapath+'random_'+str(self.random_set_id)+'_jk_inds.npy')
         randoms = randoms[np.where(jk_inds != self.leave_out_jk_id)]
         print 'randoms after jk:', len(randoms)
 
