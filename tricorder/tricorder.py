@@ -24,10 +24,10 @@ dm_octant['min_dec'] = 0
 dm_octant['max_dec'] = 90
 
 ##User settings!
-#footprint = y1_main
-#datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/randoms5x/redmagic_'
-footprint = dm_octant
-datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/dm_cat_'
+footprint = y1_main
+datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/randoms5x/redmagic_'
+#footprint = dm_octant
+#datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/dm_cat_'
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
 data_z_var = 'ZSPEC'
 random_z_var = 'Z'
@@ -40,13 +40,14 @@ metric = 'Euclidean'
 
 class NNNProcessor (object):
 
-    def __init__(self,runname, random_set_id):
+    def __init__(self,runname, random_set_id, jk_id):
         
         configdict = {}
         #treecorr ignores irrelevant keys
 
         self.runname = runname
         self.random_set_id = int(random_set_id)
+        self.leave_out_jk_id = int(jk_id)
 
         self.data_z_var = data_z_var
         self.random_z_var = random_z_var
@@ -103,11 +104,17 @@ class NNNProcessor (object):
             raise
         cat = cat[((cat['RA'] > footprint['min_ra']) & (cat['RA'] < footprint['max_ra']))]
         cat = cat[((cat['DEC'] > footprint['min_dec']) & (cat['DEC'] < footprint['max_dec']))]
+
         #later, color, magnitude cuts...
         return cat
 
     def prepare_data_cat(self):
         data = self.applyCuts(fits.getdata(self.config['datapath']),self.data_z_var)
+        
+        print len(cat)
+        jk_inds = np.load(self.config['datapath']+'data_jk_inds.npy')
+        cat = cat[np.where(jk_inds != self.leave_out_jk_id)]
+        print 'after jk:', len(cat)
 
         if self.do3D: 
             data_cat = treecorr.Catalog(ra=data['RA'], dec=data['DEC'], 
@@ -121,6 +128,12 @@ class NNNProcessor (object):
 
     def prepare_random_cat(self):
         randoms = self.applyCuts(fits.getdata(self.config['randompath']),self.random_z_var)
+
+        print len(cat)
+        jk_inds = np.load(self.config['datapath']+'random_'+str(self.random_set_id)+'_jk_inds.npy')
+        cat = cat[np.where(jk_inds != self.leave_out_jk_id)]
+        print 'after jk:', len(cat)
+
         if self.do3D:
             random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], 
                 ra_units='degrees', dec_units='degrees',
@@ -178,7 +191,7 @@ class NNNProcessor (object):
         tic = time.time()
         print 'that took', tic-toc
 
-        fname = outdir+self.config['runname']+'_'+str(self.random_set_id)+'_'+set1+set2+set3+'.out'
+        fname = outdir+self.config['runname']+'_'+str(self.random_set_id)+'_'+str(self.leave_out_jk_id)+'_'+set1+set2+set3+'.out'
         nnn.write(fname,file_type='FITS')
 
 def run_3pt_ana(runname, random_set_id, set1, set2, set3):
