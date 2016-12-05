@@ -97,11 +97,7 @@ class NNNProcessor (object):
             f.close()
 
     def applyCuts(self,cat,zvar,isData=False):
-        try:
-            cat = cat[((cat[zvar] > self.config['min_z']) & (cat[zvar] < self.config['max_z']))]
-        except KeyError:
-            print 'specified zvar: ', zvar, 'not found in ', cat.columns
-            raise
+        
         cat = cat[((cat['RA'] > footprint['min_ra']) & (cat['RA'] < footprint['max_ra']))]
         cat = cat[((cat['DEC'] > footprint['min_dec']) & (cat['DEC'] < footprint['max_dec']))]
 
@@ -113,6 +109,12 @@ class NNNProcessor (object):
         print 'len jk inds', len(jk_inds)
         cat = cat[np.where(jk_inds != self.leave_out_jk_id)]
         print 'data after jk:', len(cat)
+
+        try:
+            cat = cat[((cat[zvar] > self.config['min_z']) & (cat[zvar] < self.config['max_z']))]
+        except KeyError:
+            print 'specified zvar: ', zvar, 'not found in ', cat.columns
+            raise
 
         #later, color, magnitude cuts...
         return cat
