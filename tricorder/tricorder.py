@@ -24,10 +24,10 @@ dm_octant['min_dec'] = 0
 dm_octant['max_dec'] = 90
 
 ##User settings!
-footprint = y1_main
-datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/jackknife_randoms5x/redmagic_'
-#footprint = dm_octant
-#datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/dm_cat_'
+#footprint = y1_main
+#datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/jackknife_randoms5x/redmagic_'
+footprint = dm_octant
+datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/dm_appx_footprint_'
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
 data_z_var = 'ZSPEC'
 random_z_var = 'Z'
@@ -114,7 +114,7 @@ class NNNProcessor (object):
             cat = cat[((cat[zvar] > self.config['min_z']) & (cat[zvar] < self.config['max_z']))]
         except KeyError:
             print 'specified zvar: ', zvar, 'not found in ', cat.columns
-            raise
+        
 
         #later, color, magnitude cuts...
         return cat
