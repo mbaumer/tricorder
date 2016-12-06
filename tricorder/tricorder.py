@@ -114,7 +114,7 @@ class NNNProcessor (object):
             cat = cat[((cat[zvar] > self.config['min_z']) & (cat[zvar] < self.config['max_z']))]
         except KeyError:
             print 'specified zvar: ', zvar, 'not found in ', cat.columns
-        
+            #raise # don't do this since we don't care that dm catalogs only have distance.
 
         #later, color, magnitude cuts...
         return cat
