@@ -27,6 +27,7 @@ dm_octant['max_dec'] = 90
 #footprint = y1_main
 #datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/jackknife_randoms5x/redmagic_'
 footprint = dm_octant
+doJackknife = False
 datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/dm_appx_footprint_'
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
 data_z_var = 'ZSPEC'
@@ -102,13 +103,14 @@ class NNNProcessor (object):
         cat = cat[((cat['DEC'] > footprint['min_dec']) & (cat['DEC'] < footprint['max_dec']))]
 
         print 'data', len(cat)
-        if isData:
-            jk_inds = np.load(datapath+'data_jk_inds.npy')
-        else: 
-            jk_inds = np.load(datapath+'random_'+str(self.random_set_id)+'_jk_inds.npy')
-        print 'len jk inds', len(jk_inds)
-        cat = cat[np.where(jk_inds != self.leave_out_jk_id)]
-        print 'data after jk:', len(cat)
+        if doJackknife:
+            if isData:
+                jk_inds = np.load(datapath+'data_jk_inds.npy')
+            else: 
+                jk_inds = np.load(datapath+'random_'+str(self.random_set_id)+'_jk_inds.npy')
+            print 'len jk inds', len(jk_inds)
+            cat = cat[np.where(jk_inds != self.leave_out_jk_id)]
+            print 'data after jk:', len(cat)
 
         try:
             cat = cat[((cat[zvar] > self.config['min_z']) & (cat[zvar] < self.config['max_z']))]
