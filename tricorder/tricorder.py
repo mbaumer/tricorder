@@ -112,10 +112,11 @@ class NNNProcessor (object):
             cat = cat[np.where(jk_inds != self.leave_out_jk_id)]
             print 'data after jk:', len(cat)
 
-        try:
+        #try:
+	if zvar in cat.names:
             cat = cat[((cat[zvar] > self.config['min_z']) & (cat[zvar] < self.config['max_z']))]
-        except KeyError:
-            print 'specified zvar: ', zvar, 'not found in ', cat.columns
+        #except KeyError:
+            #print 'specified zvar: ', zvar, 'not found in ', cat.columns
             #raise # don't do this since we don't care that dm catalogs only have distance.
 
         #later, color, magnitude cuts...
