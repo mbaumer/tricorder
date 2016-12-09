@@ -177,9 +177,11 @@ class NNNProcessor (object):
 
         cat = self.prepare_data_cat()
         random_cat = self.prepare_random_cat()
-        joint_cat = self.prepare_joint_cat()
-
-        setdict = {'d':cat,'r':random_cat,'n':joint_cat}
+        if (set1 == 'n') | (set2 == 'n') | (set3 == 'n') 
+            joint_cat = self.prepare_joint_cat()
+            setdict = {'d':cat,'r':random_cat,'n':joint_cat}
+        else:
+            setdict = {'d':cat,'r':random_cat}
         nnn = treecorr.NNNCorrelation(config=self.config)
 
         print 'starting processing!'
