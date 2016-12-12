@@ -24,11 +24,11 @@ dm_octant['min_dec'] = 0
 dm_octant['max_dec'] = 90
 
 ##User settings!
-#footprint = y1_main
-#datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/jackknife_randoms5x/redmagic_'
-footprint = dm_octant
-doJackknife = False
-datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/dm_appx_footprint_z.5-.7_'
+footprint = y1_main
+datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/jackknife_randoms5x/redmagic_'
+#footprint = dm_octant
+doJackknife = True
+#datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/dm_appx_footprint_z.5-.7_'
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
 data_z_var = 'ZSPEC'
 random_z_var = 'Z'
@@ -62,21 +62,21 @@ class NNNProcessor (object):
     
         configdict['metric'] = metric
 
-        configdict['min_z'] = .5
-        configdict['max_z'] = .7
+        configdict['min_z'] = .35
+        configdict['max_z'] = .55
 
         configdict['runname'] = runname
         configdict['min_sep'] = 1
         configdict['max_sep'] = 25
-        configdict['nbins'] = 100
+        configdict['nbins'] = 400
         
         configdict['min_u'] = 0
         configdict['max_u'] = 1
-        configdict['nubins'] = 100
+        configdict['nubins'] = 400
         
         configdict['min_v'] = -1
         configdict['max_v'] = 1
-        configdict['nvbins'] = 400
+        configdict['nvbins'] = 800
 
         configdict['bin_slop'] = .1
         if not self.do3D:
@@ -198,8 +198,8 @@ class NNNProcessor (object):
         tic = time.time()
         print 'that took', tic-toc
 
-        fname = outdir+self.config['runname']+'_'+str(self.random_set_id)+'_'+str(self.leave_out_jk_id)+'_'+set1+set2+set3+'.out'
-        nnn.write(fname,file_type='FITS')
+        fname = outdir+self.config['runname']+'_'+str(self.random_set_id)+'_'+str(self.leave_out_jk_id)+'_'+set1+set2+set3+'.npy'
+        np.save(fname,nnn.ntri)
 
 def run_3pt_ana(runname, random_set_id, jk_id, set1, set2, set3):
         handler = NNNProcessor(runname,random_set_id, jk_id)
