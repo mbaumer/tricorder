@@ -28,7 +28,7 @@ dm_octant['max_dec'] = 90
 #datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/jackknife_randoms5x/redmagic_'
 footprint = dm_octant
 doJackknife = False
-datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/dm_appx_footprint_'
+datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/dm_appx_footprint_z.5-.7_'
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
 data_z_var = 'ZSPEC'
 random_z_var = 'Z'
@@ -113,7 +113,7 @@ class NNNProcessor (object):
             print 'data after jk:', len(cat)
 
         #try:
-	if zvar in cat.names:
+        if zvar in cat.names:
             cat = cat[((cat[zvar] > self.config['min_z']) & (cat[zvar] < self.config['max_z']))]
         #except KeyError:
             #print 'specified zvar: ', zvar, 'not found in ', cat.columns
@@ -178,10 +178,11 @@ class NNNProcessor (object):
 
         cat = self.prepare_data_cat()
         random_cat = self.prepare_random_cat()
-        if (set1 == 'n') | (set2 == 'n') | (set3 == 'n') 
+        if (set1 == 'n') | (set2 == 'n') | (set3 == 'n'): 
             joint_cat = self.prepare_joint_cat()
             setdict = {'d':cat,'r':random_cat,'n':joint_cat}
         else:
+            print 'not slepian mode'
             setdict = {'d':cat,'r':random_cat}
         nnn = treecorr.NNNCorrelation(config=self.config)
 
