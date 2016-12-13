@@ -54,8 +54,8 @@ class NNNProcessor (object):
         self.random_z_var = random_z_var
         self.do3D = do3D
 
-        #configdict['datapath'] = datapath+'data.fits'
-        configdict['datapath'] = datapath+'randoms_'+str(self.random_set_id+1)+'.fits'
+        configdict['datapath'] = datapath+'data.fits'
+        #configdict['datapath'] = datapath+'randoms_'+str(self.random_set_id+1)+'.fits'
         configdict['randompath'] = datapath+'randoms_'+str(self.random_set_id)+'.fits'
 
         for key,value in footprint.iteritems():
