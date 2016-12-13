@@ -63,8 +63,8 @@ class NNNProcessor (object):
     
         configdict['metric'] = metric
 
-        configdict['min_z'] = .35
-        configdict['max_z'] = .55
+        configdict['min_z'] = .5
+        configdict['max_z'] = .7
 
         configdict['runname'] = runname
         configdict['min_sep'] = 1
