@@ -104,14 +104,17 @@ class NNNProcessor (object):
         cat = cat[((cat['DEC'] > footprint['min_dec']) & (cat['DEC'] < footprint['max_dec']))]
 
         print 'data', len(cat)
+        sys.stdout.flush()
         if doJackknife:
             if isData:
                 jk_inds = np.load(datapath+'data_jk_inds.npy')
             else: 
                 jk_inds = np.load(datapath+'random_'+str(self.random_set_id)+'_jk_inds.npy')
             print 'len jk inds', len(jk_inds)
+            sys.stdout.flush()
             cat = cat[np.where(jk_inds != self.leave_out_jk_id)]
             print 'data after jk:', len(cat)
+            sys.stdout.flush()
 
         #try:
         if zvar in cat.names:
@@ -184,10 +187,12 @@ class NNNProcessor (object):
             setdict = {'d':cat,'r':random_cat,'n':joint_cat}
         else:
             print 'not slepian mode'
+            sys.stdout.flush()
             setdict = {'d':cat,'r':random_cat}
         nnn = treecorr.NNNCorrelation(config=self.config)
 
         print 'starting processing!'
+        sys.stdout.flush()
         toc = time.time()
 
         if ((set1 == set2) and (set2 == set3)):
