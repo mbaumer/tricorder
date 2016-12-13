@@ -56,7 +56,7 @@ class NNNProcessor (object):
 
         #configdict['datapath'] = datapath+'data.fits'
         configdict['datapath'] = datapath+'randoms_'+str(self.random_set_id+1)+'.fits'
-	configdict['randompath'] = datapath+'randoms_'+str(self.random_set_id)+'.fits'
+        configdict['randompath'] = datapath+'randoms_'+str(self.random_set_id)+'.fits'
 
         for key,value in footprint.iteritems():
             configdict[key] = value
@@ -161,8 +161,8 @@ class NNNProcessor (object):
         
         wt_factor = float(len(data['RA']))/float(len(randoms['RA']))
         wt_factor += np.finfo(float).eps 
-	#treecorr complains if weights sum exactly to zerp
-	weights = np.hstack([np.ones_like(data['RA']),-(wt_factor)*np.ones_like(randoms['RA'])])
+	    #treecorr complains if weights sum exactly to zerp
+	    weights = np.hstack([np.ones_like(data['RA']),-(wt_factor)*np.ones_like(randoms['RA'])])
         print 'sum of weights (should be close to zero; only matters for NNN): ', np.sum(weights)
 
         if self.do3D:
