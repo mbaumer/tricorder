@@ -1,8 +1,8 @@
-#!/home/mbaumer/anaconda2/bin/python
+#!/home/mbaumer/anaconda/bin/python
 import sys, subprocess
 
 Nrandoms = 1
-Njackknife = 1
+Njackknife = 15
 method = 'DDD' # or NNN
 if method == 'DDD':
 	setlist = ['\'d\',\'d\',\'d\'','\'d\',\'d\',\'r\'','\'d\',\'r\',\'d\'','\'r\',\'d\',\'d\'',

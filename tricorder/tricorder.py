@@ -1,4 +1,4 @@
-#!/home/mbaumer/anaconda2/bin/python2.7
+#!/home/mbaumer/anaconda/bin/python2.7
 from __future__ import division
 import sys, os.path
 sys.path.append('/home/mbaumer/anaconda2/bin/')
@@ -54,8 +54,9 @@ class NNNProcessor (object):
         self.random_z_var = random_z_var
         self.do3D = do3D
 
-        configdict['datapath'] = datapath+'data.fits'
-        configdict['randompath'] = datapath+'randoms_'+str(self.random_set_id)+'.fits'
+        #configdict['datapath'] = datapath+'data.fits'
+        configdict['datapath'] = datapath+'randoms_'+str(self.random_set_id+1)+'.fits'
+	configdict['randompath'] = datapath+'randoms_'+str(self.random_set_id)+'.fits'
 
         for key,value in footprint.iteritems():
             configdict[key] = value
@@ -68,15 +69,15 @@ class NNNProcessor (object):
         configdict['runname'] = runname
         configdict['min_sep'] = 1
         configdict['max_sep'] = 25
-        configdict['nbins'] = 400
+        configdict['nbins'] = 100
         
         configdict['min_u'] = 0
         configdict['max_u'] = 1
-        configdict['nubins'] = 400
+        configdict['nubins'] = 100
         
         configdict['min_v'] = -1
         configdict['max_v'] = 1
-        configdict['nvbins'] = 800
+        configdict['nvbins'] = 400
 
         configdict['bin_slop'] = .1
         if not self.do3D:
