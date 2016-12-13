@@ -203,5 +203,7 @@ class NNNProcessor (object):
         np.save(fname,nnn.ntri)
 
 def run_3pt_ana(runname, random_set_id, jk_id, set1, set2, set3):
+	print 'constructing analysis'
         handler = NNNProcessor(runname,random_set_id, jk_id)
+	print 'handler constructed'
         handler.run(set1,set2,set3)
