@@ -68,7 +68,7 @@ class NNNProcessor (object):
 
         configdict['runname'] = runname
         configdict['min_sep'] = 1
-        configdict['max_sep'] = 25
+        configdict['max_sep'] = 12
         configdict['nbins'] = 100
         
         configdict['min_u'] = 0
@@ -116,7 +116,9 @@ class NNNProcessor (object):
             print 'data after jk:', len(cat)
             sys.stdout.flush()
 
-        #try:
+        
+	cat = cat[np.random.rand(len(cat)) < .25]
+	#try:
         if zvar in cat.names:
             cat = cat[((cat[zvar] > self.config['min_z']) & (cat[zvar] < self.config['max_z']))]
         #except KeyError:
@@ -203,7 +205,7 @@ class NNNProcessor (object):
 
         tic = time.time()
         print 'that took', tic-toc
-
+	sys.stdout.flush()
         fname = outdir+self.config['runname']+'_'+str(self.random_set_id)+'_'+str(self.leave_out_jk_id)+'_'+set1+set2+set3+'.npy'
         np.save(fname,nnn.ntri)
 
