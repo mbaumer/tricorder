@@ -24,16 +24,17 @@ dm_octant['min_dec'] = 0
 dm_octant['max_dec'] = 90
 
 ##User settings!
-#footprint = y1_main
-#datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/jackknife_randoms5x/redmagic_'
-footprint = dm_octant
+footprint = y1_main
+#datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/randoms1.0x/redmagic_'
+datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/jackknife_randoms5x/redmagic_'
+#footprint = dm_octant
 doJackknife = False
-datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/dm_appx_footprint_z.5-.7_'
+#datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/dm_appx_footprint_z.5-.7_'
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
 data_z_var = 'ZSPEC'
 random_z_var = 'Z'
-do3D = False
-metric = 'Euclidean'
+do3D = True
+metric = 'Rperp'
 
 #if 'sh-' in platform.node():
 #    datapath = '/scratch/PI/kipac/mbaumer/des/data/redmagic_'
@@ -63,8 +64,8 @@ class NNNProcessor (object):
     
         configdict['metric'] = metric
 
-        configdict['min_z'] = .5
-        configdict['max_z'] = .7
+        configdict['min_z'] = .0
+        configdict['max_z'] = .25
 
         configdict['runname'] = runname
         configdict['min_sep'] = 1
@@ -79,7 +80,17 @@ class NNNProcessor (object):
         configdict['max_v'] = 1
         configdict['nvbins'] = 400
 
-        configdict['bin_slop'] = .1
+	if metric == 'Rperp':
+            configdict['min_rpar'] = -20
+	    configdict['max_rpar'] = 20
+	#else:
+	#    try:
+	#	del configdict['min_rpar']
+	#	del configdict['max_rpar']
+	#    except KeyError:
+	#	pass
+
+        configdict['bin_slop'] = .05
         if not self.do3D:
             configdict['sep_units'] = 'arcmin'
         else: 
@@ -117,11 +128,13 @@ class NNNProcessor (object):
             sys.stdout.flush()
 
         
-	cat = cat[np.random.rand(len(cat)) < .25]
+	#just for testing!
+	#cat = cat[np.random.rand(len(cat)) < .25]
 	#try:
         if zvar in cat.names:
             cat = cat[((cat[zvar] > self.config['min_z']) & (cat[zvar] < self.config['max_z']))]
-        #except KeyError:
+        print len(cat)
+	#except KeyError:
             #print 'specified zvar: ', zvar, 'not found in ', cat.columns
             #raise # don't do this since we don't care that dm catalogs only have distance.
 
@@ -196,12 +209,11 @@ class NNNProcessor (object):
         print 'starting processing!'
         sys.stdout.flush()
         toc = time.time()
-
         if ((set1 == set2) and (set2 == set3)):
             #this is faster even though it shouldn't in theory...
-            nnn.process(setdict[set1],metric=metric)
+            nnn.process(setdict[set1])
         else:
-            nnn.process(setdict[set1],setdict[set2],setdict[set3],metric=metric)
+            nnn.process(setdict[set1],setdict[set2],setdict[set3])
 
         tic = time.time()
         print 'that took', tic-toc

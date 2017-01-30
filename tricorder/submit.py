@@ -1,7 +1,7 @@
 #!/home/mbaumer/anaconda/bin/python
 import sys, subprocess
 
-Nrandoms = 1
+Nrandoms = 2
 Njackknife = 1
 method = 'DDD' # or NNN
 if method == 'DDD':
