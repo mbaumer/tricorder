@@ -31,7 +31,7 @@ datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/jackknife_randoms5x/redmagi
 doJackknife = False
 #datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/dm_appx_footprint_z.5-.7_'
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
-data_z_var = 'ZSPEC'
+data_z_var = 'ZREDMAGIC'
 random_z_var = 'Z'
 do3D = True
 metric = 'Rperp'
@@ -81,8 +81,8 @@ class NNNProcessor (object):
         configdict['nvbins'] = 400
 
 	if metric == 'Rperp':
-            configdict['min_rpar'] = -20
-	    configdict['max_rpar'] = 20
+            configdict['min_rpar'] = -50
+	    configdict['max_rpar'] = 50
 	#else:
 	#    try:
 	#	del configdict['min_rpar']
