@@ -24,12 +24,12 @@ dm_octant['min_dec'] = 0
 dm_octant['max_dec'] = 90
 
 ##User settings!
-footprint = y1_main
+#footprint = y1_main
 #datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/randoms1.0x/redmagic_'
-datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/jackknife_randoms5x/redmagic_'
-#footprint = dm_octant
+#datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/jackknife_randoms5x/redmagic_'
+footprint = dm_octant
 doJackknife = False
-#datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/dm_appx_footprint_z.5-.7_'
+datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/test_dm_lowz_'
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
 data_z_var = 'ZREDMAGIC'
 random_z_var = 'Z'
@@ -81,8 +81,8 @@ class NNNProcessor (object):
         configdict['nvbins'] = 400
 
 	if metric == 'Rperp':
-            configdict['min_rpar'] = -50
-	    configdict['max_rpar'] = 50
+            configdict['min_rpar'] = -20
+	    configdict['max_rpar'] = 20
 	#else:
 	#    try:
 	#	del configdict['min_rpar']
@@ -90,7 +90,7 @@ class NNNProcessor (object):
 	#    except KeyError:
 	#	pass
 
-        configdict['bin_slop'] = .05
+        configdict['bin_slop'] = .1
         if not self.do3D:
             configdict['sep_units'] = 'arcmin'
         else: 
@@ -145,7 +145,12 @@ class NNNProcessor (object):
         data = self.applyCuts(fits.getdata(self.config['datapath']),self.data_z_var,isData=True)
 
         if self.do3D: 
-            data_cat = treecorr.Catalog(ra=data['RA'], dec=data['DEC'], 
+            if 'DISTANCE' in data.names:
+                data_cat = treecorr.Catalog(ra=data['RA'], dec=data['DEC'], 
+                ra_units='degrees', dec_units='degrees',
+                r=data['DISTANCE']/cosmo.h)
+            else:
+                data_cat = treecorr.Catalog(ra=data['RA'], dec=data['DEC'], 
                 ra_units='degrees', dec_units='degrees',
                 r=cosmo.comoving_distance(data[self.data_z_var])/cosmo.h)
         else: 
@@ -158,7 +163,12 @@ class NNNProcessor (object):
         randoms = self.applyCuts(fits.getdata(self.config['randompath']),self.random_z_var,isData=False)
 
         if self.do3D:
-            random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], 
+            if 'DISTANCE' in randoms.names:
+                random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], 
+                ra_units='degrees', dec_units='degrees',
+                r=randoms['DISTANCE']/cosmo.h)
+            else:
+                random_cat = treecorr.Catalog(ra=randoms['RA'], dec=randoms['DEC'], 
                 ra_units='degrees', dec_units='degrees',
                 r=cosmo.comoving_distance(randoms[self.random_z_var])/cosmo.h)
         else:
