@@ -24,12 +24,12 @@ dm_octant['min_dec'] = 0
 dm_octant['max_dec'] = 90
 
 ##User settings!
-#footprint = y1_main
+footprint = y1_main
 #datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/randoms1.0x/redmagic_'
-#datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/jackknife_randoms5x/redmagic_'
-footprint = dm_octant
+datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/jackknife_randoms5x/redmagic_'
+#footprint = dm_octant
 doJackknife = False
-datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/test_dm_lowz_'
+#datapath = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/gadget_sims/test_dm_lowz_'
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
 data_z_var = 'ZREDMAGIC'
 random_z_var = 'Z'
@@ -80,9 +80,11 @@ class NNNProcessor (object):
         configdict['max_v'] = 1
         configdict['nvbins'] = 400
 
+	configdict['data_z_var'] = data_z_var
+
 	if metric == 'Rperp':
-            configdict['min_rpar'] = -20
-	    configdict['max_rpar'] = 20
+            configdict['min_rpar'] = -100
+	    configdict['max_rpar'] = 100
 	#else:
 	#    try:
 	#	del configdict['min_rpar']
