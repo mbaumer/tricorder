@@ -1,6 +1,7 @@
 #!/home/mbaumer/anaconda/bin/python
 import sys, subprocess
 from os.path import expandvars
+import yaml
 
 #needs to be same as in tricorder.py
 outdir = expandvars('$DES_DATA')+'/new_3pt_runs/'
@@ -51,7 +52,7 @@ def make_config(lower_z_lim,delta_z,zvar,metric,do3D):
     config_fname = outdir+configdict['runname']+'.config'
     #if (!os.path.exists(config_fname)): #not atomic; hard code for now
     f = open(config_fname,'w')
-    f.write(json.dumps(self.config))
+    f.write(yaml.dump(configdict))
     f.close()
 
     return config_fname
