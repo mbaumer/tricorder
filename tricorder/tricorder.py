@@ -27,7 +27,7 @@ class NNNProcessor (object):
     def make_catalog(self,cat):
 
         #redshift cut
-        if zvar == 'DISTANCE':
+        if self.config['zvar'] == 'DISTANCE':
             cat = cat[((cat[self.config['zvar']] > cosmo.comoving_distance(self.config['min_z']).value) & (cat[self.config['zvar']] < cosmo.comoving_distance(self.config['max_z']).value))]
         else:
             cat = cat[((cat[self.config['zvar']] > self.config['min_z']) & (cat[self.config['zvar']] < self.config['max_z']))]
