@@ -6,7 +6,7 @@ from os.path import expandvars
 outdir = expandvars('$DES_DATA')+'/new_3pt_runs/'
 
 setlist = ['\'d\',\'d\',\'d\'','\'d\',\'d\',\'r\'','\'d\',\'r\',\'d\'','\'r\',\'d\',\'d\'',
-	'\'r\',\'r\',\'d\'','\'d\',\'r\',\'r\'','\'r\',\'d\',\'r\'','\'r\',\'r\',\'r\'']
+    '\'r\',\'r\',\'d\'','\'d\',\'r\',\'r\'','\'r\',\'d\',\'r\'','\'r\',\'r\',\'r\'']
 
 def make_config(lower_z_lim,delta_z,zvar,metric,do3D):
 
@@ -59,8 +59,8 @@ def make_config(lower_z_lim,delta_z,zvar,metric,do3D):
 def runall(min_z, max_z, delta_z, zvar, metric, do3D):
     for lower_z_lim in np.arange(min_z,max_z,delta_z):
         config_fname = make_config(lower_z_lim,delta_z,zvar,metric,do3D)
-    	for this_set in setlist:
-    		subprocess.call(["bsub", "-W", "47:00", "python", "-c" ,"import tricorder; tricorder.run_3pt_ana('"+config_fname+"',"+this_set+")"])
+        for this_set in setlist:
+            subprocess.call(["bsub", "-W", "47:00", "python", "-c" ,"import tricorder; tricorder.run_3pt_ana('"+config_fname+"',"+this_set+")"])
 
 if __name__ == '__main__':
-	runall(sys.argv[1])
+    runall(sys.argv[1])
