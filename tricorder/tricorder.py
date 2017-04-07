@@ -37,18 +37,18 @@ class NNNProcessor (object):
 
         if self.config['do3D']: 
             if self.config['zvar'] == 'DISTANCE':
-                data_cat = treecorr.Catalog(ra=data['RA'], dec=data['DEC'], 
+                out_cat = treecorr.Catalog(ra=cat['RA'], dec=cat['DEC'], 
                 ra_units='degrees', dec_units='degrees',
-                r=data[self.config['zvar']]/cosmo.h)
+                r=cat[self.config['zvar']]/cosmo.h)
             else:
-                data_cat = treecorr.Catalog(ra=data['RA'], dec=data['DEC'], 
+                out_cat = treecorr.Catalog(ra=cat['RA'], dec=cat['DEC'], 
                 ra_units='degrees', dec_units='degrees',
-                r=cosmo.comoving_distance(data[self.config['zvar']])/cosmo.h)
+                r=cosmo.comoving_distance(cat[self.config['zvar']])/cosmo.h)
         else: 
-            data_cat = treecorr.Catalog(ra=data['RA'], dec=data['DEC'], 
+            out_cat = treecorr.Catalog(ra=cat['RA'], dec=cat['DEC'], 
                 ra_units='degrees', dec_units='degrees')
             
-        return data_cat
+        return out_cat
 
     def run(self,set1,set2,set3):
 
