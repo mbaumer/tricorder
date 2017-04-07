@@ -1,23 +1,66 @@
 #!/home/mbaumer/anaconda/bin/python
 import sys, subprocess
+from os.path import expandvars
 
-Nrandoms = 2
-Njackknife = 1
-method = 'DDD' # or NNN
-if method == 'DDD':
-	setlist = ['\'d\',\'d\',\'d\'','\'d\',\'d\',\'r\'','\'d\',\'r\',\'d\'','\'r\',\'d\',\'d\'',
+#needs to be same as in tricorder.py
+outdir = expandvars('$DES_DATA')+'/new_3pt_runs/'
+
+setlist = ['\'d\',\'d\',\'d\'','\'d\',\'d\',\'r\'','\'d\',\'r\',\'d\'','\'r\',\'d\',\'d\'',
 	'\'r\',\'r\',\'d\'','\'d\',\'r\',\'r\'','\'r\',\'d\',\'r\'','\'r\',\'r\',\'r\'']
-elif method == 'NNN':
-	setlist = ['\'n\',\'n\',\'n\'','\'r\',\'r\',\'r\'']
-else:
-	raise ValueError('method must be NNN or DDD')
 
-def runall(runname):
-	for random_set_id in range(Nrandoms):
-		for jk_id in range(Njackknife):
-			if Njackknife == 1: jk_id = -1	
-			for this_set in setlist:
-				subprocess.call(["bsub", "-W", "47:00", "python", "-c" ,"import tricorder; tricorder.run_3pt_ana('"+runname+"',"+str(random_set_id)+","+str(jk_id)+","+this_set+")"])
+def make_config(lower_z_lim,delta_z,zvar,metric,do3D):
+
+    configdict = {}
+
+    configdict['zvar'] = zvar
+    configdict['do3D'] = do3D
+    configdict['metric'] = metric
+
+    if zvar == 'DISTANCE':
+        configdict['data_path'] = expandvars('$DES_DATA')+'/new_3pt_data/processed/dark_matter/downsampled_dm_spt_data.npy'
+        configdict['randoms_path'] = expandvars('$DES_DATA')+'/new_3pt_data/processed/dark_matter/downsampled_dm_spt_randoms.npy'
+    else:
+        configdict['data_path'] = expandvars('$DES_DATA')+'/new_3pt_data/processed/simulation/buzzard_redmagic_spt_zspec_data.npy'
+        configdict['randoms_path'] = expandvars('$DES_DATA')+'/new_3pt_data/processed/simulation/buzzard_redmagic_spt_zspec_randoms.npy'
+
+    configdict['min_z'] = lower_z_lim
+    configdict['max_z'] = lower_z_lim + delta_z
+
+    #treecorr params
+    configdict['min_sep'] = 1
+    configdict['max_sep'] = 25
+    configdict['nbins'] = 200
+    configdict['min_u'] = 0
+    configdict['max_u'] = 1
+    configdict['nubins'] = 100
+    configdict['min_v'] = -1
+    configdict['max_v'] = 1
+    configdict['nvbins'] = 400
+    configdict['bin_slop'] = 0.1
+    if not self.do3D:
+        configdict['sep_units'] = 'arcmin'
+    else: 
+        try:
+            del configdict['sep_units']
+        except KeyError:
+            pass
+    
+    configdict['runname'] = zvar+str(lower_z_lim)+'_deltaz'+delta_z+'_'+metric
+
+    #write it out so we remember what we did
+    config_fname = outdir+configdict['runname']+'.config'
+    #if (!os.path.exists(config_fname)): #not atomic; hard code for now
+    f = open(config_fname,'w')
+    f.write(json.dumps(self.config))
+    f.close()
+
+    return config_fname
+
+def runall(min_z, max_z, delta_z, zvar, metric, do3D):
+    for lower_z_lim in np.arange(min_z,max_z,delta_z):
+        config_fname = make_config(lower_z_lim,delta_z,zvar,metric,do3D)
+    	for this_set in setlist:
+    		subprocess.call(["bsub", "-W", "47:00", "python", "-c" ,"import tricorder; tricorder.run_3pt_ana('"+config_fname+"',"+this_set+")"])
 
 if __name__ == '__main__':
 	runall(sys.argv[1])
