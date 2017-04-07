@@ -45,7 +45,7 @@ def make_config(lower_z_lim,delta_z,zvar,metric,do3D):
         except KeyError:
             pass
     
-    configdict['runname'] = zvar+str(lower_z_lim)+'_deltaz'+delta_z+'_'+metric
+    configdict['runname'] = zvar+str(lower_z_lim)+'_deltaz'+str(delta_z)+'_'+metric
 
     #write it out so we remember what we did
     config_fname = outdir+configdict['runname']+'.config'
