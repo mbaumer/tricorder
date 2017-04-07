@@ -10,15 +10,11 @@ import time
 import yaml
 from os.path import expandvars
 
-#needs to stay same as in submit.py
-outdir = expandvars('$DES_DATA')+'/new_3pt_runs/'
-
 class NNNProcessor (object):
 
     def __init__(self,config_fname):
-        config_path = outdir+config_fname
         try: 
-            with open(config_path) as f:
+            with open(config_fname) as f:
                 configdict = json.loads(f.read())
         except IOError:
             print 'config file '+config_fname+' not found in '+outdir
