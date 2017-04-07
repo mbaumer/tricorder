@@ -63,5 +63,5 @@ def runall(min_z, max_z, delta_z, zvar, metric, do3D):
         for this_set in setlist:
             subprocess.call(["bsub", "-W", "47:00", "python", "-c" ,"import tricorder; tricorder.run_3pt_ana('"+config_fname+"',"+this_set+")"])
 
-if __name__ == '__main__':
-    runall(sys.argv[1])
+#if __name__ == '__main__':
+#    runall(sys.argv[1],sys.argv[1],sys.argv[1],sys.argv[1],sys.argv[1],sys.argv[1])
