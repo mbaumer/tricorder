@@ -62,6 +62,7 @@ def runall(min_z, max_z, delta_z, zvar, metric, do3D):
     for lower_z_lim in np.arange(min_z,max_z,delta_z):
         config_fname = make_config(lower_z_lim,delta_z,zvar,metric,do3D)
         for this_set in setlist:
+            print "bsub", "-W", "47:00", "python", "-c" ,"import tricorder; tricorder.run_3pt_ana('"+config_fname+"',"+this_set+")"
             subprocess.call(["bsub", "-W", "47:00", "python", "-c" ,"import tricorder; tricorder.run_3pt_ana('"+config_fname+"',"+this_set+")"])
 
 #if __name__ == '__main__':
