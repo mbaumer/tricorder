@@ -24,7 +24,7 @@ class NNNProcessor (object):
         self.data = np.load(self.config['data_path'])
         self.randoms = np.load(self.config['randoms_path'])
 
-    def make_catalog(self):
+    def make_catalog(self,cat):
 
         #redshift cut
         if zvar == 'DISTANCE':
