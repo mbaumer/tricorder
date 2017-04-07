@@ -16,6 +16,7 @@ def make_config(lower_z_lim,delta_z,zvar,metric,do3D):
     configdict['do3D'] = do3D
     configdict['metric'] = metric
 
+    configdict['outdir'] = outdir
     if zvar == 'DISTANCE':
         configdict['data_path'] = expandvars('$DES_DATA')+'/new_3pt_data/processed/dark_matter/downsampled_dm_spt_data.npy'
         configdict['randoms_path'] = expandvars('$DES_DATA')+'/new_3pt_data/processed/dark_matter/downsampled_dm_spt_randoms.npy'

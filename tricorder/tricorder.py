@@ -17,7 +17,7 @@ class NNNProcessor (object):
             with open(config_fname) as f:
                 configdict = yaml.load(f.read())
         except IOError:
-            print 'config file '+config_fname+' not found in '+outdir
+            print 'config file '+config_fname+' not found.'
             raise
 
         self.config = configdict
@@ -68,7 +68,7 @@ class NNNProcessor (object):
         print 'that took', tic-toc
         sys.stdout.flush()
 
-        fname = outdir+self.config['runname']+'_'+set1+set2+set3+'.npy'
+        fname = self.config['outdir']+self.config['runname']+'_'+set1+set2+set3+'.npy'
         np.save(fname,nnn.ntri)
 
 def run_3pt_ana(config_fname, set1, set2, set3):
