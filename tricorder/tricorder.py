@@ -15,7 +15,7 @@ class NNNProcessor (object):
     def __init__(self,config_fname):
         try: 
             with open(config_fname) as f:
-                configdict = json.loads(f.read())
+                configdict = yaml.load(f.read())
         except IOError:
             print 'config file '+config_fname+' not found in '+outdir
             raise
