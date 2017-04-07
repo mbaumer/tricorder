@@ -37,7 +37,7 @@ def make_config(lower_z_lim,delta_z,zvar,metric,do3D):
     configdict['max_v'] = 1
     configdict['nvbins'] = 400
     configdict['bin_slop'] = 0.1
-    if not self.do3D:
+    if not do3D:
         configdict['sep_units'] = 'arcmin'
     else: 
         try:
