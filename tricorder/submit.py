@@ -2,6 +2,7 @@
 import sys, subprocess
 from os.path import expandvars
 import yaml
+import numpy as np
 
 outdir = expandvars('$DES_DATA')+'new_3pt_runs/'
 
