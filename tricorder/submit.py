@@ -4,7 +4,7 @@ from os.path import expandvars
 import yaml
 
 #needs to be same as in tricorder.py
-outdir = expandvars('$DES_DATA')+'/new_3pt_runs/'
+outdir = expandvars('$DES_DATA')+'new_3pt_runs/'
 
 setlist = ['\'d\',\'d\',\'d\'','\'d\',\'d\',\'r\'','\'d\',\'r\',\'d\'','\'r\',\'d\',\'d\'',
     '\'r\',\'r\',\'d\'','\'d\',\'r\',\'r\'','\'r\',\'d\',\'r\'','\'r\',\'r\',\'r\'']
