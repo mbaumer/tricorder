@@ -7,32 +7,25 @@ from scipy.stats import binned_statistic
 import treecorr
 import sys
 import numpy as np
-import json
+import yaml
 import os
 
-outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
+outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/new_3pt_runs/'
 
-def plot_run(runname):
-    with open(outdir+runname+'.config') as f:
-        config = json.loads(f.read())
-        
-    if 'random_set_id' not in config.keys():
-        config['random_set_id'] = 0
-    if 'jk_id' not in config.keys():
-        config['jk_id'] = -1
-    if 'data_z_var' not in config.keys():
-        config['data_z_var'] = 'ZSPEC'
-    
-    data = fits.getdata(config['datapath'])
-    randoms = fits.getdata(config['randompath'])
-    
-    data = data[((data[config['data_z_var']] > config['min_z']) & (data[config['data_z_var']] < config['max_z']))]
-    data = data[((data['RA'] > config['min_ra']) & (data['RA'] < config['max_ra']))]
-    data = data[((data['DEC'] > config['min_dec']) & (data['DEC'] < config['max_dec']))]
+class NNNPlotter (object):
 
-    randoms = randoms[((randoms['Z'] > config['min_z']) & (randoms['Z'] < config['max_z']))]
-    randoms = randoms[((randoms['RA'] > config['min_ra']) & (randoms['RA'] < config['max_ra']))]
-    randoms = randoms[((randoms['DEC'] > config['min_dec']) & (randoms['DEC'] < config['max_dec']))]
+    def __init__(self,runname):
+        self.runname = runname
+        with open(outdir+self.runname+'.yaml') as f:
+            self.config = yaml.load(f.read())
+    
+def plot_run(self):
+    
+    data = np.load(config['data_path'])
+    randoms = np.load(config['randoms_path'])
+    
+    data = data[((data[config['zvar']] > config['min_z']) & (data[config['zvar']] < config['max_z']))]
+    randoms = randoms[((randoms[config['zvar']] > config['min_z']) & (randoms[config['zvar']] < config['max_z']))]
     
     template = treecorr.NNNCorrelation(config=config)
 
@@ -48,8 +41,8 @@ def plot_run(runname):
                         plt.plot(bins,var)
                         plt.xlabel('Angle (degrees)')
                         plt.ylabel(name)
-                        plt.title(str(config['min_z'])+'<'config['data_z_var']+str(config['max_z'])+'  '+str(scale*ratio)+':'+str(scale)+' +/- '+str(100*tolerance)+'%')
-                        plt.figtext(.7,.7,)
+                        plt.title(str(config['min_z'])+'<'+config['zvar']+str(config['max_z'])+' '+str(scale*ratio)+':'+str(scale)+' +/- '+str(100*tolerance)+'%')
+                        #plt.figtext(.7,.7,)
                         #plt.savefig(plotdir+name+'.png')
 
 
@@ -80,7 +73,7 @@ def compute_x_vs_side_length(ddd,var,stat='mean',nbins=15,tolerance=.1):
     return res, b
 
 def analyze_single_run(mode,**kwargs):
-    ddd,drr,rdr,rrd,ddr,drd,rdd,rrr = load_data_for_run(config[jk_id])
+    ddd,drr,rdr,rrd,ddr,drd,rdd,rrr = load_data_for_run()
     template = treecorr.NNNCorrelation(config=config)
     
     if mode == 'angle':
@@ -149,15 +142,15 @@ def get_two_point_expectation(d1bins,d2bins,d3bins):
     denom_bins = (xi1*xi2+xi2*xi3+xi3*xi1)
     return denom_bins
 
-def load_data_for_run(jk_id):
-    ddd = np.load(outdir+runname+'_'+str(random_set_id)+'_'+str(jk_id)+'_'+'ddd.npy')
-    ddr = np.load(outdir+runname+'_'+str(random_set_id)+'_'+str(jk_id)+'_'+'ddr.npy')
-    drd = np.load(outdir+runname+'_'+str(random_set_id)+'_'+str(jk_id)+'_'+'drd.npy')
-    rdd = np.load(outdir+runname+'_'+str(random_set_id)+'_'+str(jk_id)+'_'+'rdd.npy')
-    rrd = np.load(outdir+runname+'_'+str(random_set_id)+'_'+str(jk_id)+'_'+'rrd.npy')
-    drr = np.load(outdir+runname+'_'+str(random_set_id)+'_'+str(jk_id)+'_'+'drr.npy')
-    rdr = np.load(outdir+runname+'_'+str(random_set_id)+'_'+str(jk_id)+'_'+'rdr.npy')
-    rrr = np.load(outdir+runname+'_'+str(random_set_id)+'_'+str(jk_id)+'_'+'rrr.npy')
+def load_data_for_run(runname):
+    ddd = np.load(outdir+runname+'_'+'ddd.npy')
+    ddr = np.load(outdir+runname+'_'+'ddr.npy')
+    drd = np.load(outdir+runname+'_'+'drd.npy')
+    rdd = np.load(outdir+runname+'_'+'rdd.npy')
+    rrd = np.load(outdir+runname+'_'+'rrd.npy')
+    drr = np.load(outdir+runname+'_'+'drr.npy')
+    rdr = np.load(outdir+runname+'_'+'rdr.npy')
+    rrr = np.load(outdir+runname+'_'+'rrr.npy')
     return ddd,drr,rdr,rrd,ddr,drd,rdd,rrr
 
 def computeAngularBins(r,u,v,collapsed=False):
