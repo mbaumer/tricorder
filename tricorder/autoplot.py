@@ -1,8 +1,10 @@
 from __future__ import print_function
 from __future__ import division
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from astropy.io import fits
-from astropy.cosmology import Planck15 as cosmo
+from astropy.cosmology import Planck13 as cosmo
 from scipy.stats import binned_statistic
 import treecorr
 import sys
@@ -11,8 +13,9 @@ import yaml
 import os
 
 outdir = '/nfs/slac/g/ki/ki19/des/mbaumer/new_3pt_runs/'
+plotdir = '/nfs/slac/g/ki/ki19/des/mbaumer/new_3pt_plots/'
 
-def computeXvsAngle(ddd,var,stat='mean',scale=6,ratio=.5,tolerance=.1,nbins=15):
+def computeXvsAngle(ddd,var,stat='mean',scale=6,ratio=.5,tolerance=.1,nbins=15,**kwargs):
     transition_angle = np.arccos(.25)/np.pi*180 #angle at which elongate becomes collapsed
     N_low_bins = np.floor(transition_angle/180*nbins)
     coll_bins = np.linspace(0,transition_angle,num=N_low_bins) 
@@ -21,7 +24,7 @@ def computeXvsAngle(ddd,var,stat='mean',scale=6,ratio=.5,tolerance=.1,nbins=15):
     collapsed_angles = computeAngularBins(np.exp(ddd.logr),ddd.u,ddd.v,collapsed=True)
     elongated_angles = computeAngularBins(np.exp(ddd.logr),ddd.u,ddd.v,collapsed=False)
     isRightSize = (np.exp(ddd.logr)*ddd.u > scale*ratio-scale*ratio*tolerance) & (np.exp(ddd.logr)*ddd.u < scale*ratio+scale*ratio*tolerance)
-    isCollapsed = (((ddd.u*np.abs(ddd.v))*np.exp(ddd.logr)+np.exp(ddd.logr) > scale-scale*tolerance) & ((ddd.u*np.abs(ddd.v))*np.exp(ddd.logr)+np.exp(ddd.logr) < scale*scale*tolerance))
+    isCollapsed = (((ddd.u*np.abs(ddd.v))*np.exp(ddd.logr)+np.exp(ddd.logr) > scale-scale*tolerance) & ((ddd.u*np.abs(ddd.v))*np.exp(ddd.logr)+np.exp(ddd.logr) < scale+scale*tolerance))
     isElongated = ((np.exp(ddd.logr) > scale-scale*tolerance) & (np.exp(ddd.logr) < scale+scale*tolerance))
     out1,bins1,_ = binned_statistic(elongated_angles[np.where(isRightSize & isElongated)],var[np.where(isRightSize & isElongated)],bins=elong_bins,statistic=stat)
     out2,bins2,_ = binned_statistic(collapsed_angles[np.where(isRightSize & isCollapsed)],var[np.where(isRightSize & isCollapsed)],bins=coll_bins,statistic=stat)
@@ -31,7 +34,7 @@ def computeXvsAngle(ddd,var,stat='mean',scale=6,ratio=.5,tolerance=.1,nbins=15):
     full_bins = np.concatenate((bins2[:-1],bins1[:-1]))
     return full_var, full_bins
 
-def compute_x_vs_side_length(ddd,var,stat='mean',nbins=15,tolerance=.1):
+def compute_x_vs_side_length(ddd,var,stat='mean',nbins=15,tolerance=.1,**kwargs):
     isEquilateral = (ddd.u > 1-tolerance) & (np.abs(ddd.v) < tolerance)
     res, b, _ = binned_statistic(ddd.logr[isEquilateral],var[isEquilateral],bins=nbins,statistic=stat)
     b += (b[1]-b[0])/2
@@ -60,29 +63,32 @@ class NNNPlotter (object):
         self.delta_z = delta_z
         self.max_z = self.min_z + self.delta_z
         self.metric = metric
+        self.runname = self.zvar+str(self.min_z)+'_deltaz'+str(self.delta_z)+'_'+self.metric
         with open(outdir+self.runname+'.yaml') as f:
             self.config = yaml.load(f.read())
         self.data = np.load(self.config['data_path'])
         self.randoms = np.load(self.config['randoms_path'])
-        self.runname = self.config['runname']
+        assert self.runname == self.config['runname']
     
     def load_data_for_run(self):
-        
-        self.data = self.data[((self.data[self.zvar] > self.min_z) & (self.data[self.zvar] < self.max_z))]
-        self.randoms = self.randoms[((self.randoms[self.zvar] > self.min_z) & (self.randoms[self.zvar] < self.max_z))]
+        if self.zvar == 'DISTANCE':
+            self.data = self.data[((self.data[self.zvar] > cosmo.comoving_distance(self.min_z).value) & (self.data[self.zvar] < cosmo.comoving_distance(self.max_z).value))]
+            self.randoms = self.randoms[((self.randoms[self.zvar] > cosmo.comoving_distance(self.min_z).value) & (self.randoms[self.zvar] < cosmo.comoving_distance(self.max_z).value))]
+        else:
+            self.data = self.data[((self.data[self.zvar] > self.min_z) & (self.data[self.zvar] < self.max_z))]
+            self.randoms = self.randoms[((self.randoms[self.zvar] > self.min_z) & (self.randoms[self.zvar] < self.max_z))]
 
-        ddd = np.load(outdir+self.runname+'_'+'ddd.npy')
-        ddr = np.load(outdir+self.runname+'_'+'ddr.npy')
-        drd = np.load(outdir+self.runname+'_'+'drd.npy')
-        rdd = np.load(outdir+self.runname+'_'+'rdd.npy')
-        rrd = np.load(outdir+self.runname+'_'+'rrd.npy')
-        drr = np.load(outdir+self.runname+'_'+'drr.npy')
-        rdr = np.load(outdir+self.runname+'_'+'rdr.npy')
-        rrr = np.load(outdir+self.runname+'_'+'rrr.npy')
-        return ddd,drr,rdr,rrd,ddr,drd,rdd,rrr
+        self.ddd = np.load(outdir+self.runname+'_'+'ddd.npy')
+        self.ddr = np.load(outdir+self.runname+'_'+'ddr.npy')
+        self.drd = np.load(outdir+self.runname+'_'+'drd.npy')
+        self.rdd = np.load(outdir+self.runname+'_'+'rdd.npy')
+        self.rrd = np.load(outdir+self.runname+'_'+'rrd.npy')
+        self.drr = np.load(outdir+self.runname+'_'+'drr.npy')
+        self.rdr = np.load(outdir+self.runname+'_'+'rdr.npy')
+        self.rrr = np.load(outdir+self.runname+'_'+'rrr.npy')
 
-    def analyze_single_run(mode,**kwargs):
-        ddd,drr,rdr,rrd,ddr,drd,rdd,rrr = self.load_data_for_run()
+    def analyze_single_run(self,mode,**kwargs):
+
         template = treecorr.NNNCorrelation(config=self.config)
         
         if mode == 'angle':
@@ -91,18 +97,18 @@ class NNNPlotter (object):
             get_binned_stat = compute_x_vs_side_length
         
         binned = {}
-        binned['ddd'], bins = get_binned_stat(template,ddd,stat='sum')
-        binned['ddr'], bins = get_binned_stat(template,ddr,stat='sum')
-        binned['drd'], bins = get_binned_stat(template,drd,stat='sum')
-        binned['rdd'], bins = get_binned_stat(template,rdd,stat='sum')
-        binned['rrd'], bins = get_binned_stat(template,rrd,stat='sum')
-        binned['drr'], bins = get_binned_stat(template,drr,stat='sum')
-        binned['rdr'], bins = get_binned_stat(template,rdr,stat='sum')
-        binned['rrr'], bins = get_binned_stat(template,rrr,stat='sum')
+        binned['ddd'], bins = get_binned_stat(template,self.ddd,stat='sum',**kwargs)
+        binned['ddr'], bins = get_binned_stat(template,self.ddr,stat='sum',**kwargs)
+        binned['drd'], bins = get_binned_stat(template,self.drd,stat='sum',**kwargs)
+        binned['rdd'], bins = get_binned_stat(template,self.rdd,stat='sum',**kwargs)
+        binned['rrd'], bins = get_binned_stat(template,self.rrd,stat='sum',**kwargs)
+        binned['drr'], bins = get_binned_stat(template,self.drr,stat='sum',**kwargs)
+        binned['rdr'], bins = get_binned_stat(template,self.rdr,stat='sum',**kwargs)
+        binned['rrr'], bins = get_binned_stat(template,self.rrr,stat='sum',**kwargs)
 
-        binned['d1'], bins = get_binned_stat(template,template.u*np.abs(template.v)*np.exp(template.logr)+np.exp(template.logr))
-        binned['d2'], bins = get_binned_stat(template,np.exp(template.logr))
-        binned['d3'], bins = get_binned_stat(template,template.u*np.exp(template.logr))
+        binned['d1'], bins = get_binned_stat(template,template.u*np.abs(template.v)*np.exp(template.logr)+np.exp(template.logr),**kwargs)
+        binned['d2'], bins = get_binned_stat(template,np.exp(template.logr),**kwargs)
+        binned['d3'], bins = get_binned_stat(template,template.u*np.exp(template.logr),**kwargs)
 
         datatot = len(self.data)
         randtot = len(self.randoms)
@@ -116,17 +122,17 @@ class NNNPlotter (object):
         rrrtot = float(randtot)**3/6
 
         binned['zeta'] = (binned['ddd']+dddtot*(-binned['ddr']/ddrtot-binned['drd']/drdtot-binned['rdd']/rddtot+binned['rrd']/rrdtot+binned['rdr']/rdrtot+binned['drr']/drrtot-binned['rrr']/rrrtot))/(binned['rrr']*dddtot/rrrtot)  
-        binned['denom'] = get_two_point_expectation(binned['d1'],binned['d2'],binned['d3'],metric=self.metric)
+        binned['denom'] = self.get_two_point_expectation(binned['d1'],binned['d2'],binned['d3'])
         binned['q'] = binned['zeta']/binned['denom']
         return bins, binned
 
-    def get_two_point_expectation(d1bins,d2bins,d3bins):
-        elif self.metric == 'Euclidean':
+    def get_two_point_expectation(self,d1bins,d2bins,d3bins):
+        if self.metric == 'Euclidean':
             cat = treecorr.Catalog(ra=self.data['RA'], dec=self.data['DEC'], ra_units='degrees', dec_units='degrees')
             random_cat = treecorr.Catalog(ra=self.randoms['RA'], dec=self.randoms['DEC'], ra_units='degrees', dec_units='degrees')
-            dd = treecorr.NNCorrelation(min_sep=.1,max_sep=25,nbins=20,bin_slop=0.1,sep_units='arcmin',metric='Euclidean')
-            dr = treecorr.NNCorrelation(min_sep=.1,max_sep=25,nbins=20,bin_slop=0.1,sep_units='arcmin',metric='Euclidean')
-            rr = treecorr.NNCorrelation(min_sep=.1,max_sep=25,nbins=20,bin_slop=0.1,sep_units='arcmin',metric='Euclidean')
+            dd = treecorr.NNCorrelation(min_sep=.1,max_sep=25,nbins=20,bin_slop=0.1,sep_units='arcmin',metric=self.metric)
+            dr = treecorr.NNCorrelation(min_sep=.1,max_sep=25,nbins=20,bin_slop=0.1,sep_units='arcmin',metric=self.metric)
+            rr = treecorr.NNCorrelation(min_sep=.1,max_sep=25,nbins=20,bin_slop=0.1,sep_units='arcmin',metric=self.metric)
         else:
             raise ValueError('invalid metric specified')
         dd.process(cat)
@@ -145,22 +151,29 @@ class NNNPlotter (object):
         return denom_bins
 
     def plot_run(self):
-
+        
+        self.load_data_for_run()
+        
         #make angular plots
         for scale in [3,6,9,12]:
-            for ratio in [.5,.333,.25]:
+            for ratio in [1,.5,.333,.25]:
                 for tolerance in [.1,.2,.3]:
-                    for nbins in [8,16,24,32]:
-                        mode = 'angle'
-                        bins, binned = analyze_single_run(mode,scale=scale,ratio=ratio,tolerance=tolerance,nbins=nbins)
+                    for nbins in [8,16,50]:
+                        if ratio == 1:
+                            mode = 'equi'
+                        else:
+                            mode = 'angle'
+                        bins, binned = self.analyze_single_run(mode,scale=scale,ratio=ratio,tolerance=tolerance,nbins=nbins)
                         for name,var in binned.iteritems():
-                            plt.figure()
+                            fig = plt.figure()
                             plt.plot(bins,var)
-                            plt.xlabel('Angle (degrees)')
+                            if mode == 'angle':
+                                plt.xlabel('Angle (degrees)')
+                            else:
+                                plt.xlabel('Scale (arcmin)')
                             plt.ylabel(name)
-                            plt.title(str(self.min_z)+'<'+self.zvar+str(self.max_z)+' '+str(scale*ratio)+':'+str(scale)+' +/- '+str(100*tolerance)+'%')
-                            #plt.figtext(.7,.7,)
-                            #plt.savefig(plotdir+name+'.png')
+                            plt.title(str(self.min_z)+'<'+self.zvar+'<'+str(self.max_z)+' '+str(scale*ratio)+':'+str(scale)+' +/- '+str(100*tolerance)+'%')
+                            fig.savefig(plotdir+name+'_'+mode+'_'+str(scale)+'_'+str(ratio)+'_'+str(tolerance)+'_'+str(nbins)+'.png')
 
 
 
