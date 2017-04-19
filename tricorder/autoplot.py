@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from astropy.io import fits
 from astropy.cosmology import Planck13 as cosmo
 from scipy.stats import binned_statistic
+import subprocess
+import pandas as pd
 import treecorr
 import sys
 import numpy as np
@@ -152,28 +154,46 @@ class NNNPlotter (object):
 
     def plot_run(self):
         
+        results = pd.DataFrame()
         self.load_data_for_run()
         
         #make angular plots
-        for scale in [3,6,9,12]:
-            for ratio in [1,.5,.333,.25]:
+        for scale in [3,6,9,12,15,18]:
+            for ratio in [1,.5]:
                 for tolerance in [.1,.2,.3]:
-                    for nbins in [8,16,50]:
+                    for nbins in [8,16,100]:
+                        print (scale,ratio,tolerance,nbins)
+                        sys.stdout.flush()
                         if ratio == 1:
                             mode = 'equi'
                         else:
                             mode = 'angle'
                         bins, binned = self.analyze_single_run(mode,scale=scale,ratio=ratio,tolerance=tolerance,nbins=nbins)
-                        for name,var in binned.iteritems():
-                            fig = plt.figure()
-                            plt.plot(bins,var)
-                            if mode == 'angle':
-                                plt.xlabel('Angle (degrees)')
-                            else:
-                                plt.xlabel('Scale (arcmin)')
-                            plt.ylabel(name)
-                            plt.title(str(self.min_z)+'<'+self.zvar+'<'+str(self.max_z)+' '+str(scale*ratio)+':'+str(scale)+' +/- '+str(100*tolerance)+'%')
-                            fig.savefig(plotdir+name+'_'+mode+'_'+str(scale)+'_'+str(ratio)+'_'+str(tolerance)+'_'+str(nbins)+'.png')
+                        
+                        this_res = pd.DataFrame.from_dict(binned)
+                        this_res['bins'] = bins
+                        this_res['scale'] = scale
+                        this_res['ratio'] = ratio
+                        this_res['tolerance'] = tolerance
+                        this_res['nbins']= nbins
+                        
+                        results = results.append(this_res)
+                        
+                        if False:
+                            for name,var in binned.iteritems():
+                                fig = plt.figure()
+                                plt.plot(bins,var)
+                                if mode == 'angle':
+                                    plt.xlabel('Angle (degrees)')
+                                else:
+                                    plt.xlabel('Scale (arcmin)')
+                                plt.ylabel(name)
+                                plt.title(str(self.min_z)+'<'+self.zvar+'<'+str(self.max_z)+' '+str(scale*ratio)+':'+str(scale)+' +/- '+str(100*tolerance)+'%')
+                                fig.savefig(plotdir+name+'_'+mode+'_'+str(scale)+'_'+str(ratio)+'_'+str(tolerance)+'_'+str(nbins)+'.png')
+                                
+        results.to_csv(outdir+self.runname+'.csv')
 
-
-
+def runall(min_z, max_z, delta_z, zvar, metric, do3D):
+    for lower_z_lim in np.arange(min_z,max_z,delta_z):
+        print ("bsub", "-W", "08:00", "python", "-c" ,"import autoplot; plotter = autoplot.NNNPlotter('"+zvar+"',"+str(lower_z_lim)+","+str(delta_z)+",'Euclidean'); plotter.plot_run()")
+        subprocess.call(["bsub", "-W", "08:00", "python", "-c" ,"import autoplot; plotter = autoplot.NNNPlotter('"+zvar+"',"+str(lower_z_lim)+","+str(delta_z)+",'Euclidean'); plotter.plot_run()"])
