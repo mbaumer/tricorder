@@ -35,7 +35,7 @@ class NNNProcessor (object):
         print 'Catalog length after redshift cut:', len(cat)
         sys.stdout.flush()
 
-        if self.config['do3D']: 
+        if self.config['param_3D'] != 0: 
             if self.config['zvar'] == 'DISTANCE':
                 out_cat = treecorr.Catalog(ra=cat['RA'], dec=cat['DEC'], 
                 ra_units='degrees', dec_units='degrees',

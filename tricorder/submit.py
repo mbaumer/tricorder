@@ -9,13 +9,18 @@ outdir = expandvars('$DES_DATA')+'new_3pt_runs/'
 setlist = ['\'d\',\'d\',\'d\'','\'d\',\'d\',\'r\'','\'d\',\'r\',\'d\'','\'r\',\'d\',\'d\'',
     '\'r\',\'r\',\'d\'','\'d\',\'r\',\'r\'','\'r\',\'d\',\'r\'','\'r\',\'r\',\'r\'']
 
-def make_config(lower_z_lim,delta_z,zvar,metric,do3D):
+def make_config(lower_z_lim,delta_z,zvar,metric,param_3D):
 
     configdict = {}
 
     configdict['zvar'] = zvar
-    configdict['do3D'] = do3D
+    configdict['param_3D'] = param_3D
     configdict['metric'] = metric
+
+    if metric == 'Rperp':
+        assert configdict['param_3D'] != 0
+        configdict['min_rpar'] = -1*configdict['param_3D']
+        configdict['max_rpar'] = 1*configdict['param_3D']
 
     configdict['outdir'] = outdir
     if zvar == 'DISTANCE':
@@ -42,7 +47,7 @@ def make_config(lower_z_lim,delta_z,zvar,metric,do3D):
     configdict['max_v'] = 1
     configdict['nvbins'] = 400
     configdict['bin_slop'] = 0.1
-    if not do3D:
+    if param_3D == 0:
         configdict['sep_units'] = 'arcmin'
     else: 
         try:
@@ -61,9 +66,9 @@ def make_config(lower_z_lim,delta_z,zvar,metric,do3D):
 
     return config_fname
 
-def runall(min_z, max_z, delta_z, zvar, metric, do3D):
+def runall(min_z, max_z, delta_z, zvar, metric, param_3D):
     for lower_z_lim in np.arange(min_z,max_z,delta_z):
-        config_fname = make_config(lower_z_lim,delta_z,zvar,metric,do3D)
+        config_fname = make_config(lower_z_lim,delta_z,zvar,metric,param_3D)
         for this_set in setlist:
             print "bsub", "-W", "47:00", "python", "-c" ,"import tricorder; tricorder.run_3pt_ana('"+config_fname+"',"+this_set+")"
             subprocess.call(["bsub", "-W", "47:00", "python", "-c" ,"import tricorder; tricorder.run_3pt_ana('"+config_fname+"',"+this_set+")"])
