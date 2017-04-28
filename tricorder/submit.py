@@ -37,15 +37,15 @@ def make_config(lower_z_lim,delta_z,zvar,metric,param_3D):
     configdict['max_z'] = lower_z_lim + delta_z
 
     #treecorr params
-    configdict['min_sep'] = 1
-    configdict['max_sep'] = 25
+    configdict['min_sep'] = 3
+    configdict['max_sep'] = 40
     configdict['nbins'] = 200
     configdict['min_u'] = 0
     configdict['max_u'] = 1
     configdict['nubins'] = 100
     configdict['min_v'] = -1
     configdict['max_v'] = 1
-    configdict['nvbins'] = 400
+    configdict['nvbins'] = 200
     configdict['bin_slop'] = 0.1
     if param_3D == 0:
         configdict['sep_units'] = 'arcmin'
