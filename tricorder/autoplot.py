@@ -132,9 +132,9 @@ class NNNPlotter (object):
         if self.metric == 'Euclidean':
             cat = treecorr.Catalog(ra=self.data['RA'], dec=self.data['DEC'], ra_units='degrees', dec_units='degrees')
             random_cat = treecorr.Catalog(ra=self.randoms['RA'], dec=self.randoms['DEC'], ra_units='degrees', dec_units='degrees')
-            dd = treecorr.NNCorrelation(min_sep=.1,max_sep=25,nbins=20,bin_slop=0.1,sep_units='arcmin',metric=self.metric)
-            dr = treecorr.NNCorrelation(min_sep=.1,max_sep=25,nbins=20,bin_slop=0.1,sep_units='arcmin',metric=self.metric)
-            rr = treecorr.NNCorrelation(min_sep=.1,max_sep=25,nbins=20,bin_slop=0.1,sep_units='arcmin',metric=self.metric)
+            dd = treecorr.NNCorrelation(min_sep=1,max_sep=30,nbins=30,bin_slop=0.1,sep_units='arcmin',metric=self.metric)
+            dr = treecorr.NNCorrelation(min_sep=1,max_sep=30,nbins=30,bin_slop=0.1,sep_units='arcmin',metric=self.metric)
+            rr = treecorr.NNCorrelation(min_sep=1,max_sep=30,nbins=30,bin_slop=0.1,sep_units='arcmin',metric=self.metric)
         else:
             raise ValueError('invalid metric specified')
         dd.process(cat)
@@ -158,8 +158,8 @@ class NNNPlotter (object):
         self.load_data_for_run()
         
         #make angular plots
-        for scale in [3,6,9,12,15,18]:
-            for ratio in [1,.5]:
+        for scale in [10,15,20,25,30]:
+            for ratio in [.5]:
                 for tolerance in [.1,.2,.3]:
                     for nbins in [8,16,100]:
                         print (scale,ratio,tolerance,nbins)
