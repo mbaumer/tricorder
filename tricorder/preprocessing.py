@@ -4,20 +4,7 @@ import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.neighbors import KNeighborsRegressor
 
-outdir = '/scratch/PI/kipac/mbaumer/des/3pt_results/'
-runType = 'Y1_sims'
-n_jackknife = 15
-
-#define footprint dicts
-sv_spt_footprint['min_ra'] = 60
-sv_spt_footprint['max_ra'] = 92
-sv_spt_footprint['min_dec'] = -61
-sv_spt_footprint['max_dec'] = -40
-
-y1_main_footprint['min_ra'] = 0
-y1_main_footprint['max_ra'] = 360
-y1_main_footprint['min_dec'] = -70
-y1_main_footprint['max_dec'] = -35
+n_jackknife = 30
 
 def plotRegion(cat, indices, i):
     locs = np.where(indices == i)
@@ -31,53 +18,22 @@ def plotFootprint(cat,indices):
 class NNNMunger(object):
     
     def __init__(self,runname):
-        config_fname = outdir+runname+'.config'
-        self.config = {}
-        self.runname = runname
-        self.config['runType'] = runType
-        self.config['n_jackknife'] = n_jackknife
-
-        if self.config['runType'] == 'SV':
-            self.config['datapath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_sv_data.fits'
-            self.config['randompath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_sv_5x_randoms.fits'
-            self.footprint = sv_spt_footprint
-
-        elif self.config['runType'] == 'Y1_sims':
-            self.config['datapath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_Y1_sims_data.fits'
-            self.config['randompath'] = '/scratch/PI/kipac/mbaumer/des/data/redmagic_Y1_sims_5x_randoms.fits'
-            self.footprint = y1_main_footprint
-
-        else:
-            raise IOError('invalid runType')
-    
-        self.config['min_z'] = .5
-        self.config['max_z'] = .7
-
-        #write it out so we remember what we did
-        f = open(config_fname,'w')
-        f.write(json.dumps(self.config))
-        f.close()
-
-    def applyCuts(self,cat):
-        cat = cat[((cat['ZREDMAGIC'] > self.config['min_z']) & (cat['ZREDMAGIC'] < self.config['max_z']))]
-        cat = cat[((cat['RA'] > self.footprint['min_ra']) & (cat['RA'] < self.footprint['max_ra']))]
-        cat = cat[((cat['DEC'] > self.footprint['min_dec']) & (cat['DEC'] < self.footprint['max_dec']))]
-        #later, color, magnitude cuts...
-        return cat
-
-    def prepareCatalog(self):
-        data = fits.getdata(self.config['datapath'])
-        randoms = fits.getdata(self.config['randompath'])
-
-        data = applyCuts(data)
-        randoms = applyCuts(randoms)
-
-        self.cat = cat
-        self.random_cat = random_cat
+        def __init__(self,zvar,min_z,delta_z,metric):
+        self.zvar = zvar
+        self.min_z = min_z
+        self.delta_z = delta_z
+        self.max_z = self.min_z + self.delta_z
+        self.metric = metric
+        self.runname = self.zvar+str(self.min_z)+'_deltaz'+str(self.delta_z)+'_'+self.metric
+        with open(outdir+self.runname+'.yaml') as f:
+            self.config = yaml.load(f.read())
+        self.data = np.load(self.config['data_path'])
+        self.randoms = np.load(self.config['randoms_path'])
+        assert self.runname == self.config['runname']
 
     def addJKRegionLabels(self):
-        data = zip(self.cat['RA'],self.cat['DEC'])
-        randoms = zip(self.random_cat['RA'],self.random_cat['DEC'])
+        data = zip(self.data['RA'],self.data['DEC'])
+        randoms = zip(self.randoms['RA'],self.randoms['DEC'])
         
         finder = KMeans(n_clusters=self.config['n_jackknife'])
         self.data_jk_indices = finder.fit_predict(data)
