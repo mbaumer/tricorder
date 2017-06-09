@@ -139,7 +139,7 @@ def generate_randoms(dat, zvar, raoffset, Ntot,
         zmax_i = map_zmax[zmax_indices_i]
         # cut on zmax
         if zvar == 'DISTANCE':
-            good_index = buzzard_cosmo.comoving_distance(zmax_i).value >= z_i
+            good_index = buzzard_cosmo.comoving_distance(zmax_i).value*buzzard_cosmo.h >= z_i
         else:
             good_index = zmax_i >= z_i
         
@@ -178,7 +178,7 @@ def mask_data(data, zvar, map_fracgood_indices, map_fracgood, map_zmax_indices, 
     map_zmax = map_zmax[map_zmax_indices]
     
     if zvar == 'DISTANCE':
-        good_index = buzzard_cosmo.comoving_distance(map_zmax).value >= data[zvar]
+        good_index = buzzard_cosmo.comoving_distance(map_zmax).value*buzzard_cosmo.h >= data[zvar]
     else:
         good_index = map_zmax >= data[zvar]
     
@@ -205,20 +205,6 @@ def test_data_randoms(data,randoms,zvar,dname,rname,nbins=200):
     axarr[1,1].set_title('Randoms '+zvar)
     return fig
     
-def correct_DM_coordinates(data):
-    coords = SkyCoord(ra=data['RA'],dec=data['DEC'],distance=data['DISTANCE'],unit=('deg','deg','Mpc'))
-    coords2 = SkyCoord(x=coords.cartesian.x/buzzard_cosmo.h,
-                       y=coords.cartesian.y/buzzard_cosmo.h,
-                       z=coords.cartesian.z/buzzard_cosmo.h,
-                       unit='Mpc',representation='cartesian')
-    ra = coords2.fk5.ra.degree
-    dec = coords2.fk5.dec.degree
-    distance = coords2.fk5.distance.value
-    data = np.array(zip(ra,dec,distance),dtype=[('RA', float),('DEC',float),('DISTANCE',float)])
-    data = data[data['DISTANCE'] < 2600/buzzard_cosmo.h]
-    data['DEC'] = -data['DEC']
-    return data
-    
 def generate_datasets(data_filename, mask_filename, zvar, oversampling,outname):
     #mask_filename = 'raw/simulation/buzzard-v1.1-y1a1-full_run_redmapper_v6.4.13_redmagic_highdens_0.5-10_vlim_zmask.fit'
     
@@ -229,8 +215,9 @@ def generate_datasets(data_filename, mask_filename, zvar, oversampling,outname):
     data = fits.getdata(data_filename)
     
     if zvar == 'DISTANCE':
-        #data = data[np.random.rand(len(data)) < .1] #total effective downsample of .1% (1% from initial gadget read)
-        data = correct_DM_coordinates(data)
+        data = data[np.random.rand(len(data)) < .1] #total effective downsample of .1% (1% from initial gadget read)
+        data = data[data['DISTANCE'] < 2600] # distance < 2600 Mpc/h (units already correct)
+        data['DEC'] = -data['DEC']
         
     data = data[(data['RA'] > 0) & (data['RA'] < 90)]
     data = data[(data['DEC'] > -60) & (data['DEC'] < -40)]
