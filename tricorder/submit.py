@@ -4,7 +4,7 @@ from os.path import expandvars
 import yaml
 import numpy as np
 
-outdir = expandvars('$DES_SIMS')+'triplet_counts/'
+outdir = expandvars('$DES_SIMS')+'new_triplet_counts/'
 
 setlist = ['\'d\',\'d\',\'d\'','\'d\',\'d\',\'r\'','\'d\',\'r\',\'d\'','\'r\',\'d\',\'d\'',
     '\'r\',\'r\',\'d\'','\'d\',\'r\',\'r\'','\'r\',\'d\',\'r\'','\'r\',\'r\',\'r\'']
