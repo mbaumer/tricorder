@@ -3,12 +3,15 @@ from __future__ import division
 import sys
 sys.path.append('/home/mbaumer/anaconda2/bin/')
 from astropy.io import fits
-from astropy.cosmology import Planck15 as cosmo
+#from astropy.cosmology import Planck15 as cosmo
 import treecorr
 import numpy as np
 import time
 import yaml
 from os.path import expandvars
+
+from astropy.cosmology import FlatLambdaCDM
+buzzard_cosmo = FlatLambdaCDM(68.81,.295)
 
 class NNNProcessor (object):
 
@@ -28,7 +31,7 @@ class NNNProcessor (object):
 
         #redshift cut
         if self.config['zvar'] == 'DISTANCE':
-            cat = cat[((cat[self.config['zvar']] > cosmo.comoving_distance(self.config['min_z']).value) & (cat[self.config['zvar']] < cosmo.comoving_distance(self.config['max_z']).value))]
+            cat = cat[((cat[self.config['zvar']] > (buzzard_cosmo.h)*buzzard_cosmo.comoving_distance(self.config['min_z']).value) & (cat[self.config['zvar']] < (buzzard_cosmo.h)*buzzard_cosmo.comoving_distance(self.config['max_z']).value))]
         else:
             cat = cat[((cat[self.config['zvar']] > self.config['min_z']) & (cat[self.config['zvar']] < self.config['max_z']))]
 
