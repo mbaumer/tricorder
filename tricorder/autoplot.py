@@ -14,8 +14,8 @@ import numpy as np
 import yaml
 import os
 
-outdir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/triplet_counts/'
-plotdir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/plots'
+outdir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new_triplet_counts_someFailed/'
+plotdir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new_plots'
 
 def computeXvsAngle(ddd,var,stat='mean',scale=6,ratio=.5,tolerance=.1,nbins=15,**kwargs):
     transition_angle = np.arccos(.25)/np.pi*180 #angle at which elongate becomes collapsed
