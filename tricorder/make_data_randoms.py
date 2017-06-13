@@ -215,7 +215,7 @@ def generate_datasets(data_filename, mask_filename, zvar, oversampling,outname):
     data = fits.getdata(data_filename)
     
     if zvar == 'DISTANCE':
-        data = data[np.random.rand(len(data)) < .1] #total effective downsample of .1% (1% from initial gadget read)
+        #data = data[np.random.rand(len(data)) < .1] #total effective downsample of .1% (1% from initial gadget read)
         data = data[data['DISTANCE'] < 2600] # distance < 2600 Mpc/h (units already correct)
         data['DEC'] = -data['DEC']
         
