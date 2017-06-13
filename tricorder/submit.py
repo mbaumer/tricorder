@@ -24,8 +24,8 @@ def make_config(lower_z_lim,delta_z,zvar,metric,param_3D):
 
     configdict['outdir'] = outdir
     if zvar == 'DISTANCE':
-        configdict['data_path'] = expandvars('$DES_SIMS')+'/processed_input/dark_matter/downsampled_dm_spt_data.npy'
-        configdict['randoms_path'] = expandvars('$DES_SIMS')+'/processed_input/dark_matter/downsampled_dm_spt_randoms.npy'
+        configdict['data_path'] = expandvars('$DES_SIMS')+'/processed_input/dark_matter/dm_3x_good_data.npy'
+        configdict['randoms_path'] = expandvars('$DES_SIMS')+'/processed_input/dark_matter/dm_3x_good_randoms.npy'
     elif zvar == 'ZSPEC':
         configdict['data_path'] = expandvars('$DES_SIMS')+'/processed_input/redmagic_gals/buzzard_redmagic_spt_zspec_data.npy'
         configdict['randoms_path'] = expandvars('$DES_SIMS')+'/processed_input/redmagic_gals/buzzard_redmagic_spt_zspec_randoms.npy'
