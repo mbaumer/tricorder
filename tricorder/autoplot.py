@@ -4,7 +4,8 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from astropy.io import fits
-from astropy.cosmology import Planck13 as cosmo
+from astropy.cosmology import FlatLambdaCDM
+buzzard_cosmo = FlatLambdaCDM(68.81,.295)
 from scipy.stats import binned_statistic
 import subprocess
 import pandas as pd
@@ -74,8 +75,8 @@ class NNNPlotter (object):
     
     def load_data_for_run(self):
         if self.zvar == 'DISTANCE':
-            self.data = self.data[((self.data[self.zvar] > cosmo.comoving_distance(self.min_z).value) & (self.data[self.zvar] < cosmo.comoving_distance(self.max_z).value))]
-            self.randoms = self.randoms[((self.randoms[self.zvar] > cosmo.comoving_distance(self.min_z).value) & (self.randoms[self.zvar] < cosmo.comoving_distance(self.max_z).value))]
+            self.data = self.data[((self.data[self.zvar] > (buzzard_cosmo.h)*buzzard_cosmo.comoving_distance(self.min_z).value) & (self.data[self.zvar] < (buzzard_cosmo.h)*buzzard_cosmo.comoving_distance(self.max_z).value))]
+            self.randoms = self.randoms[((self.randoms[self.zvar] > (buzzard_cosmo.h)*buzzard_cosmo.comoving_distance(self.min_z).value) & (self.randoms[self.zvar] < (buzzard_cosmo.h)*buzzard_cosmo.comoving_distance(self.max_z).value))]
         else:
             self.data = self.data[((self.data[self.zvar] > self.min_z) & (self.data[self.zvar] < self.max_z))]
             self.randoms = self.randoms[((self.randoms[self.zvar] > self.min_z) & (self.randoms[self.zvar] < self.max_z))]
