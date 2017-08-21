@@ -1,81 +1,133 @@
-#!/home/mbaumer/anaconda/bin/python2.7
+"""A module for computing correlation functions on datasets.
+
+I think this will end up handling 2- and 3-point correlations.
+"""
+
 from __future__ import division
-import sys
-sys.path.append('/home/mbaumer/anaconda2/bin/')
-from astropy.io import fits
-#from astropy.cosmology import Planck15 as cosmo
-import treecorr
-import numpy as np
+
 import time
+from sys import stdout
+
+import numpy as np
+import treecorr
 import yaml
-from os.path import expandvars
 
-from astropy.cosmology import FlatLambdaCDM
-buzzard_cosmo = FlatLambdaCDM(68.81,.295)
+import datasets
 
-class NNNProcessor (object):
+output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/results/'
 
-    def __init__(self,config_fname):
-        try: 
+
+def write_default_config(runname):
+    config_2pt = {}
+    config_3pt = {}
+    configdict = {'2PCF': config_2pt, '3PCF': config_3pt}
+
+    config_2pt['min_sep'] = 5
+    config_2pt['max_sep'] = 120
+    config_2pt['sep_units'] = 'arcmin'
+    config_3pt['bin_slop'] = 0.1
+
+    # 3pt params
+    config_3pt['min_sep'] = 10
+    config_3pt['max_sep'] = 60
+    config_3pt['nbins'] = 50
+    config_3pt['min_u'] = 0
+    config_3pt['max_u'] = 1
+    config_3pt['nubins'] = 100
+    config_3pt['min_v'] = -1
+    config_3pt['max_v'] = 1
+    config_3pt['nvbins'] = 100
+    config_3pt['bin_slop'] = 0.1
+
+    config_fname = output_path + runname + '.config'
+    f = open(config_fname, 'w')
+    f.write(yaml.dump(configdict))
+    f.close()
+
+
+class BaseCorrelation (object):
+    """A base class for three-point analyses.
+
+    Mostly overridden by inherited methods.
+    """
+
+    def __init__(self):
+        raise NotImplementedError(
+            'need to specify pixel- or point-based class.')
+
+
+class PixelCorrelation (BaseCorrelation):
+
+    def __init__(self, dset_fname, config_fname):
+        try:
             with open(config_fname) as f:
                 configdict = yaml.load(f.read())
         except IOError:
-            print 'config file '+config_fname+' not found.'
+            print 'config file ' + config_fname + ' not found.'
             raise
 
-        self.config = configdict
-        self.data = np.load(self.config['data_path'])
-        self.randoms = np.load(self.config['randoms_path'])
+        self.dataset = datasets.BaseDataset.fromfilename(dset_fname)
+        self.name = config_fname[:-7]  # drop the .config
+        self.config_2pt = configdict['2PCF']
+        self.config_3pt = configdict['3PCF']
+        self.cat = None
+        self.kk = None
+        self.kkk = None
 
-    def make_catalog(self,cat):
+    def make_treecorr_cat(self):
+        kappa_est = (self.dataset.pixelized[2] / self.dataset.nbar) - 1
+        self.cat = treecorr.Catalog(ra=self.dataset.pixelized[0],
+                                    dec=self.dataset.pixelized[1],
+                                    ra_units='degrees', dec_units='degrees',
+                                    k=kappa_est)
 
-        #redshift cut
-        if self.config['zvar'] == 'DISTANCE':
-            cat = cat[((cat[self.config['zvar']] > (buzzard_cosmo.h)*buzzard_cosmo.comoving_distance(self.config['min_z']).value) & (cat[self.config['zvar']] < (buzzard_cosmo.h)*buzzard_cosmo.comoving_distance(self.config['max_z']).value))]
-        else:
-            cat = cat[((cat[self.config['zvar']] > self.config['min_z']) & (cat[self.config['zvar']] < self.config['max_z']))]
-
-        print 'Catalog length after redshift cut:', len(cat)
-        sys.stdout.flush()
-
-        if self.config['param_3D'] != 0: 
-            if self.config['zvar'] == 'DISTANCE':
-                out_cat = treecorr.Catalog(ra=cat['RA'], dec=cat['DEC'], 
-                ra_units='degrees', dec_units='degrees',
-                r=cat[self.config['zvar']]/cosmo.h)
-            else:
-                out_cat = treecorr.Catalog(ra=cat['RA'], dec=cat['DEC'], 
-                ra_units='degrees', dec_units='degrees',
-                r=cosmo.comoving_distance(cat[self.config['zvar']])/cosmo.h)
-        else: 
-            out_cat = treecorr.Catalog(ra=cat['RA'], dec=cat['DEC'], 
-                ra_units='degrees', dec_units='degrees')
-            
-        return out_cat
-
-    def run(self,set1,set2,set3):
-
-        cat = self.make_catalog(self.data)
-        random_cat = self.make_catalog(self.randoms)
-
-        setdict = {'d':cat,'r':random_cat}
-        nnn = treecorr.NNNCorrelation(config=self.config)
-
-        print 'starting processing!'
-        sys.stdout.flush()
-
+    def compute_2pt_pix(self):
+        kk = treecorr.KKCorrelation(config=self.config_2pt)
         toc = time.time()
-        nnn.process(setdict[set1],setdict[set2],setdict[set3])
+        kk.process(self.cat)
         tic = time.time()
+        print '2PCF took', tic - toc
+        stdout.flush()
+        self.kk = kk
 
-        print 'that took', tic-toc
-        sys.stdout.flush()
+    def compute_3pt_pix(self):
+        kkk = treecorr.KKKCorrelation(config=self.config_3pt)
+        toc = time.time()
+        kkk.process(self.cat)
+        tic = time.time()
+        print '3PCF took', tic - toc
+        stdout.flush()
+        self.kkk = kkk
 
-        fname = self.config['outdir']+self.config['runname']+'_'+set1+set2+set3+'.npy'
-        np.save(fname,nnn.ntri)
+    def write(self):
+        np.save(output_path + self.name + '.zeta', self.kkk.zeta)
+        np.save(output_path + self.name + '.weight', self.kkk.weight)
+        np.save(output_path + self.name + '.xi', self.kk.xi)
 
-def run_3pt_ana(config_fname, set1, set2, set3):
-    print 'constructing analysis'
-    handler = NNNProcessor(config_fname)
-    print 'handler constructed'
-    handler.run(set1,set2,set3)
+    def run(self):
+        self.make_treecorr_cat()
+        self.compute_2pt_pix()
+        self.compute_3pt_pix()
+        self.write()
+
+    def submit(self):
+        print (["bsub", "-W", "47:00", "-R", "rusage[mem=8000]",
+                "python", "-c", "import tricorder; \
+                corr = tricorder.PixelCorrelation('" + self.dset_fname
+                + "'," + self.config_fname + "); corr.run()"])
+        """
+        subprocess.call(["bsub", "-W", "47:00", "-R", "rusage[mem=8000]",
+                         "python", "-c", "import tricorder; \
+                        corr = tricorder.PixelCorrelation('" + self.dset_fname
+                         + "'," + self.config_fname + "); corr.run()"])
+        """
+
+
+class PointCorrelation (BaseCorrelation):
+    """This class will implement the code I've written before.
+
+    Work in progress re-factoring it.
+    """
+
+    def __init__(self):
+        raise NotImplementedError('will put this in soon from old code.')
