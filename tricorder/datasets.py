@@ -33,9 +33,12 @@ class BaseDataset (object):
 
     def __init__(self, datapath, maskpath, use_spec_z=True):
 
-        self.data = fits.getdata(datapath)
-        self.mask = hp.read_map(maskpath, 0, partial=True)
-        self.zmask = hp.read_map(maskpath, 1, partial=True)
+        self.datapath = datapath
+        self.maskpath = maskpath
+
+        self.data = None
+        self.mask = None
+        self.zmask = None
 
         self.n_jackknife = 30
         self.jk_labels = None
@@ -50,6 +53,17 @@ class BaseDataset (object):
             self.zvar = 'ZSPEC'
         else:
             self.zvar = 'ZREDMAGIC'
+
+    @classmethod
+    def fromfilename(cls, filename):
+        "Initialize a BaseDataset from a pickle written by self.write()"
+        datadict = pickle.load(open(filename, 'rb'))
+        return cls(datadict.items())
+
+    def load_data(self):
+        self.data = fits.getdata(self.datapath)
+        self.mask = hp.read_map(self.maskpath, 0, partial=True)
+        self.zmask = hp.read_map(self.maskpath, 1, partial=True)
 
     def pixelize_at_target_nside(self, nside):
         # this also effectively applies the mask to the data
@@ -117,16 +131,28 @@ class BaseDataset (object):
         self.data = self.data[self.data[self.zvar] < self.max_z]
 
     def compute_new_jk_regions(self):
-        data = zip(self.data['RA'], self.data['DEC'])
+        """Add jackknife labels to the healpix pixels of the data locs.
+
+        I don't think it should matter that these regions will be
+        different for each redshift slice, dataset, etc.
+        """
+        data = zip(self.pixelized[0], self.pixelized[1])
         finder = KMeans(n_clusters=self.n_jackknife)
         self.jk_labels = finder.fit_predict(data)
 
-    def pickle(self):
+    def write(self):
         """Save a BaseDataset instance as a pickle.
 
         These will be read in later by the 3PCF analysis.
         """
+
+        # don't actually pickle out this huge stuff
+        del self.data
+        del self.mask
+        del self.zmask
+
         name = str(self.zvar) + str(self.min_z) + '_' + str(self.max_z) + \
             'nside' + str(self.nside) + 'nJack' + str(self.n_jackknife)
+
         with open(name, 'wb') as pickle_file:
             pickle.dump(self, pickle_file)
