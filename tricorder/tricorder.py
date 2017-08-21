@@ -24,6 +24,7 @@ def write_default_config(runname):
 
     config_2pt['min_sep'] = 5
     config_2pt['max_sep'] = 120
+    config_2pt['nbins'] = 20
     config_2pt['sep_units'] = 'arcmin'
     config_3pt['bin_slop'] = 0.1
 
@@ -38,6 +39,7 @@ def write_default_config(runname):
     config_3pt['max_v'] = 1
     config_3pt['nvbins'] = 100
     config_3pt['bin_slop'] = 0.1
+    config_3pt['sep_units'] = 'arcmin'
 
     config_fname = output_path + runname + '.config'
     f = open(config_fname, 'w')
@@ -66,8 +68,10 @@ class PixelCorrelation (BaseCorrelation):
             print 'config file ' + config_fname + ' not found.'
             raise
 
+        self.dset_fname = dset_fname
+        self.config_fname = config_fname
         self.dataset = datasets.BaseDataset.fromfilename(dset_fname)
-        self.name = config_fname[:-7]  # drop the .config
+        self.name = config_fname.split('/')[-1][:-7] # drop the abspath and .config
         self.config_2pt = configdict['2PCF']
         self.config_3pt = configdict['3PCF']
         self.cat = None
@@ -111,16 +115,9 @@ class PixelCorrelation (BaseCorrelation):
         self.write()
 
     def submit(self):
+        command_str = "import tricorder; corr = tricorder.PixelCorrelation('" + self.dset_fname + "', '" + self.config_fname + "'); corr.run()"
         print (["bsub", "-W", "47:00", "-R", "rusage[mem=8000]",
-                "python", "-c", "import tricorder; \
-                corr = tricorder.PixelCorrelation('" + self.dset_fname
-                + "'," + self.config_fname + "); corr.run()"])
-        """
-        subprocess.call(["bsub", "-W", "47:00", "-R", "rusage[mem=8000]",
-                         "python", "-c", "import tricorder; \
-                        corr = tricorder.PixelCorrelation('" + self.dset_fname
-                         + "'," + self.config_fname + "); corr.run()"])
-        """
+                "python", "-c", command_str])
 
 
 class PointCorrelation (BaseCorrelation):
