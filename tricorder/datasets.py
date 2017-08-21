@@ -10,6 +10,7 @@ from __future__ import division
 
 import healpy as hp
 import numpy as np
+import matplotlib.pyplot as plt
 from astropy.cosmology import FlatLambdaCDM
 from astropy.io import fits
 from scipy.stats import itemfreq
@@ -72,9 +73,9 @@ class BaseDataset (object):
     def _apply_footprint_mask(self, min_ra, max_ra, min_dec, max_dec):
 
         self.mask[self.mask < .95] = hp.UNSEEN
-        self.mask[self.zmask] < .5]= hp.UNSEEN
+        self.mask[self.zmask < .5]= hp.UNSEEN
 
-        dec, ra = index_to_radec(self.mask, 4096)  # masks have nside 4096
+        dec, ra = index_to_radec(np.arange(hp.nside2npix(4096),dtype='int64'), 4096)  # masks have nside 4096
         bad_ra_dec= np.where(~((dec > min_dec) & (dec < max_dec)
                                 & (ra > min_ra) & (ra < max_ra)))
         self.mask[bad_ra_dec]= hp.UNSEEN
@@ -83,13 +84,13 @@ class BaseDataset (object):
         self._apply_footprint_data(min_ra, max_ra, min_dec, max_dec)
         self._apply_footprint_mask(min_ra, max_ra, min_dec, max_dec)
 
-    def make_sky_map(self):
-        plt.hist2d(self.data['RA'], self.data['DEC'], bins=200)
+    def make_sky_map(self,**kwargs):
+        plt.hist2d(self.data['RA'], self.data['DEC'], bins=200,**kwargs)
         plt.xlabel('RA')
         plt.ylabel('DEC')
 
-    def plot_n_z(self):
-        plt.hist(self.data[self.zvar], bins=50)
+    def plot_n_z(self,**kwargs):
+        plt.hist(self.data[self.zvar], bins=50, **kwargs)
         plt.xlabel(zvar_labels[self.zvar])
 
     def apply_z_cut(self, min_z, max_z):
