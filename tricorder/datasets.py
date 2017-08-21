@@ -38,6 +38,7 @@ class BaseDataset (object):
         self.zmask = hp.read_map(maskpath, 1, partial=True)
 
         self.n_jackknife = 30
+        self.jk_labels = None
 
         self.min_z = None
         self.max_z = None
@@ -118,13 +119,14 @@ class BaseDataset (object):
     def compute_new_jk_regions(self):
         data = zip(self.data['RA'], self.data['DEC'])
         finder = KMeans(n_clusters=self.n_jackknife)
-        self.data['jk'] = finder.fit_predict(data)
+        self.jk_labels = finder.fit_predict(data)
 
-    def pickle_to(self):
+    def pickle(self):
         """Save a BaseDataset instance as a pickle.
 
         These will be read in later by the 3PCF analysis.
         """
         name = str(self.zvar) + str(self.min_z) + '_' + str(self.max_z) + \
             'nside' + str(self.nside) + 'nJack' + str(self.n_jackknife)
-        pickle.dump(self, name)
+        with open(name, 'wb') as pickle_file:
+            pickle.dump(self, pickle_file)
