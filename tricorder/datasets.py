@@ -57,8 +57,8 @@ class BaseDataset (object):
     @classmethod
     def fromfilename(cls, filename):
         "Initialize a BaseDataset from a pickle written by self.write()"
-        datadict = pickle.load(open(filename, 'rb'))
-        return cls(datadict.items())
+        data = pickle.load(open(filename, 'rb'))
+        return data
 
     def load_data(self):
         self.data = fits.getdata(self.datapath)
