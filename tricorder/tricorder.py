@@ -60,7 +60,7 @@ class BaseCorrelation (object):
 
 class PixelCorrelation (BaseCorrelation):
 
-    def __init__(self, dset_fname, config_fname):
+    def __init__(self, dset_fname, config_fname, jk_to_omit=-1):
         try:
             with open(config_fname) as f:
                 configdict = yaml.load(f.read())
@@ -70,8 +70,11 @@ class PixelCorrelation (BaseCorrelation):
 
         self.dset_fname = dset_fname
         self.config_fname = config_fname
+        self.jk_to_omit = jk_to_omit
         self.dataset = datasets.BaseDataset.fromfilename(dset_fname)
-        self.name = config_fname.split('/')[-1][:-7] # drop the abspath and .config
+        # drop the abspath and .config
+        name = config_fname.split('/')[-1][:-7]
+        self.name = name + '_' + str(self.jk_to_omit)
         self.config_2pt = configdict['2PCF']
         self.config_3pt = configdict['3PCF']
         self.cat = None
@@ -79,9 +82,15 @@ class PixelCorrelation (BaseCorrelation):
         self.kkk = None
 
     def make_treecorr_cat(self):
-        kappa_est = (self.dataset.pixelized[2] / self.dataset.nbar) - 1
-        self.cat = treecorr.Catalog(ra=self.dataset.pixelized[0],
-                                    dec=self.dataset.pixelized[1],
+        inds_to_keep = np.where(self.dataset.jk_labels != self.jk_to_omit)
+        ra_to_use = self.dataset.pixelized[0][inds_to_keep]
+        dec_to_use = self.dataset.pixelized[1][inds_to_keep]
+        counts_to_use = self.dataset.pixelized[2][inds_to_keep]
+
+        # Probably need to fix this--nbar changes when you leave pixels out!
+        kappa_est = (counts_to_use / self.dataset.nbar) - 1
+        self.cat = treecorr.Catalog(ra=ra_to_use,
+                                    dec=dec_to_use,
                                     ra_units='degrees', dec_units='degrees',
                                     k=kappa_est)
 
@@ -115,7 +124,9 @@ class PixelCorrelation (BaseCorrelation):
         self.write()
 
     def submit(self):
-        command_str = "import tricorder; corr = tricorder.PixelCorrelation('" + self.dset_fname + "', '" + self.config_fname + "'); corr.run()"
+        command_str = "import tricorder; corr = tricorder.PixelCorrelation('" + \
+            self.dset_fname + "', '" + self.config_fname + \
+            "'," + self.jk_to_omit + "); corr.run()"
         print (["bsub", "-W", "47:00", "-R", "rusage[mem=8000]",
                 "python", "-c", command_str])
 
