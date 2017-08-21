@@ -28,6 +28,8 @@ zvar_labels = {'ZSPEC': r'$z_{true}$',
                'ZREDMAGIC': r'z_{RM}',
                }
 
+output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/redmagicHD/'
+
 
 class BaseDataset (object):
 
@@ -56,7 +58,7 @@ class BaseDataset (object):
 
     @classmethod
     def fromfilename(cls, filename):
-        "Initialize a BaseDataset from a pickle written by self.write()"
+        """Initialize a BaseDataset from a pickle written by self.write."""
         data = pickle.load(open(filename, 'rb'))
         return data
 
@@ -145,14 +147,14 @@ class BaseDataset (object):
 
         These will be read in later by the 3PCF analysis.
         """
-
         # don't actually pickle out this huge stuff
         del self.data
         del self.mask
         del self.zmask
 
-        name = str(self.zvar) + str(self.min_z) + '_' + str(self.max_z) + \
-            'nside' + str(self.nside) + 'nJack' + str(self.n_jackknife)
+        name = output_path + str(self.zvar) + str(self.min_z) + '_' + \
+            str(self.max_z) + 'nside' + str(self.nside) + 'nJack' \
+            + str(self.n_jackknife)
 
         with open(name, 'wb') as pickle_file:
             pickle.dump(self, pickle_file)
