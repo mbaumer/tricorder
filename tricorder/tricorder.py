@@ -11,6 +11,7 @@ from sys import stdout
 import numpy as np
 import treecorr
 import yaml
+import subprocess
 
 import datasets
 
@@ -126,8 +127,8 @@ class PixelCorrelation (BaseCorrelation):
     def submit(self):
         command_str = "import tricorder; corr = tricorder.PixelCorrelation('" + \
             self.dset_fname + "', '" + self.config_fname + \
-            "'," + self.jk_to_omit + "); corr.run()"
-        print (["bsub", "-W", "47:00", "-R", "rusage[mem=8000]",
+            "'," + str(self.jk_to_omit) + "); corr.run()"
+        subprocess.call(["bsub", "-W", "47:00", "-R", "rusage[mem=8000]",
                 "python", "-c", command_str])
 
 
