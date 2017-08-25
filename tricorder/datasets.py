@@ -26,14 +26,20 @@ buzzard_cosmo = FlatLambdaCDM(68.81, .295)
 
 zvar_labels = {'ZSPEC': r'$z_{true}$',
                'ZREDMAGIC': r'z_{RM}',
+               'DISTANCE': r' Comoving Distance (Mpc/$h$)'
                }
 
-output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/redmagicHD/'
+output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/'
 
 
 class BaseDataset (object):
 
     def __init__(self, datapath, maskpath, use_spec_z=True):
+
+        if not hasattr(self, 'sample_type'):
+            self.sample_type = 'unk'
+
+        self.output_path = output_path.append(self.sample_type + '/')
 
         self.datapath = datapath
         self.maskpath = maskpath
@@ -51,10 +57,6 @@ class BaseDataset (object):
         self.nside = None
         self.nbar = None
         self.pixelized = None  # tuple: (pixel ra, pixel dec, counts)
-        if use_spec_z:
-            self.zvar = 'ZSPEC'
-        else:
-            self.zvar = 'ZREDMAGIC'
 
     @classmethod
     def fromfilename(cls, filename):
@@ -97,7 +99,7 @@ class BaseDataset (object):
     def _apply_footprint_mask(self, min_ra, max_ra, min_dec, max_dec):
 
         self.mask[self.mask < .95] = hp.UNSEEN
-        self.mask[self.zmask < .5] = hp.UNSEEN
+        self.mask[self.zmask < .6] = hp.UNSEEN
 
         dec, ra = index_to_radec(np.arange(hp.nside2npix(
             4096), dtype='int64'), 4096)  # masks have nside 4096
@@ -142,6 +144,14 @@ class BaseDataset (object):
         finder = KMeans(n_clusters=self.n_jackknife)
         self.jk_labels = finder.fit_predict(data)
 
+    def make(self, nside, min_z, max_z, min_ra, max_ra, min_dec, max_dec):
+        self.load_data()
+        self.apply_footprint(min_ra, max_ra, min_dec, max_dec)
+        self.apply_z_cut(min_z, max_z)
+        self.pixelize_at_target_nside(nside)
+        self.compute_new_jk_regions()
+        self.write()
+
     def write(self):
         """Save a BaseDataset instance as a pickle.
 
@@ -158,3 +168,29 @@ class BaseDataset (object):
 
         with open(name, 'wb') as pickle_file:
             pickle.dump(self, pickle_file)
+
+
+class RedmagicDataset(BaseDataset):
+    def __init__(self, datapath, maskpath, use_spec_z=True):
+        self.sample_type = 'redmagicHD'
+        if use_spec_z:
+            self.zvar = 'ZSPEC'
+        else:
+            self.zvar = 'ZREDMAGIC'
+        super(RedmagicDataset, self).__init__(
+            datapath, maskpath, use_spec_z=True)
+
+
+class DMDataset(BaseDataset):
+    def __init__(self, datapath, maskpath):
+        self.sample_type = 'dark_matter'
+        self.output_path = output_path.append(self.sample_type + '/')
+        self.zvar = 'DISTANCE'
+        super(DMDataset, self).__init__(datapath, maskpath, use_spec_z=True)
+
+    def apply_z_cut(self, min_z, max_z):
+        # compute dist limits in Mpc/h to agree w DM DISTANCE
+        min_dist = buzzard_cosmo.comoving_distance(min_z) * buzzard_cosmo.h
+        max_dist = buzzard_cosmo.comoving_distance(max_z) * buzzard_cosmo.h
+        self.data = self.data[self.data[self.zvar] > min_dist]
+        self.data = self.data[self.data[self.zvar] < max_dist]
