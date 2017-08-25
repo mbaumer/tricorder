@@ -34,7 +34,7 @@ output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/redmagicHD/'
 class BaseDataset (object):
 
     def __init__(self, datapath, maskpath, use_spec_z=True):
- 
+
         self.datapath = datapath
         self.maskpath = maskpath
 
