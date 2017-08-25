@@ -34,7 +34,8 @@ output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/redmagicHD/'
 class BaseDataset (object):
 
     def __init__(self, datapath, maskpath, use_spec_z=True):
-
+ 
+        self.sample_type = 'redmagicHD'
         self.datapath = datapath
         self.maskpath = maskpath
 
@@ -152,7 +153,7 @@ class BaseDataset (object):
         del self.mask
         del self.zmask
 
-        name = output_path + str(self.zvar) + str(self.min_z) + '_' + \
+        name = output_path + sample_type + '_' + str(self.zvar) + str(self.min_z) + '_' + \
             str(self.max_z) + 'nside' + str(self.nside) + 'nJack' \
             + str(self.n_jackknife)
 

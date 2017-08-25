@@ -24,21 +24,21 @@ def write_default_config(runname):
     configdict = {'2PCF': config_2pt, '3PCF': config_3pt}
 
     config_2pt['min_sep'] = 5
-    config_2pt['max_sep'] = 120
+    config_2pt['max_sep'] = 135
     config_2pt['nbins'] = 20
     config_2pt['sep_units'] = 'arcmin'
     config_3pt['bin_slop'] = 0.1
 
     # 3pt params
-    config_3pt['min_sep'] = 10
-    config_3pt['max_sep'] = 60
-    config_3pt['nbins'] = 50
+    config_3pt['min_sep'] = 5
+    config_3pt['max_sep'] = 90
+    config_3pt['nbins'] = 100
     config_3pt['min_u'] = 0
     config_3pt['max_u'] = 1
     config_3pt['nubins'] = 100
     config_3pt['min_v'] = -1
     config_3pt['max_v'] = 1
-    config_3pt['nvbins'] = 100
+    config_3pt['nvbins'] = 200
     config_3pt['bin_slop'] = 0.1
     config_3pt['sep_units'] = 'arcmin'
 
@@ -88,8 +88,10 @@ class PixelCorrelation (BaseCorrelation):
         dec_to_use = self.dataset.pixelized[1][inds_to_keep]
         counts_to_use = self.dataset.pixelized[2][inds_to_keep]
 
-        # Probably need to fix this--nbar changes when you leave pixels out!
-        kappa_est = (counts_to_use / self.dataset.nbar) - 1
+        # Need to recompute nbar each time
+        nbar = np.sum(counts_to_use)/len(counts_to_use)
+        print 'nbar for this run is: ', nbar
+        kappa_est = (counts_to_use / nbar) - 1
         self.cat = treecorr.Catalog(ra=ra_to_use,
                                     dec=dec_to_use,
                                     ra_units='degrees', dec_units='degrees',
@@ -114,9 +116,10 @@ class PixelCorrelation (BaseCorrelation):
         self.kkk = kkk
 
     def write(self):
-        np.save(output_path + self.name + '.zeta', self.kkk.zeta)
-        np.save(output_path + self.name + '.weight', self.kkk.weight)
-        np.save(output_path + self.name + '.xi', self.kk.xi)
+        dataname = self.dset_fname.split('/')[-1]
+        np.save(output_path + self.name + '_' + dataname + '.zeta', self.kkk.zeta)
+        np.save(output_path + self.name + '_' + dataname + '.weight', self.kkk.weight)
+        np.save(output_path + self.name + '_' + dataname + '.xi', self.kk.xi)
 
     def run(self):
         self.make_treecorr_cat()

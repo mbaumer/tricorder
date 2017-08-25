@@ -16,7 +16,8 @@ output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/results/'
 class Results(object):
     """Analyze and plot results of 3pt analyses"""
 
-    def __init__(self, runname, n_jackknife):
+    def __init__(self, dataname, runname, n_jackknife):
+        self.dataname = dataname
         self.runname = runname
         try:
             with open(output_path + self.runname + '.config') as f:
@@ -36,7 +37,7 @@ class Results(object):
 
     def _load_data_single_run(self, jk_id):
         """Load data from single jk run."""
-        base_filename = output_path + self.runname + '_' + str(jk_id)
+        base_filename = output_path + self.dataname + self.runname + '_' + str(jk_id)
         zeta_filename = base_filename + '.zeta.npy'
         weight_filename = base_filename + '.weight.npy'
         xi_filename = base_filename + '.xi.npy'
@@ -58,9 +59,9 @@ class Results(object):
     def _analyze_single_run(self, mode, jk_id, **kwargs):
 
         if mode == 'angle':
-            get_binned_stat = _computeXvsAngle
+            get_binned_stat = self._computeXvsAngle
         if mode == 'equi':
-            get_binned_stat = _compute_x_vs_side_length
+            get_binned_stat = self._compute_x_vs_side_length
 
         binned = {}
 
@@ -72,11 +73,12 @@ class Results(object):
             self.kkk.u * np.exp(self.kkk.logr), **kwargs)
 
         unweighted_zetas, bins = get_binned_stat(
-            self.zetas[jk_id] * self.weights[jk_id], **kwargs)
+            self.zetas[jk_id] * self.weights[jk_id], stat='sum',**kwargs)
         binned['zeta'] = unweighted_zetas / \
-            get_binned_stat(self.weights['jk_id'], **kwargs)
+            get_binned_stat(self.weights[jk_id], stat='sum',**kwargs)[0]
+        binned['weights'], bins = get_binned_stat(self.weights[jk_id], stat='sum',**kwargs)
         binned['denom'] = self._get_two_point_expectation(
-            binned['d1'], binned['d2'], binned['d3'])
+            binned['d1'], binned['d2'], binned['d3'], jk_id)
         binned['q'] = binned['zeta'] / binned['denom']
         return bins, binned
 
@@ -130,10 +132,8 @@ class Results(object):
         coll_bins = np.linspace(0, transition_angle, num=N_low_bins)
         elong_bins = np.linspace(transition_angle, 180, num=nbins - N_low_bins)
 
-        collapsed_angles = _computeAngularBins(
-            np.exp(self.kkk.logr), self.kkk.u, self.kkk.v, collapsed=True)
-        elongated_angles = _computeAngularBins(
-            np.exp(self.kkk.logr), self.kkk.u, self.kkk.v, collapsed=False)
+        collapsed_angles = self._computeAngularBins(collapsed=True)
+        elongated_angles = self._computeAngularBins(collapsed=False)
         isRightSize = (np.exp(self.kkk.logr) * self.kkk.u > scale * ratio - scale * ratio * tolerance) & (
             np.exp(self.kkk.logr) * self.kkk.u < scale * ratio + scale * ratio * tolerance)
         isCollapsed = (((self.kkk.u * np.abs(self.kkk.v)) * np.exp(self.kkk.logr) + np.exp(self.kkk.logr) > scale - scale * tolerance)
