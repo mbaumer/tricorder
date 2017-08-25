@@ -62,6 +62,8 @@ class Results(object):
             get_binned_stat = self._computeXvsAngle
         if mode == 'equi':
             get_binned_stat = self._compute_x_vs_side_length
+        if mode == 'v': 
+            get_binned_stat = self._computeXvsV
 
         binned = {}
 
@@ -113,14 +115,25 @@ class Results(object):
 
     def _compute_x_vs_side_length(self, var, stat='mean', nbins=15,
                                   tolerance=.1, **kwargs):
-        isEquilateral = (ddd.self.kkk.u > 1 -
-                         tolerance) & (np.abs(ddd.self.kkk.v) < tolerance)
+        isEquilateral = (self.kkk.u > 1 -
+                         tolerance) & (np.abs(self.kkk.v) < tolerance)
         res, b, _ = binned_statistic(
-            ddd.logr[isEquilateral], var[isEquilateral],
+            self.kkk.logr[isEquilateral], var[isEquilateral],
             bins=nbins, statistic=stat)
         b += (b[1] - b[0]) / 2
         b = b[:-1]
         return res, b
+    
+    def _computeXvsV(self,var,stat='mean',nbins=15, scale=6, ratio=.5,
+                                 tolerance=.1,**kwargs):
+        isCorrectRatio = ((self.kkk.u > (ratio - tolerance*ratio)) & 
+                            (self.kkk.u < (ratio + tolerance*ratio)))
+        res, b, _ = binned_statistic(
+            np.abs(self.kkk.v[isCorrectRatio]), var[isCorrectRatio],
+            bins=nbins, statistic=stat)
+        b += (b[1] - b[0]) / 2
+        b = b[:-1]
+        return res,b
 
     def _computeXvsAngle(self, var, stat='mean', scale=6, ratio=.5,
                          tolerance=.1, nbins=15, **kwargs):
