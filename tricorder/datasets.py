@@ -162,8 +162,9 @@ class BaseDataset (object):
         del self.mask
         del self.zmask
 
-        name = output_path + str(self.zvar) + str(self.min_z) + '_' + \
-            str(self.max_z) + 'nside' + str(self.nside) + 'nJack' \
+        name = output_path + self.sample_type + '_' + str(self.zvar) + \
+            str(self.min_z) + '_' + str(self.max_z) + \
+            'nside' + str(self.nside) + 'nJack' \
             + str(self.n_jackknife)
 
         with open(name, 'wb') as pickle_file:
@@ -184,7 +185,6 @@ class RedmagicDataset(BaseDataset):
 class DMDataset(BaseDataset):
     def __init__(self, datapath, maskpath):
         self.sample_type = 'dark_matter'
-        self.output_path = output_path.append(self.sample_type + '/')
         self.zvar = 'DISTANCE'
         super(DMDataset, self).__init__(datapath, maskpath, use_spec_z=True)
 
