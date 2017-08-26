@@ -65,7 +65,8 @@ class BaseDataset (object):
         return data
 
     def load_data(self):
-        raise NotImplementedError ('Need to specify sample class to know how to load!')
+        raise NotImplementedError(
+            'Need to specify sample class to know how to load!')
 
     def pixelize_at_target_nside(self, nside):
         # this also effectively applies the mask to the data
@@ -177,7 +178,7 @@ class RedmagicDataset(BaseDataset):
             self.zvar = 'ZREDMAGIC'
         super(RedmagicDataset, self).__init__(
             datapath, maskpath, use_spec_z=True)
-        
+
     def load_data(self):
         self.data = fits.getdata(self.datapath)
         self.mask = hp.read_map(self.maskpath, 0, partial=True)
@@ -194,11 +195,13 @@ class DMDataset(BaseDataset):
         # compute dist limits in Mpc/h to agree w DM DISTANCE
         self.min_z = min_z
         self.max_z = max_z
-        min_dist = buzzard_cosmo.comoving_distance(min_z).value * buzzard_cosmo.h
-        max_dist = buzzard_cosmo.comoving_distance(max_z).value * buzzard_cosmo.h
+        min_dist = buzzard_cosmo.comoving_distance(
+            min_z).value * buzzard_cosmo.h
+        max_dist = buzzard_cosmo.comoving_distance(
+            max_z).value * buzzard_cosmo.h
         self.data = self.data[self.data[self.zvar] > min_dist]
         self.data = self.data[self.data[self.zvar] < max_dist]
-        
+
     def load_data(self):
         self.data = fits.getdata(self.datapath)
         # to move DM octant into south to overlap with DES mask.
