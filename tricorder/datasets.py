@@ -39,7 +39,7 @@ class BaseDataset (object):
         if not hasattr(self, 'sample_type'):
             self.sample_type = 'unk'
 
-        self.output_path = output_path.append(self.sample_type + '/')
+        self.output_path = output_path + self.sample_type + '/'
 
         self.datapath = datapath
         self.maskpath = maskpath
@@ -65,9 +65,7 @@ class BaseDataset (object):
         return data
 
     def load_data(self):
-        self.data = fits.getdata(self.datapath)
-        self.mask = hp.read_map(self.maskpath, 0, partial=True)
-        self.zmask = hp.read_map(self.maskpath, 1, partial=True)
+        raise NotImplementedError ('Need to specify sample class to know how to load!')
 
     def pixelize_at_target_nside(self, nside):
         # this also effectively applies the mask to the data
@@ -146,11 +144,10 @@ class BaseDataset (object):
 
     def make(self, nside, min_z, max_z, min_ra, max_ra, min_dec, max_dec):
         self.load_data()
-        self.apply_footprint(min_ra, max_ra, min_dec, max_dec)
         self.apply_z_cut(min_z, max_z)
+        self.apply_footprint(min_ra, max_ra, min_dec, max_dec)
         self.pixelize_at_target_nside(nside)
         self.compute_new_jk_regions()
-        self.write()
 
     def write(self):
         """Save a BaseDataset instance as a pickle.
@@ -162,7 +159,7 @@ class BaseDataset (object):
         del self.mask
         del self.zmask
 
-        name = output_path + self.sample_type + '_' + str(self.zvar) + \
+        name = self.output_path + str(self.zvar) + \
             str(self.min_z) + '_' + str(self.max_z) + \
             'nside' + str(self.nside) + 'nJack' \
             + str(self.n_jackknife)
@@ -180,6 +177,11 @@ class RedmagicDataset(BaseDataset):
             self.zvar = 'ZREDMAGIC'
         super(RedmagicDataset, self).__init__(
             datapath, maskpath, use_spec_z=True)
+        
+    def load_data(self):
+        self.data = fits.getdata(self.datapath)
+        self.mask = hp.read_map(self.maskpath, 0, partial=True)
+        self.zmask = hp.read_map(self.maskpath, 1, partial=True)
 
 
 class DMDataset(BaseDataset):
@@ -190,7 +192,16 @@ class DMDataset(BaseDataset):
 
     def apply_z_cut(self, min_z, max_z):
         # compute dist limits in Mpc/h to agree w DM DISTANCE
-        min_dist = buzzard_cosmo.comoving_distance(min_z) * buzzard_cosmo.h
-        max_dist = buzzard_cosmo.comoving_distance(max_z) * buzzard_cosmo.h
+        self.min_z = min_z
+        self.max_z = max_z
+        min_dist = buzzard_cosmo.comoving_distance(min_z).value * buzzard_cosmo.h
+        max_dist = buzzard_cosmo.comoving_distance(max_z).value * buzzard_cosmo.h
         self.data = self.data[self.data[self.zvar] > min_dist]
         self.data = self.data[self.data[self.zvar] < max_dist]
+        
+    def load_data(self):
+        self.data = fits.getdata(self.datapath)
+        # to move DM octant into south to overlap with DES mask.
+        self.data['DEC'] = -self.data['DEC']
+        self.mask = hp.read_map(self.maskpath, 0, partial=True)
+        self.zmask = hp.read_map(self.maskpath, 1, partial=True)

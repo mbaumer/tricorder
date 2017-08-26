@@ -5,13 +5,13 @@ I think this will end up handling 2- and 3-point correlations.
 
 from __future__ import division
 
-import subprocess
 import time
 from sys import stdout
 
 import numpy as np
 import treecorr
 import yaml
+import subprocess
 
 import datasets
 
@@ -23,14 +23,13 @@ def write_default_config(runname):
     config_3pt = {}
     configdict = {'2PCF': config_2pt, '3PCF': config_3pt}
 
-    # 2PT PARAMS
     config_2pt['min_sep'] = 5
     config_2pt['max_sep'] = 135
     config_2pt['nbins'] = 20
     config_2pt['sep_units'] = 'arcmin'
     config_3pt['bin_slop'] = 0.1
 
-    # 3PT PARAMS
+    # 3pt params
     config_3pt['min_sep'] = 5
     config_3pt['max_sep'] = 90
     config_3pt['nbins'] = 100
@@ -90,7 +89,7 @@ class PixelCorrelation (BaseCorrelation):
         counts_to_use = self.dataset.pixelized[2][inds_to_keep]
 
         # Need to recompute nbar each time
-        nbar = np.sum(counts_to_use) / len(counts_to_use)
+        nbar = np.sum(counts_to_use)/len(counts_to_use)
         print 'nbar for this run is: ', nbar
         kappa_est = (counts_to_use / nbar) - 1
         self.cat = treecorr.Catalog(ra=ra_to_use,
@@ -118,10 +117,8 @@ class PixelCorrelation (BaseCorrelation):
 
     def write(self):
         dataname = self.dset_fname.split('/')[-1]
-        np.save(output_path + self.name + '_' +
-                dataname + '.zeta', self.kkk.zeta)
-        np.save(output_path + self.name + '_' +
-                dataname + '.weight', self.kkk.weight)
+        np.save(output_path + self.name + '_' + dataname + '.zeta', self.kkk.zeta)
+        np.save(output_path + self.name + '_' + dataname + '.weight', self.kkk.weight)
         np.save(output_path + self.name + '_' + dataname + '.xi', self.kk.xi)
 
     def run(self):
@@ -135,7 +132,7 @@ class PixelCorrelation (BaseCorrelation):
             self.dset_fname + "', '" + self.config_fname + \
             "'," + str(self.jk_to_omit) + "); corr.run()"
         subprocess.call(["bsub", "-W", "47:00", "-R", "rusage[mem=8000]",
-                         "python", "-c", command_str])
+                "python", "-c", command_str])
 
 
 class PointCorrelation (BaseCorrelation):

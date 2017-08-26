@@ -23,7 +23,7 @@ def make_gadget_catalog(frac):
             fullcat = coordinates.concatenate([fullcat,newcat])
     return fullcat
 
-def save_dm_catalog(fullcat):
+def save_dm_catalog(fullcat,frac):
     hdu = fits.open('/nfs/slac/g/ki/ki19/des/mbaumer/3pt_data/redmagic_data.fits')
     c1 = fits.Column(name='RA', format='D', array=fullcat.ra)
     c2 = fits.Column(name='DEC', format='D', array=fullcat.dec)
@@ -31,7 +31,7 @@ def save_dm_catalog(fullcat):
     coldefs = fits.ColDefs([c1, c2, c3])
     tbhdu = fits.BinTableHDU.from_columns(coldefs)
     hdu[1] = tbhdu
-    hdu.writeto('dm_cat_'+str(box_size)+'Mpc_data.fits',clobber=True)
+    hdu.writeto('/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/dark_matter/dm_cat_'+str(box_size)+'h-1Mpc_data_10pct_downsampled.fits',clobber=True)
     
 def save_random_catalog(cat,oversample_factor):
     random_ra = 90*np.random.rand(oversample_factor*len(cat.ra))
@@ -46,10 +46,10 @@ def save_random_catalog(cat,oversample_factor):
     hdu[1] = tbhdu2
     hdu.writeto('dm_cat_'+str(box_size)+'Mpc_randoms_0.fits',clobber=True)
     
-def make_DM_catalogs(frac=0.01,oversample_factor=5):
+def make_DM_catalogs(frac=0.1,oversample_factor=5):
     gadget_cat = make_gadget_catalog(frac)
-    save_dm_catalog(gadget_cat)
-    save_random_catalog(gadget_cat,oversample_factor)
+    save_dm_catalog(gadget_cat,frac)
+    #save_random_catalog(gadget_cat,oversample_factor)
     
 if __name__ == '__main__':
     make_DM_catalogs()
