@@ -36,8 +36,8 @@ class Results(object):
 
     def _load_data_single_run(self, jk_id):
         """Load data from single jk run."""
-        base_filename = output_path + self.dataname + \
-            self.runname + '_' + str(jk_id)
+        base_filename = output_path + self.runname + '_' + str(jk_id) \
+            + '_' + self.dataname
         zeta_filename = base_filename + '.zeta.npy'
         weight_filename = base_filename + '.weight.npy'
         xi_filename = base_filename + '.xi.npy'
