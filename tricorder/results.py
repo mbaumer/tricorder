@@ -59,6 +59,9 @@ class Results(object):
             results.append(binned)
         return results, bins
 
+    def plot(self, **kwargs):
+        pass
+
     def _analyze_single_run(self, mode, jk_id, **kwargs):
 
         if mode == 'angle':
