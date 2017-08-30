@@ -4,16 +4,17 @@ Will also include the bias inference code.
 """
 
 import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import treecorr
 import yaml
 from astropy.cosmology import FlatLambdaCDM
 from scipy.stats import binned_statistic
+import cPickle as pickle
 
 import datasets
 
-matplotlib.use('Agg')
 buzzard_cosmo = FlatLambdaCDM(68.81, .295)
 
 
@@ -24,7 +25,8 @@ plot_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/plots/'
 class Results(object):
     """Analyze and plot results of 3pt analyses."""
 
-    def __init__(self, dataname, runname, n_jackknife):
+    def __init__(self, dataname, runname, sample_type, n_jackknife):
+        self.sample_type = sample_type #redmagicHD, dark_matter
         self.dataname = dataname
         self.runname = runname
         config_fname = output_path + self.runname + '.config'
@@ -71,27 +73,34 @@ class Results(object):
         for scale in [15, 30, 45, 60, 75]:
             for ratio in [.5, 1.0]:
                 for tolerance in [.2]:
-                    out, bins = self.analyze(
-                        'angle', scale=scale, ratio=ratio,
-                        tolerance=tolerance, nbins=16)
-                    self.make_plots('q', bins, out, scale=scale,
-                                    ratio=ratio, tolerance=tolerance, nbins=16)
-                    self.make_plots('zeta', bins, out, scale=scale,
-                                    ratio=ratio, tolerance=tolerance, nbins=16)
-                    self.make_plots('denom', bins, out, scale=scale,
-                                    ratio=ratio, tolerance=tolerance, nbins=16)
-                    self.make_plots('weights', bins, out, scale=scale,
-                                    ratio=ratio, tolerance=tolerance, nbins=16,
-                                    make_covmat=False)
-                    self.make_plots('d1', bins, out, scale=scale,
-                                    ratio=ratio, tolerance=tolerance, nbins=16,
-                                    make_covmat=False)
-                    self.make_plots('d2', bins, out, scale=scale,
-                                    ratio=ratio, tolerance=tolerance, nbins=16,
-                                    make_covmat=False)
-                    self.make_plots('d3', bins, out, scale=scale,
-                                    ratio=ratio, tolerance=tolerance, nbins=16,
-                                    make_covmat=False)
+                    for nbins in [16]:
+                        out, bins = self.analyze(
+                            'angle', scale=scale, ratio=ratio,
+                            tolerance=tolerance, nbins=nbins)
+                        self.make_plots('q', bins, out, scale=scale,
+                                        ratio=ratio, tolerance=tolerance, nbins=nbins)
+                        self.make_plots('zeta', bins, out, scale=scale,
+                                        ratio=ratio, tolerance=tolerance, nbins=nbins)
+                        self.make_plots('denom', bins, out, scale=scale,
+                                        ratio=ratio, tolerance=tolerance, nbins=nbins)
+                        self.make_plots('weights', bins, out, scale=scale,
+                                        ratio=ratio, tolerance=tolerance, nbins=nbins,
+                                        make_covmat=False)
+                        self.make_plots('d1', bins, out, scale=scale,
+                                        ratio=ratio, tolerance=tolerance, nbins=nbins,
+                                        make_covmat=False)
+                        self.make_plots('d2', bins, out, scale=scale,
+                                        ratio=ratio, tolerance=tolerance, nbins=nbins,
+                                        make_covmat=False)
+                        self.make_plots('d3', bins, out, scale=scale,
+                                        ratio=ratio, tolerance=tolerance, nbins=nbins,
+                                        make_covmat=False)
+                        base_name = plot_path + self.dataname + '_' + self.runname + '_' + str(scale) + \
+                            '_' + str(ratio) + '_' + str(tolerance) + \
+                            '_' + str(nbins)
+                        out_tup = (out,bins)
+                        with open(base_name+'.res','wb') as f:
+                            pickle.dump(out_tup,f)
 
     def make_plots(self, var, bins, out, scale=30, nbins=16, tolerance=.3,
                    ratio=.5, make_covmat=True):
@@ -108,7 +117,7 @@ class Results(object):
         plt.xlabel('Angle')
         plt.ylabel(var)
         dset = datasets.BaseDataset.fromfilename(
-            datasets.output_path + 'redmagicHD/' + self.dataname)
+            datasets.output_path + self.sample_type + '/' + self.dataname)
         mean_z = np.mean([dset.max_z, dset.min_z])
         lg_dist = np.round(buzzard_cosmo.kpc_comoving_per_arcmin(
             mean_z).value / 1000 * scale * buzzard_cosmo.h, 1)
@@ -119,14 +128,15 @@ class Results(object):
             '_' + str(ratio) + '_' + str(tolerance) + \
             '_' + str(nbins) + '_' + var
         plt.savefig(base_name + '.png')
-        plt.figure()
-        covmat = jk_factor * np.cov(out_vec)
-        plt.imshow(covmat, interpolation='None', origin='lower',
-                   extent=[0, 180, 0, 180], cmap='RdBu_r')
-        plt.title(self.dataname)
-        cbar = plt.colorbar()
-        cbar.set_label(var)
-        plt.savefig(base_name + '_covmat.png')
+        if make_covmat:
+            plt.figure()
+            covmat = jk_factor * np.cov(out_vec)
+            plt.imshow(covmat, interpolation='None', origin='lower',
+                       extent=[0, 180, 0, 180], cmap='RdBu_r')
+            plt.title(self.dataname)
+            cbar = plt.colorbar()
+            cbar.set_label(var)
+            plt.savefig(base_name + '_covmat.png')
 
     def _analyze_single_run(self, mode, jk_id, **kwargs):
 
@@ -202,8 +212,10 @@ class Results(object):
                      tolerance=.1, **kwargs):
         isCorrectRatio = ((self.kkk.u > (ratio - tolerance * ratio)) &
                           (self.kkk.u < (ratio + tolerance * ratio)))
+        isCorrectSize = ((np.exp(self.kkk.logr) > scale-scale*tolerance) &
+                         (np.exp(self.kkk.logr) < scale+scale*tolerance))
         res, b, _ = binned_statistic(
-            np.abs(self.kkk.v[isCorrectRatio]), var[isCorrectRatio],
+            np.abs(self.kkk.v[isCorrectRatio & isCorrectSize]), var[isCorrectRatio & isCorrectSize],
             bins=nbins, statistic=stat)
         b += (b[1] - b[0]) / 2
         b = b[:-1]
@@ -213,8 +225,8 @@ class Results(object):
                          tolerance=.1, nbins=15, **kwargs):
 
         # angle at which elongate becomes collapsed
-        # TODO maybe different for ratios other than 0.5?
-        transition_angle = np.arccos(.25) / np.pi * 180
+        # changed fixed 0.25 to ratio/2 so ratio can vary
+        transition_angle = np.arccos(ratio/2) / np.pi * 180
         N_low_bins = np.floor(transition_angle / 180 * nbins)
         coll_bins = np.linspace(0, transition_angle, num=N_low_bins)
         elong_bins = np.linspace(transition_angle, 180, num=nbins - N_low_bins)
