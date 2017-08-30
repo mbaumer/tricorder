@@ -3,12 +3,22 @@
 Will also include the bias inference code.
 """
 
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import treecorr
 import yaml
+from astropy.cosmology import FlatLambdaCDM
 from scipy.stats import binned_statistic
 
+import datasets
+
+matplotlib.use('Agg')
+buzzard_cosmo = FlatLambdaCDM(68.81, .295)
+
+
 output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/results/'
+plot_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/plots/'
 
 
 class Results(object):
@@ -56,8 +66,67 @@ class Results(object):
             results.append(binned)
         return results, bins
 
-    def plot(self, **kwargs):
-        pass
+    def analyze_many_scales(self, **kwargs):
+        self.load_all_data()
+        for scale in [15, 30, 45, 60, 75]:
+            for ratio in [.5, 1.0]:
+                for tolerance in [.2]:
+                    out, bins = self.analyze(
+                        'angle', scale=scale, ratio=ratio,
+                        tolerance=tolerance, nbins=16)
+                    self.make_plots('q', bins, out, scale=scale,
+                                    ratio=ratio, tolerance=tolerance, nbins=16)
+                    self.make_plots('zeta', bins, out, scale=scale,
+                                    ratio=ratio, tolerance=tolerance, nbins=16)
+                    self.make_plots('denom', bins, out, scale=scale,
+                                    ratio=ratio, tolerance=tolerance, nbins=16)
+                    self.make_plots('weights', bins, out, scale=scale,
+                                    ratio=ratio, tolerance=tolerance, nbins=16,
+                                    make_covmat=False)
+                    self.make_plots('d1', bins, out, scale=scale,
+                                    ratio=ratio, tolerance=tolerance, nbins=16,
+                                    make_covmat=False)
+                    self.make_plots('d2', bins, out, scale=scale,
+                                    ratio=ratio, tolerance=tolerance, nbins=16,
+                                    make_covmat=False)
+                    self.make_plots('d3', bins, out, scale=scale,
+                                    ratio=ratio, tolerance=tolerance, nbins=16,
+                                    make_covmat=False)
+
+    def make_plots(self, var, bins, out, scale=30, nbins=16, tolerance=.3,
+                   ratio=.5, make_covmat=True):
+        out_vec = []
+        for res1 in out:
+            out_vec.append(res1[var])
+        out_vec = np.array(out_vec)
+        out_vec = out_vec.T
+        plt.plot(bins, out_vec, color='k', alpha=.1)
+        # use number of jk analyses that finished.
+        jk_factor = (out_vec.shape[1] - 1.0) / out_vec.shape[1]
+        plt.errorbar(bins, np.mean(out_vec, axis=1), color='g', marker='o', linestyle='.',
+                     linewidth=3, yerr=np.sqrt(jk_factor * np.var(out_vec, axis=1)))
+        plt.xlabel('Angle')
+        plt.ylabel(var)
+        dset = datasets.BaseDataset.fromfilename(
+            datasets.output_path + 'redmagicHD/' + self.dataname)
+        mean_z = np.mean([dset.max_z, dset.min_z])
+        lg_dist = np.round(buzzard_cosmo.kpc_comoving_per_arcmin(
+            mean_z).value / 1000 * scale * buzzard_cosmo.h, 1)
+        sm_dist = np.round(lg_dist * ratio, 1)
+        plt.title(str(dset.min_z) + '<z<' + str(dset.max_z) + '; ' + str(scale * ratio) + "\':" + str(scale) +
+                  "\' = " + str(sm_dist) + ':' + str(lg_dist) + ' Mpc/h +/- ' + str(100 * tolerance) + '%')
+        base_name = plot_path + self.dataname + '_' + self.runname + '_' + str(scale) + \
+            '_' + str(ratio) + '_' + str(tolerance) + \
+            '_' + str(nbins) + '_' + var
+        plt.savefig(base_name + '.png')
+        plt.figure()
+        covmat = jk_factor * np.cov(out_vec)
+        plt.imshow(covmat, interpolation='None', origin='lower',
+                   extent=[0, 180, 0, 180], cmap='RdBu_r')
+        plt.title(self.dataname)
+        cbar = plt.colorbar()
+        cbar.set_label(var)
+        plt.savefig(base_name + '_covmat.png')
 
     def _analyze_single_run(self, mode, jk_id, **kwargs):
 
