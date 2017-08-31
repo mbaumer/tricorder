@@ -26,7 +26,8 @@ buzzard_cosmo = FlatLambdaCDM(68.81, .295)
 
 zvar_labels = {'ZSPEC': r'$z_{true}$',
                'ZREDMAGIC': r'z_{RM}',
-               'DISTANCE': r' Comoving Distance (Mpc/$h$)'
+               'DISTANCE': r' Comoving Distance (Mpc/$h$)',
+               'REDSHIFT': r'$z_{true}$',
                }
 
 output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/'
@@ -208,3 +209,36 @@ class DMDataset(BaseDataset):
         self.data['DEC'] = -self.data['DEC']
         self.mask = hp.read_map(self.maskpath, 0, partial=True)
         self.zmask = hp.read_map(self.maskpath, 1, partial=True)
+        
+class LSSDataset(BaseDataset):
+    def __init__(self):
+        self.sample_type = 'lss_sample'
+        self.zvar = 'REDSHIFT'
+        super(LSSDataset, self).__init__(None, None, use_spec_z=True)
+        
+    def load_data(self):
+        mock = 1
+        gold = fits.getdata('/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock{0}/mergedcats/Buzzard_v1.1_{0}_gold.fits.gz'.format(mock))
+        lss = gold[(gold['SAMPLE'] == 1) + (gold['SAMPLE'] == 3)]
+        c1 = fits.Column(name='RA', array=lss['ra'], format='E')
+        c2 = fits.Column(name='DEC', array=lss['dec'], format='E')
+        c3 = fits.Column(name='REDSHIFT', array=lss['redshift'], format='E')
+        t = fits.BinTableHDU.from_columns([c1, c2, c3])
+        self.data = t.data
+        
+        footprint = hp.read_map('/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_footprint_4096.fits.gz')
+        badmask = hp.read_map('/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_badmask_4096.fits.gz')
+        nodup = hp.read_map('/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/depthmaps/nodup_ssmask.fits')
+        lss_mask = (footprint >= 1) * (badmask == 0) * (nodup != -9999)
+        new_mask = hp.UNSEEN*np.ones(hp.nside2npix(4096))
+        new_mask[lss_mask] = 1
+        self.mask = new_mask
+        
+    def _apply_footprint_mask(self, min_ra, max_ra, min_dec, max_dec):
+
+        dec, ra = index_to_radec(np.arange(hp.nside2npix(
+            4096), dtype='int64'), 4096)  # masks have nside 4096
+        bad_ra_dec = np.where(~((dec > min_dec) & (dec < max_dec)
+                                & (ra > min_ra) & (ra < max_ra)))
+        self.mask[bad_ra_dec] = hp.UNSEEN
+
