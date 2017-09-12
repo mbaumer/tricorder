@@ -27,19 +27,19 @@ def write_default_config(runname):
     config_2pt['max_sep'] = 135
     config_2pt['nbins'] = 20
     config_2pt['sep_units'] = 'arcmin'
-    config_3pt['bin_slop'] = 0.1
+    config_3pt['bin_slop'] = 0
 
     # 3pt params
-    config_3pt['min_sep'] = 5
-    config_3pt['max_sep'] = 90
-    config_3pt['nbins'] = 100
-    config_3pt['min_u'] = 0
-    config_3pt['max_u'] = 1
-    config_3pt['nubins'] = 100
+    config_3pt['min_sep'] = 85
+    config_3pt['max_sep'] = 95
+    config_3pt['nbins'] = 1
+    config_3pt['min_u'] = .25
+    config_3pt['max_u'] = .95
+    config_3pt['nubins'] = 7
     config_3pt['min_v'] = -1
     config_3pt['max_v'] = 1
-    config_3pt['nvbins'] = 200
-    config_3pt['bin_slop'] = 0.1
+    config_3pt['nvbins'] = 20
+    config_3pt['bin_slop'] = 0
     config_3pt['sep_units'] = 'arcmin'
 
     config_fname = output_path + runname + '.config'

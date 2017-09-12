@@ -150,6 +150,7 @@ class BaseDataset (object):
         self.apply_footprint(min_ra, max_ra, min_dec, max_dec)
         self.pixelize_at_target_nside(nside)
         self.compute_new_jk_regions()
+        self.write()
 
     def write(self):
         """Save a BaseDataset instance as a pickle.

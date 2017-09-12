@@ -59,11 +59,14 @@ class Results(object):
 
     def load_all_data(self):
         for i in xrange(self.n_jackknife):
-            self._load_data_single_run(i)
+            try:
+                self._load_data_single_run(i)
+            except IOError:
+                print 'file for jk region '+str(i)+'not found'
 
     def analyze(self, mode, **kwargs):
         results = []
-        for i in xrange(self.n_jackknife):
+        for i in xrange(len(self.zetas)):
             bins, binned = self._analyze_single_run(mode, i, **kwargs)
             results.append(binned)
         return results, bins
