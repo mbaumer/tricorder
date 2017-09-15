@@ -30,8 +30,8 @@ def write_default_config(runname):
     config_3pt['bin_slop'] = 0
 
     # 3pt params
-    config_3pt['min_sep'] = 85
-    config_3pt['max_sep'] = 95
+    config_3pt['min_sep'] = 80
+    config_3pt['max_sep'] = 100
     config_3pt['nbins'] = 1
     config_3pt['min_u'] = .25
     config_3pt['max_u'] = .95
