@@ -211,7 +211,7 @@ class RedmagicDataset(BaseDataset):
 
 
 class DMDataset(BaseDataset):
-    def __init__(self, datapath, maskpath):
+    def __init__(self):
         self.sample_type = 'dark_matter'
         self.zvar = 'DISTANCE'
         self.datapath = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/dark_matter/dm_cat_2600Mpc_data.fits'
