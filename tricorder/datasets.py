@@ -153,7 +153,8 @@ class BaseDataset (object):
     def generate_randoms(self, oversamp):
         """Generate randoms with oversamp times the density of the data."""
         # uses more memory, but don't want this method to edit real mask.
-        zero_mask = copy(self.mask)
+        #zero_mask = copy(self.mask)
+        zero_mask = self.mask
         zero_mask[zero_mask == hp.UNSEEN] = 0
         dmask = hu.DensityMap('ring', self.mask)
         randoms = {}
