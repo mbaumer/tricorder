@@ -18,9 +18,8 @@ from astropy.io import fits
 from scipy.stats import itemfreq
 from sklearn.cluster import KMeans
 
-# upgrade to this at some point:
-# import healpix_util as hu
-from make_data_randoms import index_to_radec, radec_to_index
+from make_data_randoms import (generate_randoms_radec, index_to_radec,
+                               radec_to_index)
 
 buzzard_cosmo = FlatLambdaCDM(68.81, .295)
 
@@ -30,22 +29,22 @@ zvar_labels = {'ZSPEC': r'$z_{true}$',
                'REDSHIFT': r'$z_{true}$',
                }
 
-output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/'
+mock = 'Buzzard_v1.1'
+
+output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/' + mock + '/'
 
 
 class BaseDataset (object):
 
-    def __init__(self, datapath, maskpath, use_spec_z=True):
+    def __init__(self):
 
         if not hasattr(self, 'sample_type'):
             self.sample_type = 'unk'
 
         self.output_path = output_path + self.sample_type + '/'
 
-        self.datapath = datapath
-        self.maskpath = maskpath
-
         self.data = None
+        self.randoms = None
         self.mask = None
         self.zmask = None
 
@@ -76,6 +75,10 @@ class BaseDataset (object):
             self.mask, pess=True, nside_out=self.nside)
         gal_index_targetnside = radec_to_index(
             self.data['DEC'], self.data['RA'], self.nside)
+
+        # prune data that's in a bad part of the mask
+        self.data = self.data[mask_targetnside[gal_index_targetnside] != hp.UNSEEN]
+
         counts = itemfreq(gal_index_targetnside)
         full_map_counts = np.zeros(hp.nside2npix(self.nside))
         full_map_counts[counts[:, 0]] = counts[:, 1]
@@ -144,13 +147,71 @@ class BaseDataset (object):
         finder = KMeans(n_clusters=self.n_jackknife)
         self.jk_labels = finder.fit_predict(data)
 
-    def make(self, nside, min_z, max_z, min_ra, max_ra, min_dec, max_dec):
+    def generate_randoms(self, oversamp,
+                         Ngen=1000000, Ntries_max=10000):
+
+        Ncurrent = 0
+        Ntry = 0
+        Ntot = len(self.data) * oversamp
+
+        minra = min(self.data['RA'])
+        maxra = max(self.data['RA'])
+        mindec = min(self.data['DEC'])
+        maxdec = max(self.data['DEC'])
+
+        zdist = self.data[self.zvar]
+
+        random_ra = []
+        random_dec = []
+        random_z = []
+        while ((Ncurrent < Ntot) & (Ntry < Ntries_max)):
+            if Ntry % 100 == 1:
+                print(Ntry, Ntries_max, Ncurrent, Ntot, Ngen)
+            # generate random ra and dec
+            ra_i, dec_i = generate_randoms_radec(minra, maxra,
+                                                 mindec, maxdec, Ngen)
+            indices_i = radec_to_index(dec_i, ra_i, 4096)
+
+            good_index = np.in1d(indices_i, np.where(self.mask != hp.UNSEEN))
+            ra_i = ra_i[good_index]
+            dec_i = dec_i[good_index]
+            indices_i = indices_i[good_index]
+
+            z_i = np.random.choice(zdist, len(ra_i))
+
+            random_ra += list(ra_i)
+            random_dec += list(dec_i)
+            random_z += list(z_i)
+
+            Ncurrent = len(random_ra)
+            Ntry += 1
+        if Ntry >= Ntries_max:
+            print('Warning! We gave up after {0} tries, finding {1} objects instead of the desired {2} objects!'.format(
+                Ntry, Ncurrent, Ntot))
+
+        randoms = np.zeros(len(random_ra), dtype=[
+                           ('RA', '>f4'), ('DEC', '>f4'), (self.zvar, '>f4')])
+        randoms['RA'] = random_ra
+        randoms['DEC'] = random_dec
+        randoms[self.zvar] = random_z
+
+        if len(randoms) > Ntot:
+            inds_to_keep = np.random.choice(np.arange(len(randoms)), size=Ntot,
+                                            replace=False)
+            randoms = randoms[inds_to_keep]
+
+        self.randoms = randoms
+
+    def make(self, nside, oversamp, min_z, max_z, min_ra,
+             max_ra, min_dec, max_dec, write=True):
         self.load_data()
         self.apply_z_cut(min_z, max_z)
         self.apply_footprint(min_ra, max_ra, min_dec, max_dec)
         self.pixelize_at_target_nside(nside)
+        self.generate_randoms(oversamp)
         self.compute_new_jk_regions()
-        self.write()
+        if write:
+            self.write()
 
     def write(self):
         """Save a BaseDataset instance as a pickle.
@@ -158,7 +219,6 @@ class BaseDataset (object):
         These will be read in later by the 3PCF analysis.
         """
         # don't actually pickle out this huge stuff
-        del self.data
         del self.mask
         del self.zmask
 
@@ -210,31 +270,36 @@ class DMDataset(BaseDataset):
         self.data['DEC'] = -self.data['DEC']
         self.mask = hp.read_map(self.maskpath, 0, partial=True)
         self.zmask = hp.read_map(self.maskpath, 1, partial=True)
-        
+
+
 class LSSDataset(BaseDataset):
     def __init__(self):
         self.sample_type = 'lss_sample'
         self.zvar = 'REDSHIFT'
         super(LSSDataset, self).__init__(None, None, use_spec_z=True)
-        
+
     def load_data(self):
         mock = 1
-        gold = fits.getdata('/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock{0}/mergedcats/Buzzard_v1.1_{0}_gold.fits.gz'.format(mock))
+        gold = fits.getdata(
+            '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock{0}/mergedcats/Buzzard_v1.1_{0}_gold.fits.gz'.format(mock))
         lss = gold[(gold['SAMPLE'] == 1) + (gold['SAMPLE'] == 3)]
         c1 = fits.Column(name='RA', array=lss['ra'], format='E')
         c2 = fits.Column(name='DEC', array=lss['dec'], format='E')
         c3 = fits.Column(name='REDSHIFT', array=lss['redshift'], format='E')
         t = fits.BinTableHDU.from_columns([c1, c2, c3])
         self.data = t.data
-        
-        footprint = hp.read_map('/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_footprint_4096.fits.gz')
-        badmask = hp.read_map('/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_badmask_4096.fits.gz')
-        nodup = hp.read_map('/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/depthmaps/nodup_ssmask.fits')
+
+        footprint = hp.read_map(
+            '/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_footprint_4096.fits.gz')
+        badmask = hp.read_map(
+            '/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_badmask_4096.fits.gz')
+        nodup = hp.read_map(
+            '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/depthmaps/nodup_ssmask.fits')
         lss_mask = (footprint >= 1) * (badmask == 0) * (nodup != -9999)
-        new_mask = hp.UNSEEN*np.ones(hp.nside2npix(4096))
+        new_mask = hp.UNSEEN * np.ones(hp.nside2npix(4096))
         new_mask[lss_mask] = 1
         self.mask = new_mask
-        
+
     def _apply_footprint_mask(self, min_ra, max_ra, min_dec, max_dec):
 
         dec, ra = index_to_radec(np.arange(hp.nside2npix(
@@ -242,4 +307,3 @@ class LSSDataset(BaseDataset):
         bad_ra_dec = np.where(~((dec > min_dec) & (dec < max_dec)
                                 & (ra > min_ra) & (ra < max_ra)))
         self.mask[bad_ra_dec] = hp.UNSEEN
-
