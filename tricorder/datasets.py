@@ -107,8 +107,9 @@ class BaseDataset (object):
         self.mask[self.mask < .95] = hp.UNSEEN
         self.mask[self.zmask < .6] = hp.UNSEEN
 
-        dec, ra = index_to_radec(np.arange(hp.nside2npix(
-            4096), dtype='int64'), 4096)  # masks have nside 4096
+        hpix = hu.HealPix('ring', 4096)
+        ra, dec = hpix.pix2eq(np.arange(hp.nside2npix(
+            4096), dtype='int64'))  # masks have nside 4096
         bad_ra_dec = np.where(~((dec > min_dec) & (dec < max_dec)
                                 & (ra > min_ra) & (ra < max_ra)))
         self.mask[bad_ra_dec] = hp.UNSEEN
