@@ -232,14 +232,16 @@ class BaseDataset (object):
 
 
 class RedmagicDataset(BaseDataset):
-    def __init__(self, datapath, maskpath, use_spec_z=True):
+    def __init__(self, use_spec_z=True):
         self.sample_type = 'redmagicHD'
         if use_spec_z:
             self.zvar = 'ZSPEC'
         else:
             self.zvar = 'ZREDMAGIC'
-        super(RedmagicDataset, self).__init__(
-            datapath, maskpath, use_spec_z=True)
+        self.datapath = '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock1/redmagic/buzzard-v1.1-y1a1-spt_mock1_redmapper_v6.4.13_redmagic_higherlum_1.5-01.fit'
+        self.maskpath = '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock1/redmagic/buzzard-v1.1-y1a1-spt_mock1_run_redmapper_v6.4.13_redmagic_1.5_vlim_zmask.fit'
+
+        super(RedmagicDataset, self).__init__()
 
     def load_data(self):
         self.data = fits.getdata(self.datapath)
@@ -248,10 +250,12 @@ class RedmagicDataset(BaseDataset):
 
 
 class DMDataset(BaseDataset):
-    def __init__(self, datapath, maskpath):
+    def __init__(self, use_spec_z=True):
         self.sample_type = 'dark_matter'
         self.zvar = 'DISTANCE'
-        super(DMDataset, self).__init__(datapath, maskpath, use_spec_z=True)
+        self.datapath = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/dark_matter/dm_cat_2600Mpc_data.fits'
+        self.maskpath = '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock1/redmagic/buzzard-v1.1-y1a1-spt_mock1_run_redmapper_v6.4.13_redmagic_1.5_vlim_zmask.fit'
+        super(DMDataset, self).__init__()
 
     def apply_z_cut(self, min_z, max_z):
         # compute dist limits in Mpc/h to agree w DM DISTANCE
@@ -273,10 +277,12 @@ class DMDataset(BaseDataset):
 
 
 class LSSDataset(BaseDataset):
-    def __init__(self):
+    def __init__(self, use_spec_z=True):
         self.sample_type = 'lss_sample'
         self.zvar = 'REDSHIFT'
-        super(LSSDataset, self).__init__(None, None, use_spec_z=True)
+        self.datapath = None
+        self.maskpath = None
+        super(LSSDataset, self).__init__()
 
     def load_data(self):
         mock = 1
