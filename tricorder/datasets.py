@@ -62,6 +62,8 @@ class BaseDataset (object):
     def fromfilename(cls, filename):
         """Initialize a BaseDataset from a pickle written by self.write."""
         data = pickle.load(open(filename, 'rb'))
+        data.data = np.load(filename + '_data.npy')
+        data.randoms = np.load(filename + '_randoms.npy')
         return data
 
     def load_data(self):
