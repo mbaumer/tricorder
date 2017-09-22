@@ -227,6 +227,14 @@ class BaseDataset (object):
             'nside' + str(self.nside) + 'nJack' \
             + str(self.n_jackknife)
 
+        if self.data is not None:
+            np.save(name + '_data.npy', self.data)
+        del self.data
+
+        if self.randoms is not None:
+            np.save(name + '_randoms.npy', self.randoms)
+        del self.randoms
+
         with open(name, 'wb') as pickle_file:
             pickle.dump(self, pickle_file, protocol=2)
 
