@@ -228,7 +228,7 @@ class BaseDataset (object):
             + str(self.n_jackknife)
 
         with open(name, 'wb') as pickle_file:
-            pickle.dump(self, pickle_file)
+            pickle.dump(self, pickle_file, protocol=2)
 
 
 class RedmagicDataset(BaseDataset):
