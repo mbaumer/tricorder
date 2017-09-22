@@ -91,7 +91,10 @@ class PixelCorrelation (BaseCorrelation):
         self.kkk = None
 
     def make_treecorr_cat(self):
-        inds_to_keep = np.where(self.dataset.jk_labels != self.jk_to_omit)
+        if self.jk_to_omit != -1:
+            inds_to_keep = np.where(self.dataset.jk_labels != self.jk_to_omit)
+        else:
+            inds_to_keep = np.arange(len(self.dataset.pixelized[0]))
         ra_to_use = self.dataset.pixelized[0][inds_to_keep]
         dec_to_use = self.dataset.pixelized[1][inds_to_keep]
         counts_to_use = self.dataset.pixelized[2][inds_to_keep]
@@ -180,7 +183,10 @@ class PointCorrelation (BaseCorrelation):
         self.nnn = None
 
     def make_treecorr_cat(self):
-        inds_to_keep = np.where(self.dataset.jk_labels != self.jk_to_omit)
+        if self.jk_to_omit != -1:
+            inds_to_keep = np.where(self.dataset.jk_labels != self.jk_to_omit)
+        else:
+            inds_to_keep = np.arange(len(self.dataset.data['RA']))
         ra_to_use = self.dataset.data['RA'][inds_to_keep]
         rand_ra_to_use = self.dataset.randoms['RA'][inds_to_keep]
         dec_to_use = self.dataset.data['DEC'][inds_to_keep]
@@ -211,9 +217,9 @@ class PointCorrelation (BaseCorrelation):
         dr = treecorr.NNCorrelation(config=self.config_2pt)
         rr = treecorr.NNCorrelation(config=self.config_2pt)
         toc = time.time()
-        dd.process(self.cat)
-        dr.process(self.cat, self.random_cat)
-        rr.process(self.random_cat)
+        dd.process(self.cat, metric=self.config_2pt['metric'])
+        dr.process(self.cat, self.random_cat, metric=self.config_2pt['metric'])
+        rr.process(self.random_cat, metric=self.config_2pt['metric'])
         self.xi, varxi = dd.calculateXi(dr=dr, rr=rr)
         tic = time.time()
         print '2PCF took', tic - toc
@@ -224,7 +230,8 @@ class PointCorrelation (BaseCorrelation):
         toc = time.time()
         setdict = {'d': self.cat, 'r': self.random_cat}
         nnn.process(setdict[self.set_str[0]],
-                    setdict[self.set_str[1]], setdict[self.set_str[2]])
+                    setdict[self.set_str[1]], setdict[self.set_str[2]],
+                    metric=self.config_3pt['metric'])
         tic = time.time()
         print '3PCF took', tic - toc
         stdout.flush()
@@ -232,19 +239,23 @@ class PointCorrelation (BaseCorrelation):
 
     def write(self):
         dataname = self.dset_fname.split('/')[-1]
-        if self.do3D:
+        if self.do3D and self.config_3pt['metric'] == 'Rperp':
             res_dir = 'point_proj_results/'
+        elif self.do3D and self.config_3pt['metric'] == 'Euclidean':
+            res_dir = 'point_3D_results/'
         else:
             res_dir = 'point_ang_results/'
         results_prefix = output_path + datasets.mock + \
             '/' + self.dataset.sample_type + '/' + res_dir
-        np.save(results_prefix + self.name + '_' +
-                dataname + '.' + self.set_str + 'weight', self.nnn.weight)
+
         if self.set_str == 'ddd':
             self.nnn.write(results_prefix + self.name +
                            '_' + dataname + '.ddd')
             np.save(results_prefix + self.name +
                     '_' + dataname + '.xi', self.xi)
+        else:
+            np.save(results_prefix + self.name + '_' +
+                    dataname + '.' + self.set_str + 'weight', self.nnn.weight)
 
     def run(self):
         self.make_treecorr_cat()
