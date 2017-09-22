@@ -267,6 +267,7 @@ class PointCorrelation (BaseCorrelation):
     def submit(self):
         command_str = "import tricorder; corr = tricorder.PointCorrelation('" + \
             self.dset_fname + "', '" + self.config_fname + \
-            "'," + str(self.jk_to_omit) + "); corr.run()"
+            "', '" + self.set_str + "', " + \
+            str(self.jk_to_omit) + "); corr.run()"
         subprocess.call(["bsub", "-W", "47:00", "-R", "rusage[mem=8000]",
                          "python", "-c", command_str])
