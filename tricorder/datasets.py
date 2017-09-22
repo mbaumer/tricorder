@@ -222,7 +222,7 @@ class BaseDataset (object):
         del self.mask
         del self.zmask
 
-        name = self.output_path + str(self.zvar) + \
+        name = self.output_path + 'data/' + str(self.zvar) + \
             str(self.min_z) + '_' + str(self.max_z) + \
             'nside' + str(self.nside) + 'nJack' \
             + str(self.n_jackknife)
