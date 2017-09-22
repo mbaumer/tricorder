@@ -15,7 +15,7 @@ import yaml
 
 import datasets
 
-output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/results/'
+output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/'
 
 
 def write_default_config(runname):
@@ -50,7 +50,7 @@ def write_default_config(runname):
         config_3pt['sep_units'] = 'arcmin'
     config_3pt['metric'] = metric
 
-    config_fname = output_path + runname + '.config'
+    config_fname = output_path + 'configs/' + runname + '.config'
     f = open(config_fname, 'w')
     f.write(yaml.dump(configdict))
     f.close()
@@ -125,11 +125,15 @@ class PixelCorrelation (BaseCorrelation):
 
     def write(self):
         dataname = self.dset_fname.split('/')[-1]
-        np.save(output_path + self.name + '_' +
+        res_dir = 'pix_results/'
+        results_prefix = output_path + datasets.mock + \
+            '/' + self.dataset.sample_type + '/' + res_dir
+        np.save(results_prefix + self.name + '_' +
                 dataname + '.zeta', self.kkk.zeta)
-        np.save(output_path + self.name + '_' +
+        np.save(results_prefix + self.name + '_' +
                 dataname + '.weight', self.kkk.weight)
-        np.save(output_path + self.name + '_' + dataname + '.xi', self.kk.xi)
+        np.save(results_prefix + self.name +
+                '_' + dataname + '.xi', self.kk.xi)
 
     def run(self):
         self.make_treecorr_cat()
@@ -228,11 +232,19 @@ class PointCorrelation (BaseCorrelation):
 
     def write(self):
         dataname = self.dset_fname.split('/')[-1]
-        np.save(output_path + self.name + '_' +
+        if self.do3D:
+            res_dir = 'point_proj_results/'
+        else:
+            res_dir = 'point_ang_results/'
+        results_prefix = output_path + datasets.mock + \
+            '/' + self.dataset.sample_type + '/' + res_dir
+        np.save(results_prefix + self.name + '_' +
                 dataname + '.' + self.set_str + 'weight', self.nnn.weight)
         if self.set_str == 'ddd':
-            self.nnn.write(output_path + self.name + '_' + dataname + '.ddd')
-            np.save(output_path + self.name + '_' + dataname + '.xi', self.xi)
+            self.nnn.write(results_prefix + self.name +
+                           '_' + dataname + '.ddd')
+            np.save(results_prefix + self.name +
+                    '_' + dataname + '.xi', self.xi)
 
     def run(self):
         self.make_treecorr_cat()
