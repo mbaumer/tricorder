@@ -73,10 +73,13 @@ class BaseDataset (object):
     def pixelize_at_target_nside(self, nside):
         # this also effectively applies the mask to the data
         self.nside = nside
+        #so averages are computed in downgrade
+        self.mask[self.mask == hp.UNSEEN] = 0
         mask_targetnside = hp.pixelfunc.ud_grade(
-            self.mask, pess=True, nside_out=self.nside)
+            self.mask, pess=False, nside_out=self.nside)
         gal_index_targetnside = radec_to_index(
             self.data['DEC'], self.data['RA'], self.nside)
+        mask_targetnside[mask_targetnside == 0] = hp.UNSEEN
 
         # prune data that's in a bad part of the mask
         self.data = self.data[mask_targetnside[gal_index_targetnside] != hp.UNSEEN]
@@ -248,8 +251,8 @@ class RedmagicDataset(BaseDataset):
             self.zvar = 'ZSPEC'
         else:
             self.zvar = 'ZREDMAGIC'
-        self.datapath = '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock1/redmagic/buzzard-v1.1-y1a1-spt_mock1_redmapper_v6.4.13_redmagic_higherlum_1.5-01.fit'
-        self.maskpath = '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock1/redmagic/buzzard-v1.1-y1a1-spt_mock1_run_redmapper_v6.4.13_redmagic_1.5_vlim_zmask.fit'
+        self.datapath = '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock1/redmagic/buzzard-v1.1-y1a1-spt_mock1_run_redmapper_v6.4.13_redmagic_highdens_0.5-10.fit'
+        self.maskpath = '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock1/redmagic/buzzard-v1.1-y1a1-spt_mock1_run_0.5_redmapper_v6.4.13_redmagic_0.5_vlim_zmask.fit'
 
         super(RedmagicDataset, self).__init__()
 
@@ -264,7 +267,7 @@ class DMDataset(BaseDataset):
         self.sample_type = 'dark_matter'
         self.zvar = 'DISTANCE'
         self.datapath = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/dark_matter/dm_cat_2600Mpc_data.fits'
-        self.maskpath = '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock1/redmagic/buzzard-v1.1-y1a1-spt_mock1_run_redmapper_v6.4.13_redmagic_1.5_vlim_zmask.fit'
+        self.maskpath = '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock1/redmagic/buzzard-v1.1-y1a1-spt_mock1_run_0.5_redmapper_v6.4.13_redmagic_0.5_vlim_zmask.fit'
         super(DMDataset, self).__init__()
 
     def apply_z_cut(self, min_z, max_z):
