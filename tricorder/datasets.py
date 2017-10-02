@@ -73,7 +73,7 @@ class BaseDataset (object):
     def pixelize_at_target_nside(self, nside):
         # this also effectively applies the mask to the data
         self.nside = nside
-        #so averages are computed in downgrade
+        # so averages are computed in downgrade
         self.mask[self.mask == hp.UNSEEN] = 0
         mask_targetnside = hp.pixelfunc.ud_grade(
             self.mask, pess=False, nside_out=self.nside)
@@ -230,7 +230,7 @@ class BaseDataset (object):
         name = self.output_path + 'data/' + str(self.zvar) + \
             str(self.min_z) + '_' + str(self.max_z) + \
             'nside' + str(self.nside) + 'nJack' \
-            + str(self.n_jackknife)
+            + str(self.n_jackknife) + '.dset'
 
         if self.data is not None:
             np.save(name + '_data.npy', self.data)
