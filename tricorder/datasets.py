@@ -74,12 +74,13 @@ class BaseDataset (object):
         # this also effectively applies the mask to the data
         self.nside = nside
         # so averages are computed in downgrade
-        self.mask[self.mask == hp.UNSEEN] = 0
+        self.mask[self.mask == hp.UNSEEN] = 0  # step 1
         mask_targetnside = hp.pixelfunc.ud_grade(
             self.mask, pess=False, nside_out=self.nside)
         gal_index_targetnside = radec_to_index(
             self.data['DEC'], self.data['RA'], self.nside)
         mask_targetnside[mask_targetnside == 0] = hp.UNSEEN
+        self.mask[self.mask == 0] = hp.UNSEEN  # undo step 1
 
         # prune data that's in a bad part of the mask
         self.data = self.data[mask_targetnside[gal_index_targetnside] != hp.UNSEEN]
