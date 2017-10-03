@@ -223,18 +223,10 @@ class PointCorrelation (BaseCorrelation):
         dr = treecorr.NNCorrelation(config=self.config_2pt)
         rr = treecorr.NNCorrelation(config=self.config_2pt)
         toc = time.time()
-        if self.config_2pt['metric'] == 'Rperp':
-            dd.process(self.cat, metric=self.config_2pt['metric'],
-                       min_rpar=self.config_2pt['min_rpar'], max_rpar=self.config_2pt['max_rpar'])
-            dr.process(self.cat, self.random_cat, metric=self.config_2pt['metric'],
-                       min_rpar=self.config_2pt['min_rpar'], max_rpar=self.config_2pt['max_rpar'])
-            rr.process(self.random_cat, metric=self.config_2pt['metric'],
-                       min_rpar=self.config_2pt['min_rpar'], max_rpar=self.config_2pt['max_rpar'])
-        else:
-            dd.process(self.cat, metric=self.config_2pt['metric'])
-            dr.process(self.cat, self.random_cat,
-                       metric=self.config_2pt['metric'])
-            rr.process(self.random_cat, metric=self.config_2pt['metric'])
+        dd.process(self.cat, metric=self.config_2pt['metric'])
+        dr.process(self.cat, self.random_cat,
+                   metric=self.config_2pt['metric'])
+        rr.process(self.random_cat, metric=self.config_2pt['metric'])
         self.xi, varxi = dd.calculateXi(dr=dr, rr=rr)
         tic = time.time()
         print '2PCF took', tic - toc
@@ -244,15 +236,9 @@ class PointCorrelation (BaseCorrelation):
         nnn = treecorr.NNNCorrelation(config=self.config_3pt)
         toc = time.time()
         setdict = {'d': self.cat, 'r': self.random_cat}
-        if self.config_3pt['metric'] == 'Rperp':
-            nnn.process(setdict[self.set_str[0]],
-                        setdict[self.set_str[1]], setdict[self.set_str[2]],
-                        metric=self.config_3pt['metric'], min_rpar=self.config_3pt['min_rpar'],
-                        max_rpar=self.config_3pt['max_rpar'])
-        else:
-            nnn.process(setdict[self.set_str[0]],
-                        setdict[self.set_str[1]], setdict[self.set_str[2]],
-                        metric=self.config_3pt['metric'])
+        nnn.process(setdict[self.set_str[0]],
+                    setdict[self.set_str[1]], setdict[self.set_str[2]],
+                    metric=self.config_3pt['metric'])
         tic = time.time()
         print '3PCF took', tic - toc
         stdout.flush()
