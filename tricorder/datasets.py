@@ -29,7 +29,7 @@ zvar_labels = {'ZSPEC': r'$z_{true}$',
                'REDSHIFT': r'$z_{true}$',
                }
 
-mock = 'Buzzard_v1.1'
+mock = 'Buzzard_v1.6'
 
 output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/' + mock + '/'
 
@@ -46,7 +46,6 @@ class BaseDataset (object):
         self.data = None
         self.randoms = None
         self.mask = None
-        self.zmask = None
 
         self.n_jackknife = 30
         self.jk_labels = None
@@ -106,9 +105,6 @@ class BaseDataset (object):
         self.data = self.data[self.data['DEC'] < max_dec]
 
     def _apply_footprint_mask(self, min_ra, max_ra, min_dec, max_dec):
-
-        self.mask[self.mask < .95] = hp.UNSEEN
-        self.mask[self.zmask < .6] = hp.UNSEEN
 
         dec, ra = index_to_radec(np.arange(hp.nside2npix(
             4096), dtype='int64'), 4096)  # masks have nside 4096
@@ -226,7 +222,6 @@ class BaseDataset (object):
         """
         # don't actually pickle out this huge stuff
         del self.mask
-        del self.zmask
 
         name = self.output_path + 'data/' + str(self.zvar) + \
             str(self.min_z) + '_' + str(self.max_z) + \
@@ -260,8 +255,9 @@ class RedmagicDataset(BaseDataset):
     def load_data(self):
         self.data = fits.getdata(self.datapath)
         self.mask = hp.read_map(self.maskpath, 0, partial=True)
-        self.zmask = hp.read_map(self.maskpath, 1, partial=True)
-
+        zmask = hp.read_map(self.maskpath, 1, partial=True)
+        self.mask[self.mask < .95] = hp.UNSEEN
+        self.mask[zmask < .6] = hp.UNSEEN
 
 class DMDataset(BaseDataset):
     def __init__(self, use_spec_z=True):
@@ -287,7 +283,9 @@ class DMDataset(BaseDataset):
         # to move DM octant into south to overlap with DES mask.
         self.data['DEC'] = -self.data['DEC']
         self.mask = hp.read_map(self.maskpath, 0, partial=True)
-        self.zmask = hp.read_map(self.maskpath, 1, partial=True)
+        zmask = hp.read_map(self.maskpath, 1, partial=True)
+        self.mask[self.mask < .95] = hp.UNSEEN
+        self.mask[zmask < .6] = hp.UNSEEN
 
 
 class LSSDataset(BaseDataset):
@@ -319,11 +317,3 @@ class LSSDataset(BaseDataset):
         new_mask = hp.UNSEEN * np.ones(hp.nside2npix(4096))
         new_mask[lss_mask] = 1
         self.mask = new_mask
-
-    def _apply_footprint_mask(self, min_ra, max_ra, min_dec, max_dec):
-
-        dec, ra = index_to_radec(np.arange(hp.nside2npix(
-            4096), dtype='int64'), 4096)  # masks have nside 4096
-        bad_ra_dec = np.where(~((dec > min_dec) & (dec < max_dec)
-                                & (ra > min_ra) & (ra < max_ra)))
-        self.mask[bad_ra_dec] = hp.UNSEEN
