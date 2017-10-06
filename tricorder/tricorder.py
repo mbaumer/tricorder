@@ -22,13 +22,16 @@ def write_default_config(runname):
 
     metric = 'Euclidean'
     do3D = False
+    scale_angle_w_redshift = True
 
     config_2pt = {}
     config_3pt = {}
-    configdict = {'2PCF': config_2pt, '3PCF': config_3pt, 'do3D': do3D}
+    configdict = {'2PCF': config_2pt, '3PCF': config_3pt, 
+                  'do3D': do3D,
+                  'scale_angle_w_redshift' : scale_angle_w_redshift}
 
-    config_2pt['min_sep'] = 5
-    config_2pt['max_sep'] = 135
+    config_2pt['min_sep'] = 1
+    config_2pt['max_sep'] = 50
     config_2pt['nbins'] = 20
     if not do3D:
         config_2pt['sep_units'] = 'arcmin'
@@ -39,8 +42,8 @@ def write_default_config(runname):
     #config_2pt['max_rpar'] = 50
 
     # 3pt params
-    config_3pt['min_sep'] = 68
-    config_3pt['max_sep'] = 112
+    config_3pt['min_sep'] = 14
+    config_3pt['max_sep'] = 22
     config_3pt['nbins'] = 1
     config_3pt['min_u'] = .25
     config_3pt['max_u'] = .95
@@ -90,6 +93,16 @@ class PixelCorrelation (BaseCorrelation):
         # drop the abspath and .config
         name = config_fname.split('/')[-1][:-7]
         self.name = name + '_' + str(self.jk_to_omit)
+        
+        if configdict['scale_angle_w_redshift']:
+            avg_redshift = (self.dataset.min_z + self.dataset.max_z)/2
+            arcmin_per_mpc = datasets.buzzard_cosmo.arcsec_per_kpc_comoving(avg_redshift).value/60*1000
+            
+            configdict['2PCF']['min_sep'] = configdict['2PCF']['min_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
+            configdict['2PCF']['max_sep'] = configdict['2PCF']['max_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
+            configdict['3PCF']['min_sep'] = configdict['3PCF']['min_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
+            configdict['3PCF']['max_sep'] = configdict['3PCF']['max_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
+        
         self.config_2pt = configdict['2PCF']
         self.config_3pt = configdict['3PCF']
         self.cat = None
@@ -154,7 +167,7 @@ class PixelCorrelation (BaseCorrelation):
         command_str = "import tricorder; corr = tricorder.PixelCorrelation('" + \
             self.dset_fname + "', '" + self.config_fname + \
             "'," + str(self.jk_to_omit) + "); corr.run()"
-        subprocess.call(["bsub", "-W", "47:00", "-R", "rusage[mem=8000]",
+        subprocess.call(["bsub", "-W", "47:00", "-R", "rusage[mem=2000]",
                          "python", "-c", command_str])
 
 
@@ -180,6 +193,17 @@ class PointCorrelation (BaseCorrelation):
         # drop the abspath and .config
         name = config_fname.split('/')[-1][:-7]
         self.name = name + '_' + str(self.jk_to_omit)
+        
+        if configdict['scale_angle_w_redshift']:
+            #avg_redshift = (self.dataset.min_z + self.dataset.max_z)/2
+            avg_redshift = np.median(self.dataset.data[self.dataset.zvar])
+            arcmin_per_mpc = datasets.buzzard_cosmo.arcsec_per_kpc_comoving(avg_redshift).value/60*1000
+            
+            configdict['2PCF']['min_sep'] = configdict['2PCF']['min_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
+            configdict['2PCF']['max_sep'] = configdict['2PCF']['max_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
+            configdict['3PCF']['min_sep'] = configdict['3PCF']['min_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
+            configdict['3PCF']['max_sep'] = configdict['3PCF']['max_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
+        
         self.config_2pt = configdict['2PCF']
         self.config_3pt = configdict['3PCF']
         self.do3D = configdict['do3D']
@@ -201,10 +225,10 @@ class PointCorrelation (BaseCorrelation):
             dist_to_use = self.dataset.data[self.dataset.zvar][inds_to_keep]
             rand_dist_to_use = self.dataset.randoms[self.dataset.zvar][inds_to_keep]
         elif self.do3D:
-            dist_to_use = datasets.buzzard_cosmo.comoving_distance(
-                self.dataset.data[self.dataset.zvar])[inds_to_keep]
-            rand_dist_to_use = datasets.buzzard_cosmo.comoving_distance(
-                self.dataset.randoms[self.dataset.zvar])[inds_to_keep]
+            dist_to_use = datasets.buzzard_cosmo.h*datasets.buzzard_cosmo.comoving_distance(
+                self.dataset.data[self.dataset.zvar]).value[inds_to_keep]
+            rand_dist_to_use = datasets.buzzard_cosmo.h*datasets.buzzard_cosmo.comoving_distance(
+                self.dataset.randoms[self.dataset.zvar]).value[inds_to_keep]
         else:
             dist_to_use = None
             rand_dist_to_use = None
@@ -276,5 +300,5 @@ class PointCorrelation (BaseCorrelation):
             self.dset_fname + "', '" + self.config_fname + \
             "', '" + self.set_str + "', " + \
             str(self.jk_to_omit) + "); corr.run()"
-        subprocess.call(["bsub", "-W", "47:00", "-R", "rusage[mem=8000]",
+        subprocess.call(["bsub", "-W", "47:00", "-R", "rusage[mem=2000]",
                          "python", "-c", command_str])
