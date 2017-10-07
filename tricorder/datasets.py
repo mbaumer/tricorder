@@ -29,7 +29,7 @@ zvar_labels = {'ZSPEC': r'$z_{true}$',
                'REDSHIFT': r'$z_{true}$',
                }
 
-mock = 'Buzzard_v1.6'
+mock = 'Buzzard_v1.3a'
 
 output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/' + mock + '/'
 
@@ -247,8 +247,8 @@ class RedmagicDataset(BaseDataset):
             self.zvar = 'ZSPEC'
         else:
             self.zvar = 'ZREDMAGIC'
-        self.datapath = '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock1/redmagic/buzzard-v1.1-y1a1-spt_mock1_run_redmapper_v6.4.13_redmagic_highdens_0.5-10.fit'
-        self.maskpath = '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock1/redmagic/buzzard-v1.1-y1a1-spt_mock1_run_0.5_redmapper_v6.4.13_redmagic_0.5_vlim_zmask.fit'
+        self.datapath = '/u/ki/jderose/public_html/buzzard-flock/flock/Chinchilla-1/redmagic/redmagic_Y1a/buzzard_1.3_a_run_redmapper_v6.4.16_redmagic_highdens_0.5-10.fit'
+        self.maskpath = '/u/ki/jderose/public_html/buzzard-flock/flock/Chinchilla-1/redmagic/redmagic_Y1a/buzzard_1.3_a_run_redmapper_v6.4.16_redmagic_highdens_0.5_vlim_zmask.fit'
 
         super(RedmagicDataset, self).__init__()
 
@@ -262,26 +262,20 @@ class RedmagicDataset(BaseDataset):
 class DMDataset(BaseDataset):
     def __init__(self, use_spec_z=True):
         self.sample_type = 'dark_matter'
-        self.zvar = 'DISTANCE'
-        self.datapath = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/dark_matter/dm_cat_2600Mpc_data.fits'
-        self.maskpath = '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock1/redmagic/buzzard-v1.1-y1a1-spt_mock1_run_0.5_redmapper_v6.4.13_redmagic_0.5_vlim_zmask.fit'
+        self.zvar = 'REDSHIFT'
+        self.datapath = '/u/ki/jderose/public_html/buzzard-flock/flock/Chinchilla-1/downsampled_particles/buzzard_1a_highdens/downsampled_particles.fits'
+        self.maskpath = '/u/ki/jderose/public_html/buzzard-flock/flock/Chinchilla-1/redmagic/redmagic_Y1a/buzzard_1.3_a_run_redmapper_v6.4.16_redmagic_highdens_0.5_vlim_zmask.fit'
         super(DMDataset, self).__init__()
 
-    def apply_z_cut(self, min_z, max_z):
-        # compute dist limits in Mpc/h to agree w DM DISTANCE
-        self.min_z = min_z
-        self.max_z = max_z
-        min_dist = buzzard_cosmo.comoving_distance(
-            min_z).value * buzzard_cosmo.h
-        max_dist = buzzard_cosmo.comoving_distance(
-            max_z).value * buzzard_cosmo.h
-        self.data = self.data[self.data[self.zvar] > min_dist]
-        self.data = self.data[self.data[self.zvar] < max_dist]
-
     def load_data(self):
-        self.data = fits.getdata(self.datapath)
-        # to move DM octant into south to overlap with DES mask.
-        self.data['DEC'] = -self.data['DEC']
+        data = fits.getdata(self.datapath)
+
+        c1 = fits.Column(name='RA', array=data['azim_ang'], format='E')
+        c2 = fits.Column(name='DEC', array=lss['polar_ang'], format='E')
+        c3 = fits.Column(name='REDSHIFT', array=lss['redshift'], format='E')
+        t = fits.BinTableHDU.from_columns([c1, c2, c3])
+        self.data = t.data
+
         self.mask = hp.read_map(self.maskpath, 0, partial=True)
         zmask = hp.read_map(self.maskpath, 1, partial=True)
         self.mask[self.mask < .95] = hp.UNSEEN
@@ -292,28 +286,24 @@ class LSSDataset(BaseDataset):
     def __init__(self, use_spec_z=True):
         self.sample_type = 'lss_sample'
         self.zvar = 'REDSHIFT'
-        self.datapath = None
-        self.maskpath = None
+        self.datapath = '/u/ki/jderose/public_html/buzzard-flock/flock/Chinchilla-1/mergedcats/Y1a/Buzzard_v1.2_1_gold.fits.gz'
+        self.maskpath = ['/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_footprint_4096.fits.gz',
+                         '/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_badmask_4096.fits.gz'
+                         ]
         super(LSSDataset, self).__init__()
 
     def load_data(self):
-        mock = 1
-        gold = fits.getdata(
-            '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/y1a1_mock_analysis/mock{0}/mergedcats/Buzzard_v1.1_{0}_gold.fits.gz'.format(mock))
-        lss = gold[(gold['SAMPLE'] == 1) + (gold['SAMPLE'] == 3)]
+        gold = fits.getdata(self.datapath)
+        lss = gold[gold['lss-sample'] == 1]
         c1 = fits.Column(name='RA', array=lss['ra'], format='E')
         c2 = fits.Column(name='DEC', array=lss['dec'], format='E')
         c3 = fits.Column(name='REDSHIFT', array=lss['redshift'], format='E')
         t = fits.BinTableHDU.from_columns([c1, c2, c3])
         self.data = t.data
 
-        footprint = hp.read_map(
-            '/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_footprint_4096.fits.gz')
-        badmask = hp.read_map(
-            '/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_badmask_4096.fits.gz')
-        nodup = hp.read_map(
-            '/nfs/slac/des/fs1/g/sims/jderose/addgals/catalogs/Buzzard/Catalog_v1.1/depthmaps/nodup_ssmask.fits')
-        lss_mask = (footprint >= 1) * (badmask == 0) * (nodup != -9999)
+        footprint = hp.read_map(self.maskpath[0])
+        badmask = hp.read_map(self.maskpath[1])
+        lss_mask = (footprint >= 1) * (badmask == 0)
         new_mask = hp.UNSEEN * np.ones(hp.nside2npix(4096))
         new_mask[lss_mask] = 1
         self.mask = new_mask
