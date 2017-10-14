@@ -2,20 +2,21 @@ import subprocess
 from glob import glob
 
 dset_fname_vec = glob(
-    '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/Buzzard_v1.1/lss_sample/data/RED*.dset')
+    '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/Buzzard_v1.3a/lss_sample/data/RED*.dset')
 dset_fname_vec += glob(
-    '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/Buzzard_v1.1/dark_matter/data/DIST*.dset')
+    '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/Buzzard_v1.3a/dark_matter/data/RED*.dset')
 dset_fname_vec += glob(
-    '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/Buzzard_v1.1/redmagicHD/data/ZSPEC*.dset')
+    '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/Buzzard_v1.3a/redmagicHD/data/ZSPEC*.dset')
 
 #'/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test2_proj_rpar50.config',
 #'/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test2_proj_rpar100.config',
 #'/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test2_3d.config',
 
-config_fname_pointvec = ['/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test3_3d.config',
-                         '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test3_angular.config']
+config_fname_pointvec = ['/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test4_angular.config']
 
-config_fname_pixvec = ['/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test3_angular.config']
+config_fname_pixvec = ['/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test4_angular.config',
+                       '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test5_angular.config',
+                       '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test6_angular.config']
 
 for dset_fname in dset_fname_vec:
     

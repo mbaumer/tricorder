@@ -21,8 +21,8 @@ output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/'
 def write_default_config(runname):
 
     metric = 'Euclidean'
-    do3D = False
-    scale_angle_w_redshift = True
+    do3D = True
+    scale_angle_w_redshift = False
 
     config_2pt = {}
     config_3pt = {}
@@ -38,12 +38,12 @@ def write_default_config(runname):
     config_2pt['bin_slop'] = 0
     config_2pt['metric'] = metric
 
-    #config_2pt['min_rpar'] = -50
-    #config_2pt['max_rpar'] = 50
+    #config_2pt['min_rpar'] = -20
+    #config_2pt['max_rpar'] = 20
 
     # 3pt params
-    config_3pt['min_sep'] = 14
-    config_3pt['max_sep'] = 22
+    config_3pt['min_sep'] = 16
+    config_3pt['max_sep'] = 20
     config_3pt['nbins'] = 1
     config_3pt['min_u'] = .25
     config_3pt['max_u'] = .95
@@ -56,8 +56,8 @@ def write_default_config(runname):
         config_3pt['sep_units'] = 'arcmin'
     config_3pt['metric'] = metric
 
-    #config_3pt['min_rpar'] = -50
-    #config_3pt['max_rpar'] = 50
+    #config_3pt['min_rpar'] = -20
+    #config_3pt['max_rpar'] = 20
 
     config_fname = output_path + 'configs/' + runname + '.config'
     f = open(config_fname, 'w')

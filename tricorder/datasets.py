@@ -271,8 +271,8 @@ class DMDataset(BaseDataset):
         data = fits.getdata(self.datapath)
 
         c1 = fits.Column(name='RA', array=data['azim_ang'], format='E')
-        c2 = fits.Column(name='DEC', array=lss['polar_ang'], format='E')
-        c3 = fits.Column(name='REDSHIFT', array=lss['redshift'], format='E')
+        c2 = fits.Column(name='DEC', array=data['polar_ang'], format='E')
+        c3 = fits.Column(name='REDSHIFT', array=data['redshift'], format='E')
         t = fits.BinTableHDU.from_columns([c1, c2, c3])
         self.data = t.data
 
