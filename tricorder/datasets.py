@@ -29,7 +29,7 @@ zvar_labels = {'ZSPEC': r'$z_{true}$',
                'REDSHIFT': r'$z_{true}$',
                }
 
-mock = 'Buzzard_v1.3a'
+mock = 'Buzzard_v1.6_Y1_0_a'
 
 output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/' + mock + '/'
 
@@ -247,8 +247,8 @@ class RedmagicDataset(BaseDataset):
             self.zvar = 'ZSPEC'
         else:
             self.zvar = 'ZREDMAGIC'
-        self.datapath = '/u/ki/jderose/public_html/buzzard-flock/flock/Chinchilla-1/redmagic/redmagic_Y1a/buzzard_1.3_a_run_redmapper_v6.4.16_redmagic_highdens_0.5-10.fit'
-        self.maskpath = '/u/ki/jderose/public_html/buzzard-flock/flock/Chinchilla-1/redmagic/redmagic_Y1a/buzzard_1.3_a_run_redmapper_v6.4.16_redmagic_highdens_0.5_vlim_zmask.fit'
+        self.datapath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit'
+        self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
 
         super(RedmagicDataset, self).__init__()
 
@@ -259,17 +259,33 @@ class RedmagicDataset(BaseDataset):
         self.mask[self.mask < .95] = hp.UNSEEN
         self.mask[zmask < .6] = hp.UNSEEN
 
+class MICERedmagicDataset(BaseDataset):
+    def __init__(self, use_spec_z=True):
+        self.sample_type = 'redmagicHD'
+        if use_spec_z:
+            self.zvar = 'ZSPEC'
+        else:
+            self.zvar = 'ZREDMAGIC'
+        self.datapath = '/nfs/slac/g/ki/ki23/des/jderose/des/MICE/redmagic/mice2_des_run_redmapper_v6.4.16_redmagic_highdens_0.5-10.fit'
+        self.maskpath = None
+
+        super(MICERedmagicDataset, self).__init__()
+
+    def load_data(self):
+        self.data = fits.getdata(self.datapath)
+        self.data['DEC'] = -self.data['DEC']
+        self.mask = np.ones(hp.nside2npix(4096))
+            
 class DMDataset(BaseDataset):
     def __init__(self, use_spec_z=True):
         self.sample_type = 'dark_matter'
         self.zvar = 'REDSHIFT'
-        self.datapath = '/u/ki/jderose/public_html/buzzard-flock/flock/Chinchilla-1/downsampled_particles/buzzard_1a_highdens/downsampled_particles.fits'
-        self.maskpath = '/u/ki/jderose/public_html/buzzard-flock/flock/Chinchilla-1/redmagic/redmagic_Y1a/buzzard_1.3_a_run_redmapper_v6.4.16_redmagic_highdens_0.5_vlim_zmask.fit'
+        self.datapath = '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-0/a/downsampled_particles.fits.downsample'
+        self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
         super(DMDataset, self).__init__()
 
     def load_data(self):
         data = fits.getdata(self.datapath)
-
         c1 = fits.Column(name='RA', array=data['azim_ang'], format='E')
         c2 = fits.Column(name='DEC', array=data['polar_ang'], format='E')
         c3 = fits.Column(name='REDSHIFT', array=data['redshift'], format='E')
@@ -281,12 +297,30 @@ class DMDataset(BaseDataset):
         self.mask[self.mask < .95] = hp.UNSEEN
         self.mask[zmask < .6] = hp.UNSEEN
 
+class MICEDMDataset(BaseDataset):
+    def __init__(self, use_spec_z=True):
+        self.sample_type = 'dark_matter'
+        self.zvar = 'REDSHIFT'
+        self.datapath = '/nfs/slac/g/ki/ki23/des/jderose/des/MICE/dm/dm_v0.fits'
+        self.maskpath = None
+        super(MICEDMDataset, self).__init__()
+
+    def load_data(self):
+        data = fits.getdata(self.datapath)
+        data['dec'] = -data['dec']
+        c1 = fits.Column(name='RA', array=data['ra'], format='E')
+        c2 = fits.Column(name='DEC', array=data['dec'], format='E')
+        c3 = fits.Column(name='REDSHIFT', array=data['redshift'], format='E')
+        t = fits.BinTableHDU.from_columns([c1, c2, c3])
+        self.data = t.data
+        
+        self.mask = np.ones(hp.nside2npix(4096))
 
 class LSSDataset(BaseDataset):
     def __init__(self, use_spec_z=True):
         self.sample_type = 'lss_sample'
         self.zvar = 'REDSHIFT'
-        self.datapath = '/u/ki/jderose/public_html/buzzard-flock/flock/Chinchilla-1/mergedcats/Y1a/Buzzard_v1.2_1_gold.fits.gz'
+        self.datapath = '/u/ki/jderose/public_html/bcc/catalog/mergedcats/y1/buzzard/flock/buzzard-0/a/Buzzard_v1.6_Y1a_gold.fits'
         self.maskpath = ['/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_footprint_4096.fits.gz',
                          '/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_badmask_4096.fits.gz'
                          ]

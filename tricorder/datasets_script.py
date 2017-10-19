@@ -2,7 +2,7 @@
 import subprocess
 
 cmd_list = []
-oversamp = 1
+oversamp = 2
 
 for delta_z in [0.05,0.1,0.15]:
     z = 0.15
