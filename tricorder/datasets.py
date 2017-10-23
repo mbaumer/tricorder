@@ -29,10 +29,7 @@ zvar_labels = {'ZSPEC': r'$z_{true}$',
                'REDSHIFT': r'$z_{true}$',
                }
 
-mock = 'Buzzard_v1.6_Y3_0_a'
-
-output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/' + mock + '/'
-
+output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/'
 
 class BaseDataset (object):
 
@@ -41,7 +38,7 @@ class BaseDataset (object):
         if not hasattr(self, 'sample_type'):
             self.sample_type = 'unk'
 
-        self.output_path = output_path + self.sample_type + '/'
+        self.output_path = output_path + self.mock + '/' + self.sample_type + '/'
 
         self.data = None
         self.randoms = None
@@ -241,14 +238,22 @@ class BaseDataset (object):
 
 
 class RedmagicDataset(BaseDataset):
-    def __init__(self, use_spec_z=True):
+    def __init__(self, mock, use_spec_z=True):
         self.sample_type = 'redmagicHD'
+        self.mock = mock
         if use_spec_z:
             self.zvar = 'ZSPEC'
         else:
             self.zvar = 'ZREDMAGIC'
-        self.datapath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y3/buzzard/flock/buzzard-0/a/buzzard-0_1.6_y3_run_redmapper_v6.4.20_redmagic_highdens_0.5-10.fit'
-        self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y3/buzzard/flock/buzzard-0/a/buzzard-0_1.6_y3_run_redmapper_v6.4.20_redmagic_highdens_0.5_vlim_zmask.fit'
+
+        if mock == 'Buzzard_v1.6_Y3_0_a':
+            self.datapath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y3/buzzard/flock/buzzard-0/a/buzzard-0_1.6_y3_run_redmapper_v6.4.20_redmagic_highdens_0.5-10.fit'
+            self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y3/buzzard/flock/buzzard-0/a/buzzard-0_1.6_y3_run_redmapper_v6.4.20_redmagic_highdens_0.5_vlim_zmask.fit'
+        elif mock == 'Buzzard_v1.6_Y1_0_a':
+            self.datapath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit'
+            self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
+        else: 
+            raise ValueError('i dont know how to interpret given mock var')
 
         super(RedmagicDataset, self).__init__()
 
@@ -260,14 +265,18 @@ class RedmagicDataset(BaseDataset):
         self.mask[zmask < .6] = hp.UNSEEN
 
 class MICERedmagicDataset(BaseDataset):
-    def __init__(self, use_spec_z=True):
+    def __init__(self, mock, use_spec_z=True):
+        self.mock = mock
         self.sample_type = 'redmagicHD'
         if use_spec_z:
             self.zvar = 'ZSPEC'
         else:
             self.zvar = 'ZREDMAGIC'
-        self.datapath = '/nfs/slac/g/ki/ki23/des/jderose/des/MICE/redmagic/mice2_des_run_redmapper_v6.4.16_redmagic_highdens_0.5-10.fit'
-        self.maskpath = None
+        if mock == 'MICE':
+            self.datapath = '/nfs/slac/g/ki/ki23/des/jderose/des/MICE/redmagic/mice2_des_run_redmapper_v6.4.16_redmagic_highdens_0.5-10.fit'
+            self.maskpath = None
+        else: 
+            raise ValueError('i dont know how to interpret given mock var')
 
         super(MICERedmagicDataset, self).__init__()
 
@@ -277,11 +286,15 @@ class MICERedmagicDataset(BaseDataset):
         self.mask = np.ones(hp.nside2npix(4096))
             
 class DMDataset(BaseDataset):
-    def __init__(self, use_spec_z=True):
+    def __init__(self, mock, use_spec_z=True):
+        self.mock = mock
         self.sample_type = 'dark_matter'
         self.zvar = 'REDSHIFT'
-        self.datapath = '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-0/a/downsampled_particles.fits.downsample'
-        self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
+        if mock == 'Buzzard_v1.6_Y1_0_a'
+            self.datapath = '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-0/a/downsampled_particles.fits.downsample'
+            self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
+        else: 
+            raise ValueError('i dont know how to interpret given mock var')
         super(DMDataset, self).__init__()
 
     def load_data(self):
@@ -298,11 +311,15 @@ class DMDataset(BaseDataset):
         self.mask[zmask < .6] = hp.UNSEEN
 
 class MICEDMDataset(BaseDataset):
-    def __init__(self, use_spec_z=True):
+    def __init__(self, mock, use_spec_z=True):
+        self.mock = mock
         self.sample_type = 'dark_matter'
         self.zvar = 'REDSHIFT'
-        self.datapath = '/nfs/slac/g/ki/ki23/des/jderose/des/MICE/dm/dm_v0.fits'
-        self.maskpath = None
+        if mock == 'MICE':
+            self.datapath = '/nfs/slac/g/ki/ki23/des/jderose/des/MICE/dm/dm_v0.fits'
+            self.maskpath = None
+        else: 
+            raise ValueError('i dont know how to interpret given mock var')
         super(MICEDMDataset, self).__init__()
 
     def load_data(self):
@@ -317,13 +334,22 @@ class MICEDMDataset(BaseDataset):
         self.mask = np.ones(hp.nside2npix(4096))
 
 class LSSDataset(BaseDataset):
-    def __init__(self, use_spec_z=True):
+    def __init__(self, mock, use_spec_z=True):
+        self.mock = mock
         self.sample_type = 'lss_sample'
         self.zvar = 'REDSHIFT'
+        if mock == 'Buzzard_v1.6_Y3_0_a'
         self.datapath = '/u/ki/jderose/public_html/bcc/catalog/mergedcats/y3/buzzard/flock/buzzard-0/a/Buzzard_v1.6_Y3_gold.fits'
         self.maskpath = ['/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_footprint_4096.fits.gz',
                          '/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_badmask_4096.fits.gz'
                          ]
+        elif mock == 'Buzzard_v1.6_Y1_0_a':
+            self.datapath = '/u/ki/jderose/public_html/bcc/catalog/mergedcats/y1/buzzard/flock/buzzard-0/a/Buzzard_v1.6_Y1a_gold.fits'
+            self.maskpath = ['/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_footprint_4096.fits.gz',
+                         '/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_badmask_4096.fits.gz'
+                         ]
+        else: 
+            raise ValueError('i dont know how to interpret given mock var')
         super(LSSDataset, self).__init__()
 
     def load_data(self):
