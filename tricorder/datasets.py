@@ -378,7 +378,7 @@ class BuzzardHaloDataset(BaseDataset):
         self.maskpath = None
         super(BuzzardHaloDataset, self).__init__()
 
-    def load_data(self)
+    def load_data(self):
         ralist = []
         declist = []
         zlist = []
