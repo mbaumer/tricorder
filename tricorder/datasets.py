@@ -9,6 +9,7 @@ Later, we will have multiple classes inherit from BaseDataset, as in
 from __future__ import division
 
 import cPickle as pickle
+from glob import glob
 
 import healpy as hp
 import matplotlib.pyplot as plt
@@ -367,3 +368,37 @@ class LSSDataset(BaseDataset):
         new_mask = hp.UNSEEN * np.ones(hp.nside2npix(4096))
         new_mask[lss_mask] = 1
         self.mask = new_mask
+
+class BuzzardHaloDataset(BaseDataset):
+    def __init__(self,mock,use_spec_z=True):
+        self.mock = mock
+        self.sample_type = 'halos'
+        self.zvar = 'REDSHIFT'
+        self.datapath = glob('/u/ki/jderose/public_html/bcc/catalog/halos/semihemisphere/buzzard/flock/buzzard-0/*.fits')
+        self.maskpath = None
+        super(BuzzardHaloDataset, self).__init__()
+
+    def load_data(self)
+        ralist = []
+        declist = []
+        zlist = []
+        for halofile in halofiles:
+            halos = fits.getdata(halofile)
+            ralist.append(halos['RA'])
+            declist.append(halos['DEC'])
+            zlist.append(halos['Z'])
+        
+        merged_ras = np.concatenate(ralist)
+        merged_decs = np.concatenate(declist)
+        merged_zs = np.concatenate(zlist)
+        
+        c1 = fits.Column(name='RA', array=merged_ras, format='E')
+        c2 = fits.Column(name='DEC', array=merged_decs, format='E')
+        c3 = fits.Column(name='REDSHIFT', array=merged_zs, format='E')
+        t = fits.BinTableHDU.from_columns([c1, c2, c3])
+        self.data = t.data
+        
+        self.mask = np.ones(hp.nside2npix(4096))
+
+
+
