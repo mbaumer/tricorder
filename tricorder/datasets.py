@@ -290,7 +290,7 @@ class DMDataset(BaseDataset):
         self.mock = mock
         self.sample_type = 'dark_matter'
         self.zvar = 'REDSHIFT'
-        if mock == 'Buzzard_v1.6_Y1_0_a'
+        if mock == 'Buzzard_v1.6_Y1_0_a':
             self.datapath = '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-0/a/downsampled_particles.fits.downsample'
             self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
         else: 
@@ -338,9 +338,9 @@ class LSSDataset(BaseDataset):
         self.mock = mock
         self.sample_type = 'lss_sample'
         self.zvar = 'REDSHIFT'
-        if mock == 'Buzzard_v1.6_Y3_0_a'
-        self.datapath = '/u/ki/jderose/public_html/bcc/catalog/mergedcats/y3/buzzard/flock/buzzard-0/a/Buzzard_v1.6_Y3_gold.fits'
-        self.maskpath = ['/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_footprint_4096.fits.gz',
+        if mock == 'Buzzard_v1.6_Y3_0_a':
+            self.datapath = '/u/ki/jderose/public_html/bcc/catalog/mergedcats/y3/buzzard/flock/buzzard-0/a/Buzzard_v1.6_Y3_gold.fits'
+            self.maskpath = ['/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_footprint_4096.fits.gz',
                          '/nfs/slac/g/ki/ki23/des/jderose/SkyFactory/chinchilla-herd/Chinchilla-1/sampleselection/y1a1_gold_1.0.2_wide_badmask_4096.fits.gz'
                          ]
         elif mock == 'Buzzard_v1.6_Y1_0_a':
