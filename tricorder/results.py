@@ -21,6 +21,35 @@ buzzard_cosmo = FlatLambdaCDM(68.81, .295)
 output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/results/'
 plot_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/plots/'
 
+def add_triangles(alpha=1,lw=1,color='k'):
+    # new clear axis overlay with 0-1 limits
+    ax2 = pyplot.axes([0,0,1,1])
+    ax2.set_axis_off()
+
+    #upper right
+    x,y = numpy.array([[1, 0.9, .8,1], [.9, 0.9, 0.93,.9]])
+    line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
+    ax2.add_line(line)
+    #upper middle
+    x,y = numpy.array([[.55, 0.45, 0.49,.55], [.9, 0.9, 0.95,.9]])
+    line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
+    ax2.add_line(line)
+    #upper left
+    x,y = numpy.array([[0, 0.1,.2,0], [.9, 0.9, 0.93,.9]])
+    line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
+    ax2.add_line(line)
+    #lower right
+    x,y = numpy.array([[1, 0.9, 0.85,1], [0.03, 0.03, 0.045,.03]])
+    line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
+    ax2.add_line(line)
+    #lower middle
+    x,y = numpy.array([[.55, 0.45, 0.47,.55], [0.03, 0.03, 0.06,0.03]])
+    line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
+    ax2.add_line(line)
+    #lower left
+    x,y = numpy.array([[0, 0.1, .15,0], [0.03, 0.03, 0.045,0.03]])
+    line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
+    ax2.add_line(line)
 
 class Results(object):
     """Analyze and plot results of 3pt analyses."""
