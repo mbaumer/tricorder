@@ -396,7 +396,7 @@ class BuzzardHaloDataset(BaseDataset):
         ralist = []
         declist = []
         zlist = []
-        for halofile in halofiles:
+        for halofile in self.datapath:
             halos = fits.getdata(halofile)
             ralist.append(halos['RA'])
             declist.append(halos['DEC'])
@@ -405,6 +405,8 @@ class BuzzardHaloDataset(BaseDataset):
         merged_ras = np.concatenate(ralist)
         merged_decs = np.concatenate(declist)
         merged_zs = np.concatenate(zlist)
+
+        merged_decs *= -1  # southern sky
 
         c1 = fits.Column(name='RA', array=merged_ras, format='E')
         c2 = fits.Column(name='DEC', array=merged_decs, format='E')

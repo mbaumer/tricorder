@@ -173,7 +173,7 @@ class PixelCorrelation (BaseCorrelation):
     def write(self):
         dataname = self.dset_fname.split('/')[-1]
         res_dir = 'pix_results/'
-        results_prefix = output_path + datasets.mock + \
+        results_prefix = output_path + self.dataset.mock + \
             '/' + self.dataset.sample_type + '/' + res_dir
         np.save(results_prefix + self.name + '_' +
                 dataname + '.zeta', self.kkk.zeta)
@@ -301,7 +301,7 @@ class PointCorrelation (BaseCorrelation):
             res_dir = 'point_3D_results/'
         else:
             res_dir = 'point_ang_results/'
-        results_prefix = output_path + datasets.mock + \
+        results_prefix = output_path + self.dataset.mock + \
             '/' + self.dataset.sample_type + '/' + res_dir
 
         if self.set_str == 'ddd':

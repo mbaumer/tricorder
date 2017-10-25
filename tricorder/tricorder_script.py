@@ -8,6 +8,8 @@ dset_fname_vec += glob(
     '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/Buzzard_v1.6_Y1_0_a/lss_sample/data/RED*.dset')
 dset_fname_vec += glob(
     '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/Buzzard_v1.6_Y1_0_a/dark_matter/data/RED*.dset')
+dset_fname_vec += glob(
+    '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/Buzzard_v1.6_Y1_0_a/halos/data/RED*.dset')
 
 dset_fname_vec += glob(
     '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/Buzzard_v1.6_Y3_0_a/redmagicHD/data/ZSPEC*.dset')
@@ -33,6 +35,8 @@ config_fname_pointvec = ['/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs
 
 #config_fname_pixvec = []
 config_fname_pixvec = ['/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test3_angular.config',
+                       '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test4_angular.config',
+                       '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test5_angular.config',
                        ]
 
 for dset_fname in dset_fname_vec:
