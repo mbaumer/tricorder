@@ -6,6 +6,7 @@ Will also include the bias inference code.
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib import lines
 import numpy as np
 import treecorr
 import yaml
@@ -21,43 +22,41 @@ buzzard_cosmo = FlatLambdaCDM(68.81, .295)
 output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/results/'
 plot_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/plots/'
 
-
-def add_triangles(alpha=1, lw=1, color='k'):
+def add_triangles(alpha=1,lw=1,color='k'):
     # new clear axis overlay with 0-1 limits
-    ax2 = pyplot.axes([0, 0, 1, 1])
+    ax2 = plt.axes([0,0,1,1], axisbg=(1,1,1,0))
     ax2.set_axis_off()
 
-    # upper right
-    x, y = numpy.array([[1, 0.9, .8, 1], [.9, 0.9, 0.93, .9]])
+    #upper right
+    x,y = np.array([[.75, 0.65, .55,.75], [.8, 0.8, 0.83,.8]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
-    # upper middle
-    x, y = numpy.array([[.55, 0.45, 0.49, .55], [.9, 0.9, 0.95, .9]])
+    #upper middle
+    x,y = np.array([[.5, 0.4, 0.44,.5], [.8, 0.8, 0.9,.8]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
-    # upper left
-    x, y = numpy.array([[0, 0.1, .2, 0], [.9, 0.9, 0.93, .9]])
+    #upper left
+    x,y = np.array([[0.1, 0.2,.3,.1], [.8, 0.8, 0.83,.8]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
-    # lower right
-    x, y = numpy.array([[1, 0.9, 0.85, 1], [0.03, 0.03, 0.045, .03]])
+    #lower right
+    x,y = np.array([[.75, 0.65, .6,.75], [0.15, 0.15, 0.165,.15]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
-    # lower middle
-    x, y = numpy.array([[.55, 0.45, 0.47, .55], [0.03, 0.03, 0.06, 0.03]])
+    #lower middle
+    x,y = np.array([[.5, 0.4, 0.42,.5], [0.15, 0.15, 0.18,0.15]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
-    # lower left
-    x, y = numpy.array([[0, 0.1, .15, 0], [0.03, 0.03, 0.045, 0.03]])
+    #lower left
+    x,y = np.array([[0.1, 0.2,.25,.1], [0.15, 0.15, 0.165,0.15]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
-
 
 class Results(object):
     """Analyze and plot results of 3pt analyses."""
 
     def __init__(self, dataname, runname, sample_type, n_jackknife):
-        self.sample_type = sample_type  # redmagicHD, dark_matter
+        self.sample_type = sample_type #redmagicHD, dark_matter
         self.dataname = dataname
         self.runname = runname
         config_fname = output_path + self.runname + '.config'
@@ -93,7 +92,7 @@ class Results(object):
             try:
                 self._load_data_single_run(i)
             except IOError:
-                print 'file for jk region ' + str(i) + 'not found'
+                print 'file for jk region '+str(i)+'not found'
 
     def analyze(self, mode, **kwargs):
         results = []
@@ -132,9 +131,9 @@ class Results(object):
                         base_name = plot_path + self.dataname + '_' + self.runname + '_' + str(scale) + \
                             '_' + str(ratio) + '_' + str(tolerance) + \
                             '_' + str(nbins)
-                        out_tup = (out, bins)
-                        with open(base_name + '.res', 'wb') as f:
-                            pickle.dump(out_tup, f)
+                        out_tup = (out,bins)
+                        with open(base_name+'.res','wb') as f:
+                            pickle.dump(out_tup,f)
 
     def make_plots(self, var, bins, out, scale=30, nbins=16, tolerance=.3,
                    ratio=.5, make_covmat=True):
@@ -246,11 +245,10 @@ class Results(object):
                      tolerance=.1, **kwargs):
         isCorrectRatio = ((self.kkk.u > (ratio - tolerance * ratio)) &
                           (self.kkk.u < (ratio + tolerance * ratio)))
-        isCorrectSize = ((np.exp(self.kkk.logr) > scale - scale * tolerance) &
-                         (np.exp(self.kkk.logr) < scale + scale * tolerance))
+        isCorrectSize = ((np.exp(self.kkk.logr) > scale-scale*tolerance) &
+                         (np.exp(self.kkk.logr) < scale+scale*tolerance))
         res, b, _ = binned_statistic(
-            np.abs(self.kkk.v[isCorrectRatio & isCorrectSize]), var[
-                isCorrectRatio & isCorrectSize],
+            np.abs(self.kkk.v[isCorrectRatio & isCorrectSize]), var[isCorrectRatio & isCorrectSize],
             bins=nbins, statistic=stat)
         b += (b[1] - b[0]) / 2
         b = b[:-1]
@@ -261,7 +259,7 @@ class Results(object):
 
         # angle at which elongate becomes collapsed
         # changed fixed 0.25 to ratio/2 so ratio can vary
-        transition_angle = np.arccos(ratio / 2) / np.pi * 180
+        transition_angle = np.arccos(ratio/2) / np.pi * 180
         N_low_bins = np.floor(transition_angle / 180 * nbins)
         coll_bins = np.linspace(0, transition_angle, num=N_low_bins)
         elong_bins = np.linspace(transition_angle, 180, num=nbins - N_low_bins)
