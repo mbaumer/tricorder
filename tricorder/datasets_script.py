@@ -24,31 +24,31 @@ for delta_z in [0.15]:
         #cmd_str = "import datasets; dset = datasets.MICERedmagicDataset('MICE'); dset.make(1024,"+str(oversamp)+","+str(z)+","+str(z+delta_z)+",0, 90,-60,-40,write=True)"
         # cmd_list.append(cmd_str)
 
-        cmd_str = "import datasets; dset = datasets.BuzzardHaloDataset('Buzzard_v1.6_Y1_0_b'); dset.make(1024," + str(
+        cmd_str = "import datasets; dset = datasets.RedmagicDataset('Buzzard_v1.6_Y1_0_b'); dset.make(1024," + str(
             oversamp) + "," + str(z) + "," + str(z + delta_z) + ",180, 360,-90,0,write=True)"
         cmd_list.append(cmd_str)
-        cmd_str = "import datasets; dset = datasets.BuzzardHaloDataset('Buzzard_v1.6_Y1_0_c'); dset.make(1024," + str(
+        cmd_str = "import datasets; dset = datasets.RedmagicDataset('Buzzard_v1.6_Y1_0_c'); dset.make(1024," + str(
             oversamp) + "," + str(z) + "," + str(z + delta_z) + ",180, 360,-90,0,write=True)"
         cmd_list.append(cmd_str)
-        cmd_str = "import datasets; dset = datasets.BuzzardHaloDataset('Buzzard_v1.6_Y1_1_a'); dset.make(1024," + str(
+        cmd_str = "import datasets; dset = datasets.RedmagicDataset('Buzzard_v1.6_Y1_1_a'); dset.make(1024," + str(
             oversamp) + "," + str(z) + "," + str(z + delta_z) + ",180, 360,-90,0,write=True)"
         cmd_list.append(cmd_str)
-        cmd_str = "import datasets; dset = datasets.BuzzardHaloDataset('Buzzard_v1.6_Y1_1_b'); dset.make(1024," + str(
+        cmd_str = "import datasets; dset = datasets.RedmagicDataset('Buzzard_v1.6_Y1_1_b'); dset.make(1024," + str(
             oversamp) + "," + str(z) + "," + str(z + delta_z) + ",180, 360,-90,0,write=True)"
         cmd_list.append(cmd_str)
-        cmd_str = "import datasets; dset = datasets.BuzzardHaloDataset('Buzzard_v1.6_Y1_1_c'); dset.make(1024," + str(
+        cmd_str = "import datasets; dset = datasets.RedmagicDataset('Buzzard_v1.6_Y1_1_c'); dset.make(1024," + str(
             oversamp) + "," + str(z) + "," + str(z + delta_z) + ",180, 360,-90,0,write=True)"
         cmd_list.append(cmd_str)
-        cmd_str = "import datasets; dset = datasets.BuzzardHaloDataset('Buzzard_v1.6_Y1_2_a'); dset.make(1024," + str(
+        cmd_str = "import datasets; dset = datasets.RedmagicDataset('Buzzard_v1.6_Y1_2_a'); dset.make(1024," + str(
             oversamp) + "," + str(z) + "," + str(z + delta_z) + ",180, 360,-90,0,write=True)"
         cmd_list.append(cmd_str)
-        cmd_str = "import datasets; dset = datasets.BuzzardHaloDataset('Buzzard_v1.6_Y1_2_b'); dset.make(1024," + str(
+        cmd_str = "import datasets; dset = datasets.RedmagicDataset('Buzzard_v1.6_Y1_2_b'); dset.make(1024," + str(
             oversamp) + "," + str(z) + "," + str(z + delta_z) + ",180, 360,-90,0,write=True)"
         cmd_list.append(cmd_str)
-        cmd_str = "import datasets; dset = datasets.BuzzardHaloDataset('Buzzard_v1.6_Y1_2_c'); dset.make(1024," + str(
+        cmd_str = "import datasets; dset = datasets.RedmagicDataset('Buzzard_v1.6_Y1_2_c'); dset.make(1024," + str(
             oversamp) + "," + str(z) + "," + str(z + delta_z) + ",180, 360,-90,0,write=True)"
         cmd_list.append(cmd_str)
-        cmd_str = "import datasets; dset = datasets.BuzzardHaloDataset('Buzzard_v1.6_Y1_21_a'); dset.make(1024," + str(
+        cmd_str = "import datasets; dset = datasets.RedmagicDataset('Buzzard_v1.6_Y1_21_a'); dset.make(1024," + str(
             oversamp) + "," + str(z) + "," + str(z + delta_z) + ",180, 360,-90,0,write=True)"
         cmd_list.append(cmd_str)
 
