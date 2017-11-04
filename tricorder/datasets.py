@@ -256,6 +256,33 @@ class RedmagicDataset(BaseDataset):
         elif mock == 'Buzzard_v1.6_Y1_0_a':
             self.datapath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit'
             self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
+        elif mock == 'Buzzard_v1.6_Y1_0_b':
+            self.datapath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/b/buzzard_1.6-6b_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit'
+            self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/b/buzzard_1.6-6b_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
+        elif mock == 'Buzzard_v1.6_Y1_0_c':
+            self.datapath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/c/buzzard_1.6-6c_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit'
+            self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/c/buzzard_1.6-6c_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
+        elif mock == 'Buzzard_v1.6_Y1_1_a':
+            self.datapath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-1/a/buzzard-1_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit'
+            self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-1/a/buzzard-1_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
+        elif mock == 'Buzzard_v1.6_Y1_1_b':
+            self.datapath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-1/b/buzzard-1_1.6-6b_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit'
+            self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-1/b/buzzard-1_1.6-6b_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
+        elif mock == 'Buzzard_v1.6_Y1_1_c':
+            self.datapath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-1/c/buzzard-1_1.6-6c_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit'
+            self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-1/c/buzzard-1_1.6-6c_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
+        elif mock == 'Buzzard_v1.6_Y1_2_a':
+            self.datapath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/a/buzzard2_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit'
+            self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/a/buzzard2_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
+        elif mock == 'Buzzard_v1.6_Y1_2_b':
+            self.datapath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/b/buzzard2_1.6-6b_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit'
+            self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/b/buzzard2_1.6-6b_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
+        elif mock == 'Buzzard_v1.6_Y1_2_c':
+            self.datapath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/c/buzzard2_1.6-6c_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit'
+            self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/c/buzzard2_1.6-6c_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
+        elif mock == 'Buzzard_v1.6_Y1_21_a':
+            self.datapath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/c/buzzard21_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit'
+            self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/c/buzzard21_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
         else:
             raise ValueError('i dont know how to interpret given mock var')
 
