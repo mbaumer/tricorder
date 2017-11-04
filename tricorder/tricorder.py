@@ -116,7 +116,7 @@ class PixelCorrelation (BaseCorrelation):
         gal_z = gal_dset.data['ZSPEC']
 
         dm_counts, edges = np.histogram(dm_z, bins=nbins, normed=True, range=(self.min_z, self.max_z));
-        gal_counts, _ = np.histogram(gal_z, bins=nbins, normed=True, range=(self.min_z, self.max_z);
+        gal_counts, _ = np.histogram(gal_z, bins=nbins, normed=True, range=(self.min_z, self.max_z));
 
         # we need to weight the DM
         dm_idx = np.digitize(dm_z, edges)
@@ -127,12 +127,12 @@ class PixelCorrelation (BaseCorrelation):
     def make_treecorr_cat(self):
 
         weights = None
-        str_list = self.dset_fname.split('/')
-        if str_list[-3] == 'dark_matter':
-            str_list[-3] = 'redmagicHD'
-            str_list[-1] = 'ZSPEC'+str(self.min_z)+'_'+str(self.max_z)+'nside1024nJack30.dset'
-            target_file = "/".join(str_list)
-            weights = reweight_z_dist(target_file)
+        #str_list = self.dset_fname.split('/')
+        #if str_list[-3] == 'dark_matter':
+        #    str_list[-3] = 'redmagicHD'
+        #    str_list[-1] = 'ZSPEC'+str(self.dataset.min_z)+'_'+str(self.dataset.max_z)+'nside1024nJack30.dset'
+        #    target_file = "/".join(str_list)
+        #    weights = reweight_z_dist(target_file)
 
         if self.jk_to_omit != -1:
             inds_to_keep = np.where(self.dataset.jk_labels != self.jk_to_omit)
@@ -149,7 +149,7 @@ class PixelCorrelation (BaseCorrelation):
         self.cat = treecorr.Catalog(ra=ra_to_use,
                                     dec=dec_to_use,
                                     ra_units='degrees', dec_units='degrees',
-                                    k=kappa_est
+                                    k=kappa_est,
                                     w = weights)
 
     def compute_2pt_pix(self):

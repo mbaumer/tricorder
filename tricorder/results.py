@@ -6,6 +6,7 @@ Will also include the bias inference code.
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib import lines
 import numpy as np
 import treecorr
 import yaml
@@ -23,31 +24,31 @@ plot_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new/plots/'
 
 def add_triangles(alpha=1,lw=1,color='k'):
     # new clear axis overlay with 0-1 limits
-    ax2 = pyplot.axes([0,0,1,1])
+    ax2 = plt.axes([0,0,1,1], axisbg=(1,1,1,0))
     ax2.set_axis_off()
 
     #upper right
-    x,y = numpy.array([[1, 0.9, .8,1], [.9, 0.9, 0.93,.9]])
+    x,y = np.array([[.75, 0.65, .55,.75], [.8, 0.8, 0.83,.8]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
     #upper middle
-    x,y = numpy.array([[.55, 0.45, 0.49,.55], [.9, 0.9, 0.95,.9]])
+    x,y = np.array([[.5, 0.4, 0.44,.5], [.8, 0.8, 0.9,.8]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
     #upper left
-    x,y = numpy.array([[0, 0.1,.2,0], [.9, 0.9, 0.93,.9]])
+    x,y = np.array([[0.1, 0.2,.3,.1], [.8, 0.8, 0.83,.8]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
     #lower right
-    x,y = numpy.array([[1, 0.9, 0.85,1], [0.03, 0.03, 0.045,.03]])
+    x,y = np.array([[.75, 0.65, .6,.75], [0.15, 0.15, 0.165,.15]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
     #lower middle
-    x,y = numpy.array([[.55, 0.45, 0.47,.55], [0.03, 0.03, 0.06,0.03]])
+    x,y = np.array([[.5, 0.4, 0.42,.5], [0.15, 0.15, 0.18,0.15]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
     #lower left
-    x,y = numpy.array([[0, 0.1, .15,0], [0.03, 0.03, 0.045,0.03]])
+    x,y = np.array([[0.1, 0.2,.25,.1], [0.15, 0.15, 0.165,0.15]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
 
