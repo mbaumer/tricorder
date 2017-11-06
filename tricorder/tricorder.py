@@ -9,6 +9,7 @@ import subprocess
 import time
 from sys import stdout
 
+import healpy as hp
 import numpy as np
 import treecorr
 import yaml
@@ -26,9 +27,9 @@ def write_default_config(runname):
 
     config_2pt = {}
     config_3pt = {}
-    configdict = {'2PCF': config_2pt, '3PCF': config_3pt, 
+    configdict = {'2PCF': config_2pt, '3PCF': config_3pt,
                   'do3D': do3D,
-                  'scale_angle_w_redshift' : scale_angle_w_redshift}
+                  'scale_angle_w_redshift': scale_angle_w_redshift}
 
     config_2pt['min_sep'] = 1
     config_2pt['max_sep'] = 50
@@ -93,16 +94,21 @@ class PixelCorrelation (BaseCorrelation):
         # drop the abspath and .config
         name = config_fname.split('/')[-1][:-7]
         self.name = name + '_' + str(self.jk_to_omit)
-        
+
         if configdict['scale_angle_w_redshift']:
-            avg_redshift = (self.dataset.min_z + self.dataset.max_z)/2
-            arcmin_per_mpc = datasets.buzzard_cosmo.arcsec_per_kpc_comoving(avg_redshift).value/60*1000
-            
-            configdict['2PCF']['min_sep'] = configdict['2PCF']['min_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
-            configdict['2PCF']['max_sep'] = configdict['2PCF']['max_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
-            configdict['3PCF']['min_sep'] = configdict['3PCF']['min_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
-            configdict['3PCF']['max_sep'] = configdict['3PCF']['max_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
-        
+            avg_redshift = (self.dataset.min_z + self.dataset.max_z) / 2
+            arcmin_per_mpc = datasets.buzzard_cosmo.arcsec_per_kpc_comoving(
+                avg_redshift).value / 60 * 1000
+
+            configdict['2PCF']['min_sep'] = configdict['2PCF'][
+                'min_sep'] / datasets.buzzard_cosmo.h * arcmin_per_mpc
+            configdict['2PCF']['max_sep'] = configdict['2PCF'][
+                'max_sep'] / datasets.buzzard_cosmo.h * arcmin_per_mpc
+            configdict['3PCF']['min_sep'] = configdict['3PCF'][
+                'min_sep'] / datasets.buzzard_cosmo.h * arcmin_per_mpc
+            configdict['3PCF']['max_sep'] = configdict['3PCF'][
+                'max_sep'] / datasets.buzzard_cosmo.h * arcmin_per_mpc
+
         self.config_2pt = configdict['2PCF']
         self.config_3pt = configdict['3PCF']
         self.cat = None
@@ -115,8 +121,10 @@ class PixelCorrelation (BaseCorrelation):
         dm_z = self.data['REDSHIFT']
         gal_z = gal_dset.data['ZSPEC']
 
-        dm_counts, edges = np.histogram(dm_z, bins=nbins, normed=True, range=(self.min_z, self.max_z));
-        gal_counts, _ = np.histogram(gal_z, bins=nbins, normed=True, range=(self.min_z, self.max_z));
+        dm_counts, edges = np.histogram(
+            dm_z, bins=nbins, normed=True, range=(self.min_z, self.max_z))
+        gal_counts, _ = np.histogram(
+            gal_z, bins=nbins, normed=True, range=(self.min_z, self.max_z))
 
         # we need to weight the DM
         dm_idx = np.digitize(dm_z, edges)
@@ -128,7 +136,7 @@ class PixelCorrelation (BaseCorrelation):
 
         weights = None
         #str_list = self.dset_fname.split('/')
-        #if str_list[-3] == 'dark_matter':
+        # if str_list[-3] == 'dark_matter':
         #    str_list[-3] = 'redmagicHD'
         #    str_list[-1] = 'ZSPEC'+str(self.dataset.min_z)+'_'+str(self.dataset.max_z)+'nside1024nJack30.dset'
         #    target_file = "/".join(str_list)
@@ -150,7 +158,7 @@ class PixelCorrelation (BaseCorrelation):
                                     dec=dec_to_use,
                                     ra_units='degrees', dec_units='degrees',
                                     k=kappa_est,
-                                    w = weights)
+                                    w=weights)
 
     def compute_2pt_pix(self):
         kk = treecorr.KKCorrelation(config=self.config_2pt)
@@ -218,17 +226,22 @@ class PointCorrelation (BaseCorrelation):
         # drop the abspath and .config
         name = config_fname.split('/')[-1][:-7]
         self.name = name + '_' + str(self.jk_to_omit)
-        
+
         if configdict['scale_angle_w_redshift']:
             #avg_redshift = (self.dataset.min_z + self.dataset.max_z)/2
             avg_redshift = np.median(self.dataset.data[self.dataset.zvar])
-            arcmin_per_mpc = datasets.buzzard_cosmo.arcsec_per_kpc_comoving(avg_redshift).value/60*1000
-            
-            configdict['2PCF']['min_sep'] = configdict['2PCF']['min_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
-            configdict['2PCF']['max_sep'] = configdict['2PCF']['max_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
-            configdict['3PCF']['min_sep'] = configdict['3PCF']['min_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
-            configdict['3PCF']['max_sep'] = configdict['3PCF']['max_sep']/datasets.buzzard_cosmo.h*arcmin_per_mpc
-        
+            arcmin_per_mpc = datasets.buzzard_cosmo.arcsec_per_kpc_comoving(
+                avg_redshift).value / 60 * 1000
+
+            configdict['2PCF']['min_sep'] = configdict['2PCF'][
+                'min_sep'] / datasets.buzzard_cosmo.h * arcmin_per_mpc
+            configdict['2PCF']['max_sep'] = configdict['2PCF'][
+                'max_sep'] / datasets.buzzard_cosmo.h * arcmin_per_mpc
+            configdict['3PCF']['min_sep'] = configdict['3PCF'][
+                'min_sep'] / datasets.buzzard_cosmo.h * arcmin_per_mpc
+            configdict['3PCF']['max_sep'] = configdict['3PCF'][
+                'max_sep'] / datasets.buzzard_cosmo.h * arcmin_per_mpc
+
         self.config_2pt = configdict['2PCF']
         self.config_3pt = configdict['3PCF']
         self.do3D = configdict['do3D']
@@ -239,21 +252,34 @@ class PointCorrelation (BaseCorrelation):
 
     def make_treecorr_cat(self):
         if self.jk_to_omit != -1:
-            inds_to_keep = np.where(self.dataset.jk_labels != self.jk_to_omit)
+            data_inds = datasets.radec_to_index(
+                self.dataset.data['DEC'], self.dataset.data['RA'], 1024)
+            random_inds = datasets.radec_to_index(
+                self.dataset.randoms['DEC'], self.dataset.randoms['RA'], 1024)
+            jk_hp_inds = datasets.radec_to_index(
+                self.dataset.pixelized[1], self.dataset.pixelized[0], 1024)
+            hp_arr = np.zeros(hp.nside2npix(1024))
+            hp_arr[jk_hp_inds] = self.dataset.jk_labels
+            data_inds_to_keep = np.where(hp_arr[data_inds] != self.jk_to_omit)
+            random_inds_to_keep = np.where(
+                hp_arr[data_inds] != self.jk_to_omit)
         else:
-            inds_to_keep = np.arange(len(self.dataset.data['RA']))
-        ra_to_use = self.dataset.data['RA'][inds_to_keep]
-        rand_ra_to_use = self.dataset.randoms['RA'][inds_to_keep]
-        dec_to_use = self.dataset.data['DEC'][inds_to_keep]
-        rand_dec_to_use = self.dataset.randoms['DEC'][inds_to_keep]
+            data_inds_to_keep = np.arange(len(self.dataset.data['RA']))
+            random_inds_to_keep = np.arange(len(self.dataset.randoms['RA']))
+        ra_to_use = self.dataset.data['RA'][data_inds_to_keep]
+        rand_ra_to_use = self.dataset.randoms['RA'][random_inds_to_keep]
+        dec_to_use = self.dataset.data['DEC'][data_inds_to_keep]
+        rand_dec_to_use = self.dataset.randoms['DEC'][random_inds_to_keep]
         if self.do3D and self.dataset.zvar == 'DISTANCE':
-            dist_to_use = self.dataset.data[self.dataset.zvar][inds_to_keep]
-            rand_dist_to_use = self.dataset.randoms[self.dataset.zvar][inds_to_keep]
+            dist_to_use = self.dataset.data[
+                self.dataset.zvar][data_inds_to_keep]
+            rand_dist_to_use = self.dataset.randoms[
+                self.dataset.zvar][random_inds_to_keep]
         elif self.do3D:
-            dist_to_use = datasets.buzzard_cosmo.h*datasets.buzzard_cosmo.comoving_distance(
-                self.dataset.data[self.dataset.zvar]).value[inds_to_keep]
-            rand_dist_to_use = datasets.buzzard_cosmo.h*datasets.buzzard_cosmo.comoving_distance(
-                self.dataset.randoms[self.dataset.zvar]).value[inds_to_keep]
+            dist_to_use = datasets.buzzard_cosmo.h * datasets.buzzard_cosmo.comoving_distance(
+                self.dataset.data[self.dataset.zvar]).value[data_inds_to_keep]
+            rand_dist_to_use = datasets.buzzard_cosmo.h * datasets.buzzard_cosmo.comoving_distance(
+                self.dataset.randoms[self.dataset.zvar]).value[random_inds_to_keep]
         else:
             dist_to_use = None
             rand_dist_to_use = None
