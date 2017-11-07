@@ -51,9 +51,9 @@ config_fname_pointvec = ['/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs
 #                         ,]
 
 # config_fname_pixvec = []
-    config_fname_pixvec = ['/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test7_angular.config',
-                           '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test5_angular.config',
-                           '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test9_angular.config']
+config_fname_pixvec = ['/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test7_angular.config',
+                       '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test5_angular.config',
+                       '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/test9_angular.config']
 #                       ]
 
 for dset_fname in dset_fname_vec:
