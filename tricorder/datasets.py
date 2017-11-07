@@ -328,6 +328,9 @@ class DMDataset(BaseDataset):
         if mock == 'Buzzard_v1.6_Y1_0_a':
             self.datapath = '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-0/a/downsampled_particles.fits.downsample'
             self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5_vlim_zmask.fit'
+        elif mock == 'Buzzard_v1.6_Y3_0_a':
+            self.datapath = '/u/ki/jderose/public_html/bcc/catalog/particles/y3/buzzard/flock/buzzard-0/a/downsampled_particles.fits.downsample'
+            self.maskpath = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y3/buzzard/flock/buzzard-0/a/buzzard-0_1.6_y3_run_redmapper_v6.4.20_redmagic_highdens_0.5_vlim_zmask.fit'
         else:
             raise ValueError('i dont know how to interpret given mock var')
         super(DMDataset, self).__init__()
