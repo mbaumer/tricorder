@@ -12,12 +12,10 @@ import sys
 import os
 
 import paths
-from simple_script import out_path, config_dir
-
 
 def load_config(config_fname):
     config_path = os.path.join(
-        simple_script.config_dir, config_fname+'.config')
+        paths.config_dir, config_fname+'.config')
     with open(config_path) as f:
         return yaml.load(f.read())
 
@@ -32,8 +30,7 @@ def calc_2pt(data, randoms, config_fname, zvar, random_zvar, ra_var='RA', dec_va
                            dec_units='degrees', ra_units='degrees',
                            r=datasets.buzzard_cosmo.comoving_distance(data[zvar]).value*datasets.buzzard_cosmo.h)
     random_cat = treecorr.Catalog(ra=randoms[random_ra_var], dec=randoms[random_dec_var],
-                                  dec_units='degrees', ra_units='degrees',
-                                  r=datasets.buzzard_cosmo.comoving_distance(randoms[random_zvar]).value*datasets.buzzard_cosmo.h)
+                                  dec_units='degrees', ra_units='degrees', r=datasets.buzzard_cosmo.comoving_distance(randoms[random_zvar]).value*datasets.buzzard_cosmo.h)
     print config_2pt
     dd = treecorr.NNCorrelation(config=config_2pt)
     dr = treecorr.NNCorrelation(config=config_2pt)
@@ -98,11 +95,11 @@ def calc_3pt_noisy_photoz_lss(dset_id, config_fname, min_z, max_z, sigma_z, zvar
 
     xi_file_name = config_fname + '_lssdset' + \
         str(dset_id)+'_sigma'+str(sigma_z)+'_'+str(min_z)+'_'+str(max_z)+'.xi'
-    zeta_file_name = config_fname+'_lssdset' +
+    zeta_file_name = config_fname+'_lssdset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
             '_'+str(min_z)+'_'+str(max_z)+'.zeta'
-    np.save(os.path.join(simple_script.out_dir, xi_file_name), xi)
-    np.save(os.path.join(simple_script.out_dir, zeta_file_name), zeta)
+    np.save(os.path.join(paths.out_dir, xi_file_name), xi)
+    np.save(os.path.join(paths.out_dir, zeta_file_name), zeta)
 
 
 def calc_3pt_noisy_photoz_dm(dset_id, config_fname, min_z, max_z, sigma_z, zvar, random_zvar):
@@ -124,14 +121,14 @@ def calc_3pt_noisy_photoz_dm(dset_id, config_fname, min_z, max_z, sigma_z, zvar,
     zeta = calc_3pt(data_slice, randoms_slice, config_fname,
                     zvar, random_zvar, ra_var=ra_var, dec_var=dec_var)
 
-    xi_file_name = config_fname +
+    xi_file_name = config_fname + \
         '_dmdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
             '_'+str(min_z)+'_'+str(max_z)+'.xi'
-    zeta_file_name = config_fname+'_dmdset' +
+    zeta_file_name = config_fname+'_dmdset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
             '_'+str(min_z)+'_'+str(max_z)+'.zeta'
-    np.save(os.path.join(simple_script.out_dir, xi_file_name), xi)
-    np.save(os.path.join(simple_script.out_dir, zeta_file_name), zeta)
+    np.save(os.path.join(paths.out_dir, xi_file_name), xi)
+    np.save(os.path.join(paths.out_dir, zeta_file_name), zeta)
 
 
 def calc_3pt_noisy_photoz_rm(dset_id, config_fname, min_z, max_z, sigma_z, zvar, random_zvar):
@@ -157,11 +154,11 @@ def calc_3pt_noisy_photoz_rm(dset_id, config_fname, min_z, max_z, sigma_z, zvar,
     zeta = calc_3pt(data_slice, randoms_slice, config_fname,
                     zvar, random_zvar, ra_var=ra_var, dec_var=dec_var)
 
-    xi_file_name = config_fname +
+    xi_file_name = config_fname + \
         '_dset'+str(dset_id)+'_sigma'+str(sigma_z) + \
             '_'+str(min_z)+'_'+str(max_z)+'.xi'
-    zeta_file_name = config_fname+'_dset' +
+    zeta_file_name = config_fname+'_dset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
             '_'+str(min_z)+'_'+str(max_z)+'.zeta'
-    np.save(os.path.join(simple_script.out_dir, xi_file_name), xi)
-    np.save(os.path.join(simple_script.out_dir, zeta_file_name), zeta)
+    np.save(os.path.join(paths.out_dir, xi_file_name), xi)
+    np.save(os.path.join(paths.out_dir, zeta_file_name), zeta)

@@ -1,3 +1,7 @@
+config_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/'
+
+corr_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/test2/'
+
 rm_y1 = [
     '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
     '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/b/buzzard_1.6-6b_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
@@ -107,20 +111,6 @@ dm_y1 = [
     '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-2/d/downsampled_particles.fits.downsample',
     '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-2/e/downsampled_particles.fits.downsample',
     '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-2/f/downsampled_particles.fits.downsample',
-
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-21/a/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-21/b/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-21/c/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-21/d/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-21/e/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-21/f/downsampled_particles.fits.downsample',
-
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-3/a/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-3/b/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-3/c/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-3/d/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-3/e/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-3/f/downsampled_particles.fits.downsample',
 
     '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-5/a/downsampled_particles.fits.downsample',
     '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-5/b/downsampled_particles.fits.downsample',
