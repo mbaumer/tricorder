@@ -28,7 +28,7 @@ def add_triangles(alpha=1,lw=1,color='k'):
     ax2.set_axis_off()
 
     #upper right
-    x,y = np.array([[.75, 0.65, .55,.75], [.8, 0.8, 0.83,.8]])
+    x,y = np.array([[.75, 0.65, .55,.75], [.8, 0.8, 0.85,.8]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
     #upper middle
@@ -36,11 +36,11 @@ def add_triangles(alpha=1,lw=1,color='k'):
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
     #upper left
-    x,y = np.array([[0.1, 0.2,.3,.1], [.8, 0.8, 0.83,.8]])
+    x,y = np.array([[0.1, 0.2,.3,.1], [.8, 0.8, 0.85,.8]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
     #lower right
-    x,y = np.array([[.75, 0.65, .6,.75], [0.15, 0.15, 0.165,.15]])
+    x,y = np.array([[.75, 0.65, .6,.75], [0.15, 0.15, 0.175,.15]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
     #lower middle
@@ -48,7 +48,7 @@ def add_triangles(alpha=1,lw=1,color='k'):
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
     #lower left
-    x,y = np.array([[0.1, 0.2,.25,.1], [0.15, 0.15, 0.165,0.15]])
+    x,y = np.array([[0.1, 0.2,.25,.1], [0.15, 0.15, 0.175,0.15]])
     line = lines.Line2D(x, y, lw=lw, color=color, alpha=alpha)
     ax2.add_line(line)
 
