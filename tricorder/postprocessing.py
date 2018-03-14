@@ -8,6 +8,11 @@ import matplotlib.pyplot as plt
 import json
 from scipy.stats import binned_statistic
 
+output_dir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/'
+runname = 'many_randoms3'
+
+nbins = 8
+
 # --------------------------
 #Eventually should be object-oriented following this skeleton:
 
@@ -19,15 +24,18 @@ class NNNPlotter (object):
                 configdict = json.loads(f.read())
         except IOError:
             print 'results for '+runname+' not found in '+outdir
+            raise
 
     def load(self):
         [ddd,ddr,drd,rdd,drr,rdr,rrd,rrr] = 8*[treecorr.NNNCorrelation(config=self.config)]
         for nnn in [ddd,ddr,drd,rdd,drr,rdr,rrd,rrr]:
             pass
 
+
 # -----------------------------
         
 def computeAngularBins(r,u,v,collapsed=False):
+    v = np.abs(v) #sign of v just signals CW vs. CCW orientation
     d2 = r
     d3 = u*r
     d1 = v*d3+d2
@@ -40,7 +48,6 @@ def computeAngularBins(r,u,v,collapsed=False):
     return bins
 
 def computeXvsAngle(var):
-    nbins = 8
     out1,bins1,_ = binned_statistic(elongated_angles[np.where(isRightSize & isElongated)],var[np.where(isRightSize & isElongated)],bins=nbins,statistic='mean')
     out2,bins2,_ = binned_statistic(collapsed_angles[np.where(isRightSize & isCollapsed)],var[np.where(isRightSize & isCollapsed)],bins=nbins,statistic='mean')
     full_var = np.concatenate((out2,out1))
@@ -50,28 +57,15 @@ def computeXvsAngle(var):
     full_bins = np.concatenate((bins2[:-1],bins1[:-1]))
     return full_var, full_bins
 
-output_dir = '/nfs/slac/g/ki/ki19/des/mbaumer/3pt_runs/from_sherlock/'
-runname = 'y1_allz'
-
 #load data
 with open(output_dir+runname+'.config') as f:
     config = json.loads(f.read())
-ddd = treecorr.NNNCorrelation(config=config)
-drr = treecorr.NNNCorrelation(config=config)
-rdr = treecorr.NNNCorrelation(config=config)
-rrd = treecorr.NNNCorrelation(config=config)
-ddr = treecorr.NNNCorrelation(config=config)
-drd = treecorr.NNNCorrelation(config=config)
-rdd = treecorr.NNNCorrelation(config=config)
+
+nnn = treecorr.NNNCorrelation(config=config)
 rrr = treecorr.NNNCorrelation(config=config)
-ddd.read(output_dir+runname+'ddd.out',file_type='ASCII')
-drr.read(output_dir+runname+'drr.out',file_type='ASCII')
-rdr.read(output_dir+runname+'rdr.out',file_type='ASCII')
-rrd.read(output_dir+runname+'rrd.out',file_type='ASCII')
-ddr.read(output_dir+runname+'ddr.out',file_type='ASCII')
-drd.read(output_dir+runname+'drd.out',file_type='ASCII')
-rdd.read(output_dir+runname+'rdd.out',file_type='ASCII')
-rrr.read(output_dir+runname+'rrr.out',file_type='ASCII')
+
+ddd.read(output_dir+runname+str(random_set_id)+'.out',file_type='FITS')
+drr.read(output_dir+runname+str(random_set_id)+'.out',file_type='FITS')
 
 data = fits.getdata(output_dir+'redmagic_Y1_sims_data.fits')
 randoms = fits.getdata(output_dir+'redmagic_Y1_sims_5x_randoms.fits')
