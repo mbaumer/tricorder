@@ -13,6 +13,7 @@ import os
 
 import paths
 
+
 def load_config(config_fname):
     config_path = os.path.join(
         paths.config_dir, config_fname+'.config')
@@ -97,9 +98,9 @@ def calc_3pt_noisy_photoz_lss(dset_id, config_fname, min_z, max_z, sigma_z, zvar
         str(dset_id)+'_sigma'+str(sigma_z)+'_'+str(min_z)+'_'+str(max_z)+'.xi'
     zeta_file_name = config_fname+'_lssdset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
-            '_'+str(min_z)+'_'+str(max_z)+'.zeta'
-    np.save(os.path.join(paths.out_dir, xi_file_name), xi)
-    np.save(os.path.join(paths.out_dir, zeta_file_name), zeta)
+        '_'+str(min_z)+'_'+str(max_z)+'.zeta'
+    np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
+    np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
 
 
 def calc_3pt_noisy_photoz_dm(dset_id, config_fname, min_z, max_z, sigma_z, zvar, random_zvar):
@@ -123,12 +124,12 @@ def calc_3pt_noisy_photoz_dm(dset_id, config_fname, min_z, max_z, sigma_z, zvar,
 
     xi_file_name = config_fname + \
         '_dmdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
-            '_'+str(min_z)+'_'+str(max_z)+'.xi'
+        '_'+str(min_z)+'_'+str(max_z)+'.xi'
     zeta_file_name = config_fname+'_dmdset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
-            '_'+str(min_z)+'_'+str(max_z)+'.zeta'
-    np.save(os.path.join(paths.out_dir, xi_file_name), xi)
-    np.save(os.path.join(paths.out_dir, zeta_file_name), zeta)
+        '_'+str(min_z)+'_'+str(max_z)+'.zeta'
+    np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
+    np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
 
 
 def calc_3pt_noisy_photoz_rm(dset_id, config_fname, min_z, max_z, sigma_z, zvar, random_zvar):
@@ -156,9 +157,9 @@ def calc_3pt_noisy_photoz_rm(dset_id, config_fname, min_z, max_z, sigma_z, zvar,
 
     xi_file_name = config_fname + \
         '_dset'+str(dset_id)+'_sigma'+str(sigma_z) + \
-            '_'+str(min_z)+'_'+str(max_z)+'.xi'
+        '_'+str(min_z)+'_'+str(max_z)+'.xi'
     zeta_file_name = config_fname+'_dset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
-            '_'+str(min_z)+'_'+str(max_z)+'.zeta'
-    np.save(os.path.join(paths.out_dir, xi_file_name), xi)
-    np.save(os.path.join(paths.out_dir, zeta_file_name), zeta)
+        '_'+str(min_z)+'_'+str(max_z)+'.zeta'
+    np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
+    np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
