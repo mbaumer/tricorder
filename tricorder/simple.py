@@ -29,9 +29,9 @@ def calc_2pt(data, randoms, config_fname, zvar, random_zvar, ra_var='RA', dec_va
     config_2pt = load_config(config_fname)['2PCF']
     cat = treecorr.Catalog(ra=data[ra_var], dec=data[dec_var],
                            dec_units='degrees', ra_units='degrees',
-                           r=datasets.buzzard_cosmo.comoving_distance(data[zvar]).value*datasets.buzzard_cosmo.h)
+                           r=datasets.buzzard_cosmo.comoving_distance(data[zvar]).value)
     random_cat = treecorr.Catalog(ra=randoms[random_ra_var], dec=randoms[random_dec_var],
-                                  dec_units='degrees', ra_units='degrees', r=datasets.buzzard_cosmo.comoving_distance(randoms[random_zvar]).value*datasets.buzzard_cosmo.h)
+                                  dec_units='degrees', ra_units='degrees', r=datasets.buzzard_cosmo.comoving_distance(randoms[random_zvar]).value)
     print config_2pt
     dd = treecorr.NNCorrelation(config=config_2pt)
     dr = treecorr.NNCorrelation(config=config_2pt)
@@ -48,10 +48,10 @@ def calc_3pt(data, randoms, config_fname, zvar, random_zvar, ra_var='RA', dec_va
     config_3pt = load_config(config_fname)['3PCF']
     cat = treecorr.Catalog(ra=data[ra_var], dec=data[dec_var],
                            dec_units='degrees', ra_units='degrees',
-                           r=datasets.buzzard_cosmo.comoving_distance(data[zvar]).value*datasets.buzzard_cosmo.h)
+                           r=datasets.buzzard_cosmo.comoving_distance(data[zvar]).value)
     random_cat = treecorr.Catalog(ra=randoms[random_ra_var], dec=randoms[random_dec_var],
                                   dec_units='degrees', ra_units='degrees',
-                                  r=datasets.buzzard_cosmo.comoving_distance(randoms[random_zvar]).value*datasets.buzzard_cosmo.h)
+                                  r=datasets.buzzard_cosmo.comoving_distance(randoms[random_zvar]).value)
     print config_3pt
     ddd = treecorr.NNNCorrelation(config=config_3pt)
     ddr = treecorr.NNNCorrelation(config=config_3pt)
