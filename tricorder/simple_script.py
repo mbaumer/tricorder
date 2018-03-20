@@ -3,7 +3,7 @@ import paths
 
 if __name__ == '__main__':
     for config_fname in ['test7_3d']:
-        for sigma_z in [0.001, 0.002, 0.003, 0.004, .005, 0.01, 0.02, 0.03, 0.04]:
+        for sigma_z in [0]: #[0.001, 0.002, 0.003, 0.004, .005, 0.01, 0.02, 0.03, 0.04]:
             for min_z in [.15, .3, .45]:
                 max_z = min_z + 0.15
                 for dset_id in range(len(paths.dm_y1)):
