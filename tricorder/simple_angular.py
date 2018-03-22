@@ -1,4 +1,5 @@
 #!/u/ki/mbaumer/anaconda/bin/python
+from __future__ import division
 import matplotlib.pyplot as plt
 from astropy.io import fits
 import treecorr
@@ -12,6 +13,8 @@ import sys
 import os
 import paths
 
+random_oversamp = 2
+
 
 def load_config(config_fname):
     config_path = os.path.join(
@@ -24,14 +27,27 @@ def get_zslice(data, min_z, max_z, zvar):
     return data[(data[zvar] > min_z) & (data[zvar] < max_z)]
 
 
-def calc_2pt(data, randoms, config_fname, ra_var='RA', dec_var='DEC', random_ra_var='RA', random_dec_var='DEC'):
+def calc_2pt(data, randoms, config_fname, do3D, ra_var='RA', dec_var='DEC',
+             random_ra_var='RA', random_dec_var='DEC', data_zvar=None, random_zvar=None,):
+    if do3D:
+        assert data_zvar is not None
+        assert random_zvar is not None
     config_2pt = load_config(config_fname)['2PCF']
-    cat = treecorr.Catalog(ra=data[ra_var], dec=data[dec_var],
-                           dec_units='degrees', ra_units='degrees',
-                           )
-    random_cat = treecorr.Catalog(ra=randoms[random_ra_var], dec=randoms[random_dec_var],
-                                  dec_units='degrees', ra_units='degrees',
-                                  )
+    if not do3D:
+        cat = treecorr.Catalog(ra=data[ra_var], dec=data[dec_var],
+                               dec_units='degrees', ra_units='degrees',
+                               )
+        random_cat = treecorr.Catalog(ra=randoms[random_ra_var], dec=randoms[random_dec_var],
+                                      dec_units='degrees', ra_units='degrees',
+                                      )
+    else:
+        cat = treecorr.Catalog(ra=data[ra_var], dec=data[dec_var],
+                               dec_units='degrees', ra_units='degrees',
+                               r=datasets.buzzard_cosmo.comoving_distance(data[data_zvar]).value)
+        random_cat = treecorr.Catalog(ra=randoms[random_ra_var], dec=randoms[random_dec_var],
+                                      dec_units='degrees', ra_units='degrees',
+                                      r=datasets.buzzard_cosmo.comoving_distance(randoms[random_zvar]).value)
+
     print config_2pt
     dd = treecorr.NNCorrelation(config=config_2pt)
     dr = treecorr.NNCorrelation(config=config_2pt)
@@ -44,14 +60,30 @@ def calc_2pt(data, randoms, config_fname, ra_var='RA', dec_var='DEC', random_ra_
     return xi
 
 
-def calc_3pt(data, randoms, config_fname, ra_var='RA', dec_var='DEC', random_ra_var='RA', random_dec_var='DEC'):
+def calc_3pt(data, randoms, config_fname, do3D, ra_var='RA',
+             dec_var='DEC', random_ra_var='RA', random_dec_var='DEC',
+             data_zvar=None, random_zvar=None):
+
+    if do3D:
+        assert data_zvar is not None
+        assert random_zvar is not None
+
     config_3pt = load_config(config_fname)['3PCF']
-    cat = treecorr.Catalog(ra=data[ra_var], dec=data[dec_var],
-                           dec_units='degrees', ra_units='degrees',
-                           )
-    random_cat = treecorr.Catalog(ra=randoms[random_ra_var], dec=randoms[random_dec_var],
-                                  dec_units='degrees', ra_units='degrees',
-                                  )
+    if not do3D:
+        cat = treecorr.Catalog(ra=data[ra_var], dec=data[dec_var],
+                               dec_units='degrees', ra_units='degrees',
+                               )
+        random_cat = treecorr.Catalog(ra=randoms[random_ra_var], dec=randoms[random_dec_var],
+                                      dec_units='degrees', ra_units='degrees',
+                                      )
+    else:
+        cat = treecorr.Catalog(ra=data[ra_var], dec=data[dec_var],
+                               dec_units='degrees', ra_units='degrees',
+                               r=datasets.buzzard_cosmo.comoving_distance(data[data_zvar]).value)
+        random_cat = treecorr.Catalog(ra=randoms[random_ra_var], dec=randoms[random_dec_var],
+                                      dec_units='degrees', ra_units='degrees',
+                                      r=datasets.buzzard_cosmo.comoving_distance(randoms[random_zvar]).value)
+
     print config_3pt
     ddd = treecorr.NNNCorrelation(config=config_3pt)
     ddr = treecorr.NNNCorrelation(config=config_3pt)
@@ -75,23 +107,24 @@ def calc_3pt(data, randoms, config_fname, ra_var='RA', dec_var='DEC', random_ra_
     return zeta
 
 
-def calc_3pt_noisy_photoz_lss(dset_id, config_fname, min_z, max_z, sigma_z, zvar, random_zvar):
-    randoms = np.load(
-        '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/Buzzard_v1.6_Y1_0_a/lss_sample/data/REDSHIFT0.6_1nsideNonenJack30.dset_randoms.npy')
-    randoms = randoms[np.random.rand(len(randoms)) < 0.2]
+def calc_3pt_noisy_photoz_lss(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar):
+    randoms = np.load(paths.lss_y1_randoms)
     data = fits.getdata(paths.lss_y1[dset_id])
     data = data[data['lss-sample'] == 1]
+
     ra_var = 'RA'
     dec_var = 'DEC'
-    print len(randoms)
 
     data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
     data_slice = get_zslice(data, min_z, max_z, zvar)
     randoms_slice = get_zslice(randoms, min_z, max_z, random_zvar)
 
-    xi = calc_2pt(data_slice, randoms_slice, config_fname,
+    randoms_slice = randoms_slice[np.random.rand(len(randoms_slice)) < (
+        len(data_slice)/len(randoms_slice)*random_oversamp)]
+
+    xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
                   ra_var=ra_var, dec_var=dec_var)
-    zeta = calc_3pt(data_slice, randoms_slice, config_fname,
+    zeta = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
                     ra_var=ra_var, dec_var=dec_var)
 
     xi_file_name = config_fname+'_lssdset' + \
@@ -100,27 +133,31 @@ def calc_3pt_noisy_photoz_lss(dset_id, config_fname, min_z, max_z, sigma_z, zvar
         str(dset_id)+'_sigma'+str(sigma_z) + \
         '_'+str(min_z)+'_'+str(max_z)+'.zeta'
 
-    np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
-    np.save(os.path.join(paths.ang_out_dir, zeta_file_name), zeta)
+    if not do3D:
+        np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
+        np.save(os.path.join(paths.ang_out_dir, zeta_file_name), zeta)
+    else:
+        np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
+        np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
 
 
 def calc_3pt_noisy_photoz_dm(dset_id, config_fname, min_z, max_z, sigma_z, zvar, random_zvar):
-    randoms = fits.getdata(
-        '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10_randoms.fit')
-    randoms = randoms[np.random.rand(len(randoms)) < 0.02]
+    randoms = fits.getdata(paths.dm_y1_randoms)
     data = fits.getdata(paths.dm_y1[dset_id])
 
     ra_var = 'azim_ang'
     dec_var = 'polar_ang'
-    print len(randoms)
 
     data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
     data_slice = get_zslice(data, min_z, max_z, zvar)
     randoms_slice = get_zslice(randoms, min_z, max_z, random_zvar)
 
-    xi = calc_2pt(data_slice, randoms_slice, config_fname,
+    randoms_slice = randoms_slice[np.random.rand(len(randoms_slice)) < (
+        len(data_slice)/len(randoms_slice)*random_oversamp)]
+
+    xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
                   ra_var=ra_var, dec_var=dec_var)
-    zeta = calc_3pt(data_slice, randoms_slice, config_fname,
+    zeta = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
                     ra_var=ra_var, dec_var=dec_var)
 
     xi_file_name = config_fname + \
@@ -129,14 +166,17 @@ def calc_3pt_noisy_photoz_dm(dset_id, config_fname, min_z, max_z, sigma_z, zvar,
     zeta_file_name = config_fname+'_dmdset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
         '_'+str(min_z)+'_'+str(max_z)+'.zeta'
-    np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
-    np.save(os.path.join(paths.ang_out_dir, zeta_file_name), zeta)
+
+    if not do3D:
+        np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
+        np.save(os.path.join(paths.ang_out_dir, zeta_file_name), zeta)
+    else:
+        np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
+        np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
 
 
 def calc_3pt_noisy_photoz(dset_id, config_fname, min_z, max_z, sigma_z, zvar, random_zvar):
-    randoms = fits.getdata(
-        '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10_randoms.fit')
-    randoms = randoms[np.random.rand(len(randoms)) < 0.02]
+    randoms = fits.getdata(paths.rm_y1_randoms)
     data = fits.getdata(paths.rm_y1[dset_id])
 
     if dset_id == 0:
@@ -151,9 +191,12 @@ def calc_3pt_noisy_photoz(dset_id, config_fname, min_z, max_z, sigma_z, zvar, ra
     data_slice = get_zslice(data, min_z, max_z, zvar)
     randoms_slice = get_zslice(randoms, min_z, max_z, random_zvar)
 
-    xi = calc_2pt(data_slice, randoms_slice, config_fname,
+    randoms_slice = randoms_slice[np.random.rand(len(randoms_slice)) < (
+        len(data_slice)/len(randoms_slice)*random_oversamp)]
+
+    xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
                   ra_var=ra_var, dec_var=dec_var)
-    zeta = calc_3pt(data_slice, randoms_slice, config_fname,
+    zeta = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
                     ra_var=ra_var, dec_var=dec_var)
 
     xi_file_name = config_fname + \
@@ -162,5 +205,10 @@ def calc_3pt_noisy_photoz(dset_id, config_fname, min_z, max_z, sigma_z, zvar, ra
     zeta_file_name = config_fname+'_rmdset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
         '_'+str(min_z)+'_'+str(max_z)+'.zeta'
-    np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
-    np.save(os.path.join(paths.ang_out_dir, zeta_file_name), zeta)
+
+    if not do3D:
+        np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
+        np.save(os.path.join(paths.ang_out_dir, zeta_file_name), zeta)
+    else:
+        np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
+        np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
