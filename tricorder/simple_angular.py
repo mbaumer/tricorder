@@ -141,7 +141,7 @@ def calc_3pt_noisy_photoz_lss(dset_id, config_fname, do3D, min_z, max_z, sigma_z
         np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
 
 
-def calc_3pt_noisy_photoz_dm(dset_id, config_fname, min_z, max_z, sigma_z, zvar, random_zvar):
+def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar):
     randoms = fits.getdata(paths.dm_y1_randoms)
     data = fits.getdata(paths.dm_y1[dset_id])
 
@@ -175,7 +175,7 @@ def calc_3pt_noisy_photoz_dm(dset_id, config_fname, min_z, max_z, sigma_z, zvar,
         np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
 
 
-def calc_3pt_noisy_photoz(dset_id, config_fname, min_z, max_z, sigma_z, zvar, random_zvar):
+def calc_3pt_noisy_photoz(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar):
     randoms = fits.getdata(paths.rm_y1_randoms)
     data = fits.getdata(paths.rm_y1[dset_id])
 
