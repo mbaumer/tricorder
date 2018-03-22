@@ -123,9 +123,11 @@ def calc_3pt_noisy_photoz_lss(dset_id, config_fname, do3D, min_z, max_z, sigma_z
         len(data_slice)/len(randoms_slice)*random_oversamp)]
 
     xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
-                  ra_var=ra_var, dec_var=dec_var)
+                  ra_var=ra_var, dec_var=dec_var,
+                  data_zvar=zvar, random_zvar=random_zvar,)
     zeta = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
-                    ra_var=ra_var, dec_var=dec_var)
+                    ra_var=ra_var, dec_var=dec_var,
+                    data_zvar=zvar, random_zvar=random_zvar,)
 
     xi_file_name = config_fname+'_lssdset' + \
         str(dset_id)+'_sigma'+str(sigma_z)+'_'+str(min_z)+'_'+str(max_z)+'.xi'
@@ -156,9 +158,11 @@ def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z,
         len(data_slice)/len(randoms_slice)*random_oversamp)]
 
     xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
-                  ra_var=ra_var, dec_var=dec_var)
+                  ra_var=ra_var, dec_var=dec_var,
+                  data_zvar=zvar, random_zvar=random_zvar,)
     zeta = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
-                    ra_var=ra_var, dec_var=dec_var)
+                    ra_var=ra_var, dec_var=dec_var,
+                    data_zvar=zvar, random_zvar=random_zvar,)
 
     xi_file_name = config_fname + \
         '_dmdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
@@ -195,9 +199,11 @@ def calc_3pt_noisy_photoz(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zv
         len(data_slice)/len(randoms_slice)*random_oversamp)]
 
     xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
-                  ra_var=ra_var, dec_var=dec_var)
+                  ra_var=ra_var, dec_var=dec_var,
+                  data_zvar=zvar, random_zvar=random_zvar,)
     zeta = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
-                    ra_var=ra_var, dec_var=dec_var)
+                    ra_var=ra_var, dec_var=dec_var,
+                    data_zvar=zvar, random_zvar=random_zvar,)
 
     xi_file_name = config_fname + \
         '_rmdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
