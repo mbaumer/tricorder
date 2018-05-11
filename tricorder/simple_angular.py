@@ -15,7 +15,6 @@ import paths
 
 random_oversamp = 2
 
-
 def load_config(config_fname):
     config_path = os.path.join(
         paths.config_dir, config_fname+'.config')

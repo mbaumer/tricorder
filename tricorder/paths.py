@@ -103,33 +103,34 @@ lss_y1 = [
 ]
 
 dm_y1 = [
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-0/a/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-0/b/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-0/c/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-0/d/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-0/e/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-0/f/downsampled_particles.fits.downsample',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-0/downsample_particles/y1a/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-0/downsample_particles/y1b/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-0/downsample_particles/y1c/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-0/downsample_particles/y1d/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-0/downsample_particles/y1e/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-0/downsample_particles/y1f/downsampled_particles.fits',
 
-    # '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-1/a/downsampled_particles.fits.downsample',
-    # '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-1/b/downsampled_particles.fits.downsample',
-    # '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-1/c/downsampled_particles.fits.downsample',
-    # '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-1/d/downsampled_particles.fits.downsample',
-    # '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-1/e/downsampled_particles.fits.downsample',
-    # '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-1/f/downsampled_particles.fits.downsample',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-1/downsample_particles/y1a/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-1/downsample_particles/y1b/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-1/downsample_particles/y1c/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-1/downsample_particles/y1d/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-1/downsample_particles/y1e/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-1/downsample_particles/y1f/downsampled_particles.fits',
 
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-2/a/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-2/b/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-2/c/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-2/d/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-2/e/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-2/f/downsampled_particles.fits.downsample',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-2/downsample_particles/y1a/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-2/downsample_particles/y1b/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-2/downsample_particles/y1c/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-2/downsample_particles/y1d/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-2/downsample_particles/y1e/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-2/downsample_particles/y1f/downsampled_particles.fits',
 
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-5/a/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-5/b/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-5/c/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-5/d/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-5/e/downsampled_particles.fits.downsample',
-    '/u/ki/jderose/public_html/bcc/catalog/particles/y1/buzzard/flock/buzzard-5/f/downsampled_particles.fits.downsample',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-5/downsample_particles/y1a/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-5/downsample_particles/y1b/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-5/downsample_particles/y1c/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-5/downsample_particles/y1d/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-5/downsample_particles/y1e/downsampled_particles.fits',
+    '/nfs/slac/des/fs1/g/sims/jderose/BCC/Chinchilla/Herd//Chinchilla-5/downsample_particles/y1f/downsampled_particles.fits',
+
 ]
 
 rm_y3 = [

@@ -30,7 +30,7 @@ zvar_labels = {'ZSPEC': r'$z_{true}$',
                'REDSHIFT': r'$z_{true}$',
                }
 
-output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/'
+output_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/'
 
 
 class BaseDataset (object):
