@@ -61,7 +61,7 @@ def calc_2pt(data, randoms, config_fname, do3D, ra_var='RA', dec_var='DEC',
 
 def calc_3pt(data, randoms, config_fname, do3D, ra_var='RA',
              dec_var='DEC', random_ra_var='RA', random_dec_var='DEC',
-             data_zvar=None, random_zvar=None):
+             data_zvar=None, random_zvar=None, outvar='zeta'):
 
     if do3D:
         assert data_zvar is not None
@@ -84,26 +84,39 @@ def calc_3pt(data, randoms, config_fname, do3D, ra_var='RA',
                                       r=datasets.buzzard_cosmo.comoving_distance(randoms[random_zvar]).value)
 
     print config_3pt
-    ddd = treecorr.NNNCorrelation(config=config_3pt)
-    ddr = treecorr.NNNCorrelation(config=config_3pt)
-    drd = treecorr.NNNCorrelation(config=config_3pt)
-    rdd = treecorr.NNNCorrelation(config=config_3pt)
-    rdr = treecorr.NNNCorrelation(config=config_3pt)
-    rrd = treecorr.NNNCorrelation(config=config_3pt)
-    drr = treecorr.NNNCorrelation(config=config_3pt)
-    rrr = treecorr.NNNCorrelation(config=config_3pt)
-    ddd.process(cat, metric=config_3pt['metric'])
-    ddr.process(cat, cat,  random_cat, metric=config_3pt['metric'])
-    drd.process(cat, random_cat, cat, metric=config_3pt['metric'])
-    rdd.process(random_cat, cat, cat, metric=config_3pt['metric'])
-    rdr.process(random_cat, cat,  random_cat, metric=config_3pt['metric'])
-    rrd.process(random_cat, random_cat,  cat, metric=config_3pt['metric'])
-    drr.process(cat, random_cat,  random_cat, metric=config_3pt['metric'])
-    rrr.process(random_cat, random_cat,  random_cat,
-                metric=config_3pt['metric'])
-    zeta, varzeta = ddd.calculateZeta(
-        ddr=ddr, drd=drd, rdd=rdd, rrd=rrd, rdr=rdr, drr=drr, rrr=rrr)
-    return zeta
+
+    if outvar == 'zeta':
+        ddd = treecorr.NNNCorrelation(config=config_3pt)
+        ddr = treecorr.NNNCorrelation(config=config_3pt)
+        drd = treecorr.NNNCorrelation(config=config_3pt)
+        rdd = treecorr.NNNCorrelation(config=config_3pt)
+        rdr = treecorr.NNNCorrelation(config=config_3pt)
+        rrd = treecorr.NNNCorrelation(config=config_3pt)
+        drr = treecorr.NNNCorrelation(config=config_3pt)
+        rrr = treecorr.NNNCorrelation(config=config_3pt)
+        ddd.process(cat, metric=config_3pt['metric'])
+        ddr.process(cat, cat,  random_cat, metric=config_3pt['metric'])
+        drd.process(cat, random_cat, cat, metric=config_3pt['metric'])
+        rdd.process(random_cat, cat, cat, metric=config_3pt['metric'])
+        rdr.process(random_cat, cat,  random_cat, metric=config_3pt['metric'])
+        rrd.process(random_cat, random_cat,  cat, metric=config_3pt['metric'])
+        drr.process(cat, random_cat,  random_cat, metric=config_3pt['metric'])
+        rrr.process(random_cat, random_cat,  random_cat,
+                    metric=config_3pt['metric'])
+        output, varzeta = ddd.calculateZeta(
+            ddr=ddr, drd=drd, rdd=rdd, rrd=rrd, rdr=rdr, drr=drr, rrr=rrr)
+    else:
+        nnn = treecorr.NNNCorrelation(config=config_3pt)
+        toc = time.time()
+        setdict = {'d': cat, 'r': random_cat}
+        nnn.process(setdict[outvar[0]],
+                    setdict[outvar[1]], setdict[outvar[2]],
+                    metric=config_3pt['metric'])
+        tic = time.time()
+        print '3PCF took', tic - toc
+        stdout.flush()
+        output = nnn.ntri
+    return output
 
 
 def calc_3pt_noisy_photoz_lss(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar):
@@ -142,7 +155,7 @@ def calc_3pt_noisy_photoz_lss(dset_id, config_fname, do3D, min_z, max_z, sigma_z
         np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
 
 
-def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar):
+def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar,outvar='zeta'):
     randoms = fits.getdata(paths.dm_y1_randoms)
     data = fits.getdata(paths.dm_y1[dset_id])
 
@@ -173,26 +186,29 @@ def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z,
     randoms_slice = randoms_slice[np.random.rand(len(randoms_slice)) < (
         len(data_slice)/len(randoms_slice)*random_oversamp)]
 
-    xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
-                  ra_var=ra_var, dec_var=dec_var,
-                  data_zvar=zvar, random_zvar=random_zvar,)
-    zeta = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
+    if (outvar == 'zeta') | (outvar == 'ddd'):
+        xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
+                   ra_var=ra_var, dec_var=dec_var,
+                   data_zvar=zvar, random_zvar=random_zvar,)
+    output = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
                     ra_var=ra_var, dec_var=dec_var,
-                    data_zvar=zvar, random_zvar=random_zvar,)
+                    data_zvar=zvar, random_zvar=random_zvar,outvar=outvar)
 
     xi_file_name = config_fname + \
         '_2xdmdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
         '_'+str(min_z)+'_'+str(max_z)+'.xi'
-    zeta_file_name = config_fname+'_dmdset' + \
+    output_file_name = config_fname+'_2xdmdset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
-        '_'+str(min_z)+'_'+str(max_z)+'.zeta'
+        '_'+str(min_z)+'_'+str(max_z)+'.'+outvar
 
     if not do3D:
-        np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
-        np.save(os.path.join(paths.ang_out_dir, zeta_file_name), zeta)
+        if (outvar == 'zeta') | (outvar == 'ddd'):
+            np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
+        np.save(os.path.join(paths.ang_out_dir, output_file_name), output)
     else:
-        np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
-        np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
+        if (outvar == 'zeta') | (outvar == 'ddd'):
+            np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
+        np.save(os.path.join(paths.corr_out_dir, output_file_name), output)
 
 
 def calc_3pt_noisy_photoz(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar):
