@@ -114,7 +114,6 @@ def calc_3pt(data, randoms, config_fname, do3D, ra_var='RA',
                     metric=config_3pt['metric'])
         tic = time.time()
         print '3PCF took', tic - toc
-        stdout.flush()
         output = nnn.ntri
     return output
 
