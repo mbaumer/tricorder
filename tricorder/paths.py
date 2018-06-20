@@ -1,6 +1,6 @@
 config_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/'
 
-corr_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/test5/'
+corr_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/test5_again/'
 ang_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/test4_angular/'
 
 rm_y1_randoms = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10_randoms.fit'
