@@ -13,7 +13,11 @@ import sys
 import os
 import paths
 
+from make_data_randoms import (generate_randoms_radec, index_to_radec,
+                               radec_to_index)
+
 random_oversamp = 2
+
 
 def load_config(config_fname):
     config_path = os.path.join(
@@ -114,7 +118,6 @@ def calc_3pt(data, randoms, config_fname, do3D, ra_var='RA',
                     metric=config_3pt['metric'])
         tic = time.time()
         print '3PCF took', tic - toc
-        stdout.flush()
         output = nnn.ntri
     return output
 
@@ -155,26 +158,73 @@ def calc_3pt_noisy_photoz_lss(dset_id, config_fname, do3D, min_z, max_z, sigma_z
         np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
 
 
-def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar,outvar='zeta'):
+def calc_3pt_noisy_photoz_mice(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, outvar='zeta'):
+    data = fits.getdata(paths.rm_mice_y1[dset_id])
+    randoms = generate_randoms(data, 2)
+
+    ra_var = 'RA'
+    dec_var = 'DEC'
+
+    data[dec_var] = -data[dec_var]
+    data = data[data[ra_var] > 0]
+    data = data[data[ra_var] < 90]
+    data = data[data[dec_var] > -60]
+    data = data[data[dec_var] < -40]
+
+    data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
+    data_slice = get_zslice(data, min_z, max_z, zvar)
+    randoms_slice = get_zslice(randoms, min_z, max_z, random_zvar)
+
+    # randoms_slice = randoms_slice[np.random.rand(len(randoms_slice)) < (
+    #    len(data_slice)/len(randoms_slice)*random_oversamp)]
+
+    if (outvar == 'zeta') | (outvar == 'ddd'):
+        xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
+                      ra_var=ra_var, dec_var=dec_var,
+                      data_zvar=zvar, random_zvar=random_zvar,)
+    output = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
+                      ra_var=ra_var, dec_var=dec_var,
+                      data_zvar=zvar, random_zvar=random_zvar, outvar=outvar)
+
+    xi_file_name = config_fname + \
+        '_MICEdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
+        '_'+str(min_z)+'_'+str(max_z)+'.xi'
+    output_file_name = config_fname+'_MICEdset' + \
+        str(dset_id)+'_sigma'+str(sigma_z) + \
+        '_'+str(min_z)+'_'+str(max_z)+'.'+outvar
+
+    if not do3D:
+        if (outvar == 'zeta') | (outvar == 'ddd'):
+            np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
+        np.save(os.path.join(paths.ang_out_dir, output_file_name), output)
+    else:
+        if (outvar == 'zeta') | (outvar == 'ddd'):
+            np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
+        np.save(os.path.join(paths.corr_out_dir, output_file_name), output)
+
+
+def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, outvar='zeta'):
     randoms = fits.getdata(paths.dm_y1_randoms)
     data = fits.getdata(paths.dm_y1[dset_id])
 
-    #do downsampling
+    # do downsampling
     nbins = 1000
     data = data[(data['redshift'] > .15) & (data['redshift'] < .8)]
-    a,_ = np.histogram(data['redshift'],bins=nbins,range=(.15,.8))
+    a, _ = np.histogram(data['redshift'], bins=nbins, range=(.15, .8))
     from datasets import buzzard_cosmo
-    z = np.linspace(.15,.8,nbins)
+    z = np.linspace(.15, .8, nbins)
     vol = buzzard_cosmo.differential_comoving_volume(z)
     probs_vs_z = vol.value/a
-    p = probs_vs_z[np.digitize(data['redshift'],np.linspace(.15,.8,nbins))]
+    p = probs_vs_z[np.digitize(data['redshift'], np.linspace(.15, .8, nbins))]
     p /= np.sum(p)
-    new_downsample = np.random.choice(data,size=8000000,p=p)
-    c, _ = np.histogram(new_downsample['redshift'],bins=nbins,range=(.15,.8));
-    new_probs = (vol.value/c)[np.digitize(new_downsample['redshift'],np.linspace(.15,.8,nbins))]
+    new_downsample = np.random.choice(data, size=8000000, p=p)
+    c, _ = np.histogram(
+        new_downsample['redshift'], bins=nbins, range=(.15, .8))
+    new_probs = (
+        vol.value/c)[np.digitize(new_downsample['redshift'], np.linspace(.15, .8, nbins))]
     new_probs /= np.sum(new_probs)
-    data = np.random.choice(new_downsample,size=8000000,p=new_probs)
-    #end downsampling
+    data = np.random.choice(new_downsample, size=8000000, p=new_probs)
+    # end downsampling
 
     ra_var = 'azim_ang'
     dec_var = 'polar_ang'
@@ -188,11 +238,11 @@ def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z,
 
     if (outvar == 'zeta') | (outvar == 'ddd'):
         xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
-                   ra_var=ra_var, dec_var=dec_var,
-                   data_zvar=zvar, random_zvar=random_zvar,)
+                      ra_var=ra_var, dec_var=dec_var,
+                      data_zvar=zvar, random_zvar=random_zvar,)
     output = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
-                    ra_var=ra_var, dec_var=dec_var,
-                    data_zvar=zvar, random_zvar=random_zvar,outvar=outvar)
+                      ra_var=ra_var, dec_var=dec_var,
+                      data_zvar=zvar, random_zvar=random_zvar, outvar=outvar)
 
     xi_file_name = config_fname + \
         '_2xdmdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
@@ -250,3 +300,54 @@ def calc_3pt_noisy_photoz(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zv
     else:
         np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
         np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
+
+
+def generate_randoms(data, oversamp,
+                     Ngen=1000000, Ntries_max=10000):
+
+    Ncurrent = 0
+    Ntry = 0
+    Ntot = len(data) * oversamp
+
+    minra = 0
+    maxra = 90
+    mindec = -60
+    maxdec = -40
+
+    zdist = data['ZSPEC']
+
+    random_ra = []
+    random_dec = []
+    random_z = []
+    while ((Ncurrent < Ntot) & (Ntry < Ntries_max)):
+        if Ntry % 100 == 1:
+            print(Ntry, Ntries_max, Ncurrent, Ntot, Ngen)
+        # generate random ra and dec
+        ra_i, dec_i = generate_randoms_radec(minra, maxra,
+                                             mindec, maxdec, Ngen)
+        indices_i = radec_to_index(dec_i, ra_i, 4096)
+
+        z_i = np.random.choice(zdist, len(ra_i))
+
+        random_ra += list(ra_i)
+        random_dec += list(dec_i)
+        random_z += list(z_i)
+
+        Ncurrent = len(random_ra)
+        Ntry += 1
+    if Ntry >= Ntries_max:
+        print('Warning! We gave up after {0} tries, finding {1} objects instead of the desired {2} objects!'.format(
+            Ntry, Ncurrent, Ntot))
+
+    randoms = np.zeros(len(random_ra), dtype=[
+        ('RA', '>f4'), ('DEC', '>f4'), ('ZSPEC', '>f4')])
+    randoms['RA'] = random_ra
+    randoms['DEC'] = random_dec
+    randoms['ZSPEC'] = random_z
+
+    if len(randoms) > Ntot:
+        inds_to_keep = np.random.choice(np.arange(len(randoms)), size=Ntot,
+                                        replace=False)
+        randoms = randoms[inds_to_keep]
+
+    return randoms

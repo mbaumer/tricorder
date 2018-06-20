@@ -4,9 +4,9 @@ import paths
 do3Ds = [True]
 
 if __name__ == '__main__':
-    for i, config_fname in enumerate(['test7_3d']):
+    for i, config_fname in enumerate(['test10_3d']):
         do3D = do3Ds[i]
-        for sigma_z in [0, ]:  # 0.01, 0.02, 0.03, 0.04]:
+        for sigma_z in [0, 0.001, 0.002, 0.01, 0.02, 0.03]:
             for min_z in [.15, .3, .45]:
                 max_z = min_z + 0.15
                 # for dset_id in range(len(paths.rm_y1)):
