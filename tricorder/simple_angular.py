@@ -16,9 +16,6 @@ import paths
 from make_data_randoms import (generate_randoms_radec, index_to_radec,
                                radec_to_index)
 
-random_oversamp = 2
-
-
 def load_config(config_fname):
     config_path = os.path.join(
         paths.config_dir, config_fname+'.config')
@@ -158,9 +155,10 @@ def calc_3pt_noisy_photoz_lss(dset_id, config_fname, do3D, min_z, max_z, sigma_z
         np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
 
 
-def calc_3pt_noisy_photoz_mice(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, outvar='zeta'):
+def calc_3pt_noisy_photoz_mice(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp, outvar='zeta'):
+
     data = fits.getdata(paths.rm_mice_y1[dset_id])
-    randoms = generate_randoms(data, 2)
+    randoms = generate_randoms(data, random_oversamp)
 
     ra_var = 'RA'
     dec_var = 'DEC'
@@ -186,12 +184,13 @@ def calc_3pt_noisy_photoz_mice(dset_id, config_fname, do3D, min_z, max_z, sigma_
                       ra_var=ra_var, dec_var=dec_var,
                       data_zvar=zvar, random_zvar=random_zvar, outvar=outvar)
 
+
     xi_file_name = config_fname + \
         '_MICEdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
-        '_'+str(min_z)+'_'+str(max_z)+'.xi'
-    output_file_name = config_fname+'_MICEdset' + \
+        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+str(random_oversamp)+'.xi'
+    zeta_file_name = config_fname+'_MICEdset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
-        '_'+str(min_z)+'_'+str(max_z)+'.'+outvar
+        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+str(random_oversamp)+'.'+outvar
 
     if not do3D:
         if (outvar == 'zeta') | (outvar == 'ddd'):
@@ -261,7 +260,8 @@ def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z,
         np.save(os.path.join(paths.corr_out_dir, output_file_name), output)
 
 
-def calc_3pt_noisy_photoz(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar):
+def calc_3pt_noisy_photoz(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar,random_oversamp):
+    
     randoms = fits.getdata(paths.rm_y1_randoms)
     data = fits.getdata(paths.rm_y1[dset_id])
 
@@ -289,10 +289,10 @@ def calc_3pt_noisy_photoz(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zv
 
     xi_file_name = config_fname + \
         '_rmdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
-        '_'+str(min_z)+'_'+str(max_z)+'.xi'
+        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+str(random_oversamp)+'.xi'
     zeta_file_name = config_fname+'_rmdset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
-        '_'+str(min_z)+'_'+str(max_z)+'.zeta'
+        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+str(random_oversamp)+'.zeta'
 
     if not do3D:
         np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
