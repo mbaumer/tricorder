@@ -120,12 +120,15 @@ def calc_3pt(data, randoms, config_fname, do3D, ra_var='RA',
 
 
 def calc_3pt_noisy_photoz_lss(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar,random_oversamp):
-    randoms = np.load(paths.lss_y1_randoms)
+    randoms = fits.getdata(paths.lss_y1_randoms)
     data = fits.getdata(paths.lss_y1[dset_id])
     data = data[data['lss-sample'] == 1]
 
     ra_var = 'RA'
     dec_var = 'DEC'
+
+    data = data[data[ra_var] < 100]
+    data = data[data[dec_var] < -20]
 
     data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
     data_slice = get_zslice(data, min_z, max_z, zvar)
@@ -159,7 +162,7 @@ def calc_3pt_noisy_photoz_lss(dset_id, config_fname, do3D, min_z, max_z, sigma_z
 def calc_3pt_noisy_photoz_mice(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp, outvar='zeta'):
 
     data = fits.getdata(paths.rm_mice_y1[dset_id])
-    randoms = generate_randoms(data, random_oversamp)
+    randoms = generate_randoms(data, random_oversamp,zvar)
 
     ra_var = 'RA'
     dec_var = 'DEC'
@@ -299,7 +302,7 @@ def calc_3pt_noisy_photoz(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zv
         np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
 
 
-def generate_randoms(data, oversamp,
+def generate_randoms(data, oversamp, zvar,
                      Ngen=1000000, Ntries_max=10000):
 
     Ncurrent = 0
@@ -311,7 +314,7 @@ def generate_randoms(data, oversamp,
     mindec = -60
     maxdec = -40
 
-    zdist = data['ZSPEC']
+    zdist = data[zvar]
 
     random_ra = []
     random_dec = []
