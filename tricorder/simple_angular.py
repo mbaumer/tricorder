@@ -119,7 +119,7 @@ def calc_3pt(data, randoms, config_fname, do3D, ra_var='RA',
     return output
 
 
-def calc_3pt_noisy_photoz_lss(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar):
+def calc_3pt_noisy_photoz_lss(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar,random_oversamp):
     randoms = np.load(paths.lss_y1_randoms)
     data = fits.getdata(paths.lss_y1[dset_id])
     data = data[data['lss-sample'] == 1]
@@ -141,11 +141,12 @@ def calc_3pt_noisy_photoz_lss(dset_id, config_fname, do3D, min_z, max_z, sigma_z
                     ra_var=ra_var, dec_var=dec_var,
                     data_zvar=zvar, random_zvar=random_zvar,)
 
-    xi_file_name = config_fname+'_lssdset' + \
-        str(dset_id)+'_sigma'+str(sigma_z)+'_'+str(min_z)+'_'+str(max_z)+'.xi'
+    xi_file_name = config_fname + \
+        '_lssdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
+        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+str(random_oversamp)+'.xi'
     zeta_file_name = config_fname+'_lssdset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
-        '_'+str(min_z)+'_'+str(max_z)+'.zeta'
+        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+str(random_oversamp)+'.zeta'
 
     if not do3D:
         np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
