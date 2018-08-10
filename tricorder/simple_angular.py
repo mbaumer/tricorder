@@ -188,7 +188,7 @@ def calc_3pt_noisy_photoz_mice(dset_id, config_fname, do3D, min_z, max_z, sigma_
     xi_file_name = config_fname + \
         '_MICEdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
         '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+str(random_oversamp)+'.xi'
-    zeta_file_name = config_fname+'_MICEdset' + \
+    output_file_name = config_fname+'_MICEdset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
         '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+str(random_oversamp)+'.'+outvar
 
@@ -265,12 +265,8 @@ def calc_3pt_noisy_photoz(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zv
     randoms = fits.getdata(paths.rm_y1_randoms)
     data = fits.getdata(paths.rm_y1[dset_id])
 
-    if dset_id == 0:
-        ra_var = 'azim_ang'
-        dec_var = 'polar_ang'
-    else:
-        ra_var = 'RA'
-        dec_var = 'DEC'
+    ra_var = 'RA'
+    dec_var = 'DEC'
     print len(randoms)
 
     data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
@@ -307,7 +303,7 @@ def generate_randoms(data, oversamp,
 
     Ncurrent = 0
     Ntry = 0
-    Ntot = len(data) * oversamp
+    Ntot = int(len(data) * oversamp)
 
     minra = 0
     maxra = 90
@@ -340,14 +336,13 @@ def generate_randoms(data, oversamp,
             Ntry, Ncurrent, Ntot))
 
     randoms = np.zeros(len(random_ra), dtype=[
-        ('RA', '>f4'), ('DEC', '>f4'), ('ZSPEC', '>f4')])
+        ('RA', '>f4'), ('DEC', '>f4'), ('Z', '>f4')])
     randoms['RA'] = random_ra
     randoms['DEC'] = random_dec
-    randoms['ZSPEC'] = random_z
+    randoms['Z'] = random_z
 
     if len(randoms) > Ntot:
-        inds_to_keep = np.random.choice(np.arange(len(randoms)), size=Ntot,
-                                        replace=False)
+        inds_to_keep = np.random.choice(np.arange(len(randoms)), size=Ntot,replace=False)
         randoms = randoms[inds_to_keep]
 
     return randoms
