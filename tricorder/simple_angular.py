@@ -266,8 +266,15 @@ def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z,
 
 def calc_3pt_noisy_photoz(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar,random_oversamp):
     
-    randoms = fits.getdata(paths.rm_y1_randoms)
-    data = fits.getdata(paths.rm_y1[dset_id])
+    if min_z == .6:
+        randoms = fits.getdata(paths.rm_y1_HL_randoms)
+        data = fits.getdata(paths.rm_y1_HL[dset_id])
+    elif min_z == .75:
+        randoms = fits.getdata(paths.rm_y1_HHL_randoms)
+        data = fits.getdata(paths.rm_y1_HHL[dset_id])
+    else:
+        randoms = fits.getdata(paths.rm_y1_randoms)
+        data = fits.getdata(paths.rm_y1[dset_id])
 
     ra_var = 'RA'
     dec_var = 'DEC'
@@ -303,8 +310,15 @@ def calc_3pt_noisy_photoz(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zv
 
 def calc_3pt_noisy_photoz_y3(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar,random_oversamp):
     
-    randoms = fits.getdata(paths.rm_y3_randoms)
-    data = fits.getdata(paths.rm_y3[dset_id])
+    if min_z == .6:
+        randoms = fits.getdata(paths.rm_y3_HL_randoms)
+        data = fits.getdata(paths.rm_y3_HL[dset_id])
+    elif min_z == .75:
+        randoms = fits.getdata(paths.rm_y3_HHL_randoms)
+        data = fits.getdata(paths.rm_y3_HHL[dset_id])
+    else:
+        randoms = fits.getdata(paths.rm_y3_randoms)
+        data = fits.getdata(paths.rm_y3[dset_id])
 
     ra_var = 'RA'
     dec_var = 'DEC'
