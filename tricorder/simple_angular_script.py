@@ -10,24 +10,24 @@ if __name__ == '__main__':
             for min_z in [.15, .3, .45]:
                 max_z = min_z + 0.15
                 for random_oversamp in [1, 2, 3]:
-                    for dset_id in [0]:  # range(len(paths.rm_y1)):
+                    for dset_id in [1, 2, 3, 4, 5]:  # range(len(paths.rm_y1)):
                         command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_y3(" + str(
                             dset_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + "," + "'ZSPEC','Z',"+str(random_oversamp)+")"
                         print command_str
                         subprocess.call(["bsub", "-W", "47:00", "-R", "rusage[mem=4000]", "-o", "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/logs/%J.out",
                                          "-e", "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/logs/%J.err", "python", "-c", command_str])
-
+                    for dset_id in np.arange(1, len(paths.rm_y1)):
                         #     command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_mice(" + str(
                         #         dset_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + "," + "'ZSPEC','Z',"+str(random_oversamp)+")"
                         #     print command_str
                         #     subprocess.call(["bsub", "-W", "47:00", "-R", "rusage[mem=4000]", "-o", "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/logs/%J.out",
                         #                      "-e", "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/logs/%J.err", "python", "-c", command_str])
 
-                        #     command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz(" + str(
-                        #         dset_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + "," + "'ZREDMAGIC','Z',"+str(random_oversamp)+")"
-                        #     print command_str
-                        #     subprocess.call(["bsub", "-W", "47:00", "-R", "rusage[mem=4000]", "-o", "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/logs/%J.out",
-                        #                      "-e", "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/logs/%J.err", "python", "-c", command_str])
+                        command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz(" + str(
+                            dset_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + "," + "'ZREDMAGIC','Z',"+str(random_oversamp)+")"
+                        print command_str
+                        subprocess.call(["bsub", "-W", "47:00", "-R", "rusage[mem=4000]", "-o", "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/logs/%J.out",
+                                         "-e", "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/logs/%J.err", "python", "-c", command_str])
 
                         #     command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_mice(" + str(
                         #         dset_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + "," + "'ZREDMAGIC','Z',"+str(random_oversamp)+")"
