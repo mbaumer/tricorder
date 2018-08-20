@@ -4,12 +4,12 @@ import paths
 # do3Ds = [True]
 
 if __name__ == '__main__':
-    for i, config_fname in enumerate(['paper10.1', 'paper11.1', 'paper12.1']):
+    for i, config_fname in enumerate(['paper13.1', 'paper14.1', 'paper15.1']):
         do3D = False
         for sigma_z in [0]:
             for min_z in [.15, .3, .45, .6, .75]:
                 max_z = min_z + 0.15
-                for random_oversamp in [1, 2, 3]:
+                for random_oversamp in [1, 2]:
                     command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_mice(" + str(
                         0) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + "," + "'ZSPEC','Z',"+str(random_oversamp)+")"
                     print command_str
