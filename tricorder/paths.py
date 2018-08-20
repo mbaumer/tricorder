@@ -66,26 +66,26 @@ rm_y1 = [
 ]
 
 rm_y1_HL = [
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/b/buzzard_1.6-6b_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/c/buzzard_1.6-6c_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/d/buzzard_1.6-6d_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/e/buzzard_1.6-6e_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/f/buzzard_1.6-6f_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/b/buzzard_1.6-6b_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/c/buzzard_1.6-6c_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/d/buzzard_1.6-6d_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/e/buzzard_1.6-6e_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/f/buzzard_1.6-6f_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
 
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/a/buzzard2_1.6-6a_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/b/buzzard2_1.6-6b_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/c/buzzard2_1.6-6c_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/d/buzzard2_1.6-6d_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/e/buzzard2_1.6-6e_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/f/buzzard2_1.6-6f_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/a/buzzard2_1.6-6a_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/b/buzzard2_1.6-6b_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/c/buzzard2_1.6-6c_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/d/buzzard2_1.6-6d_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/e/buzzard2_1.6-6e_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/f/buzzard2_1.6-6f_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
 
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/a/buzzard5_1.6-6a_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/b/buzzard5_1.6-6b_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/c/buzzard5_1.6-6c_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/d/buzzard5_1.6-6d_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/e/buzzard5_1.6-6e_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/f/buzzard5_1.6-6f_run_redmapper_v6.4.18_redmagic_highlum_1.5-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/a/buzzard5_1.6-6a_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/b/buzzard5_1.6-6b_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/c/buzzard5_1.6-6c_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/d/buzzard5_1.6-6d_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/e/buzzard5_1.6-6e_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/f/buzzard5_1.6-6f_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
 ]
 
 rm_y1_HHL = [
