@@ -17,6 +17,10 @@ lss_y1_randoms = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/lss_y1_randoms.
 
 rm_mice_y1 = [
     '/nfs/slac/g/ki/ki23/des/jderose/des/MICE/redmagic/mice2_des_run_redmapper_v6.4.16_redmagic_highdens_0.5-10.fit']
+rm_mice_y1_HL = [
+    '/nfs/slac/g/ki/ki23/des/jderose/des/MICE/redmagic/mice2_des_run_redmapper_v6.4.16_redmagic_highlum_1.0-04.fit']
+rm_mice_y1_HHL = [
+    '/nfs/slac/g/ki/ki23/des/jderose/des/MICE/redmagic/mice2_des_run_redmapper_v6.4.16_redmagic_higherlum_1.5-01.fit']
 
 rm_y1 = [
     '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',

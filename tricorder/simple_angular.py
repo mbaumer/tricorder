@@ -161,8 +161,15 @@ def calc_3pt_noisy_photoz_lss(dset_id, config_fname, do3D, min_z, max_z, sigma_z
 
 def calc_3pt_noisy_photoz_mice(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp, outvar='zeta'):
 
-    data = fits.getdata(paths.rm_mice_y1[dset_id])
-    randoms = generate_randoms(data, random_oversamp,zvar)
+    if min_z == .6:
+        data = fits.getdata(paths.rm_mice_y1_HL[dset_id])
+        randoms = generate_randoms(data, random_oversamp,zvar)
+    elif min_z == .75:
+        data = fits.getdata(paths.rm_mice_y1_HHL[dset_id])
+        randoms = generate_randoms(data, random_oversamp,zvar)
+    else:
+        data = fits.getdata(paths.rm_mice_y1[dset_id])
+        randoms = generate_randoms(data, random_oversamp,zvar)
 
     ra_var = 'RA'
     dec_var = 'DEC'
