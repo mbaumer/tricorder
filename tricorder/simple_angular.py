@@ -213,27 +213,27 @@ def calc_3pt_noisy_photoz_mice(dset_id, config_fname, do3D, min_z, max_z, sigma_
         np.save(os.path.join(paths.corr_out_dir, output_file_name), output)
 
 
-def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, outvar='zeta'):
+def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp, outvar='zeta'):
     randoms = fits.getdata(paths.dm_y1_randoms)
     data = fits.getdata(paths.dm_y1[dset_id])
 
     # do downsampling
-    nbins = 1000
-    data = data[(data['redshift'] > .15) & (data['redshift'] < .8)]
-    a, _ = np.histogram(data['redshift'], bins=nbins, range=(.15, .8))
-    from datasets import buzzard_cosmo
-    z = np.linspace(.15, .8, nbins)
-    vol = buzzard_cosmo.differential_comoving_volume(z)
-    probs_vs_z = vol.value/a
-    p = probs_vs_z[np.digitize(data['redshift'], np.linspace(.15, .8, nbins))]
-    p /= np.sum(p)
-    new_downsample = np.random.choice(data, size=8000000, p=p)
-    c, _ = np.histogram(
-        new_downsample['redshift'], bins=nbins, range=(.15, .8))
-    new_probs = (
-        vol.value/c)[np.digitize(new_downsample['redshift'], np.linspace(.15, .8, nbins))]
-    new_probs /= np.sum(new_probs)
-    data = np.random.choice(new_downsample, size=8000000, p=new_probs)
+    # nbins = 1000
+    # data = data[(data['redshift'] > .15) & (data['redshift'] < .8)]
+    # a, _ = np.histogram(data['redshift'], bins=nbins, range=(.15, .8))
+    # from datasets import buzzard_cosmo
+    # z = np.linspace(.15, .8, nbins)
+    # vol = buzzard_cosmo.differential_comoving_volume(z)
+    # probs_vs_z = vol.value/a
+    # p = probs_vs_z[np.digitize(data['redshift'], np.linspace(.15, .8, nbins))]
+    # p /= np.sum(p)
+    # new_downsample = np.random.choice(data, size=8000000, p=p)
+    # c, _ = np.histogram(
+    #     new_downsample['redshift'], bins=nbins, range=(.15, .8))
+    # new_probs = (
+    #     vol.value/c)[np.digitize(new_downsample['redshift'], np.linspace(.15, .8, nbins))]
+    # new_probs /= np.sum(new_probs)
+    # data = np.random.choice(new_downsample, size=8000000, p=new_probs)
     # end downsampling
 
     ra_var = 'azim_ang'
@@ -255,9 +255,9 @@ def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z,
                       data_zvar=zvar, random_zvar=random_zvar, outvar=outvar)
 
     xi_file_name = config_fname + \
-        '_2xdmdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
+        '_dmdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
         '_'+str(min_z)+'_'+str(max_z)+'.xi'
-    output_file_name = config_fname+'_2xdmdset' + \
+    output_file_name = config_fname+'_dmdset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
         '_'+str(min_z)+'_'+str(max_z)+'.'+outvar
 
