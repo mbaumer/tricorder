@@ -255,10 +255,10 @@ def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z,
     dec_var = 'polar_ang'
 
     weight_data = fits.getdata(paths.rm_y1[0])
-    weight_data_slice = get_zslice(weight_data, min_z, max_z,rw_scheme)
+    weight_data_slice = get_zslice(weight_data, min_z, max_z, rw_scheme)
 
     data_slice = downselect(data, weight_data_slice, 'redshift', 'ZSPEC', 10)
-    randoms_slice = downselect(randoms, data_slice, 'Z', 'ZSPEC',1)
+    randoms_slice = downselect(randoms, data_slice, 'Z', 'redshift', 1)
 
     if (outvar == 'zeta') | (outvar == 'ddd'):
         xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
