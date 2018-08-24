@@ -7,9 +7,9 @@ if __name__ == '__main__':
     for i, config_fname in enumerate(['paper3.1', 'paper6.1', 'paper9.1', 'paper13.1', 'paper14.1', 'paper15.1']):
         do3D = False
         for sigma_z in [0]:
-            for min_z in [.15, .3, .45, .6, ]:
+            for min_z in [.15, .3, .45, .6, .75]:
                 max_z = min_z + 0.15
-                for random_oversamp in [1, 2]:
+                for random_oversamp in [1]:
                     for dset_id in range(len(paths.dm_y1)):
                         command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_dm(" + str(
                             dset_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + "," + "'redshift','Z',"+str(random_oversamp)+")"
