@@ -227,7 +227,7 @@ def calc_3pt_noisy_photoz_mice(dset_id, config_fname, do3D, min_z, max_z, sigma_
         np.save(os.path.join(paths.corr_out_dir, output_file_name), output)
 
 
-def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, data_oversamp, rw_scheme, outvar='zeta'):
+def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, rw_scheme, outvar='zeta'):
     randoms = fits.getdata(paths.dm_y1_randoms)
     data = fits.getdata(paths.dm_y1[dset_id])
     data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
