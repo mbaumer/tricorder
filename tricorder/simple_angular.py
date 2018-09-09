@@ -257,7 +257,7 @@ def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z,
     weight_data = fits.getdata(paths.rm_y1[0])
     weight_data_slice = get_zslice(weight_data, min_z, max_z, rw_scheme)
 
-    data_slice = downselect(data, weight_data_slice, 'redshift', 'ZSPEC', 10)
+    data_slice = downselect(data, weight_data_slice, 'redshift', 'ZSPEC', 3)
     randoms_slice = downselect(randoms, data_slice, 'Z', 'redshift', 1)
 
     if (outvar == 'zeta') | (outvar == 'ddd'):
@@ -269,9 +269,9 @@ def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z,
                       data_zvar=zvar, random_zvar=random_zvar, outvar=outvar)
 
     xi_file_name = config_fname + \
-        '_dm10dset'+str(dset_id)+'_sigma'+str(sigma_z) + \
+        '_dm3dset'+str(dset_id)+'_sigma'+str(sigma_z) + \
         '_'+rw_scheme+'_'+str(min_z)+'_'+str(max_z)+'.xi'
-    output_file_name = config_fname+'_dm10dset' + \
+    output_file_name = config_fname+'_dm3dset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
         '_'+rw_scheme+'_'+str(min_z)+'_'+str(max_z)+'.'+outvar
 
