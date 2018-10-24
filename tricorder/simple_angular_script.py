@@ -4,11 +4,11 @@ import paths
 # do3Ds = [True]
 
 if __name__ == '__main__':
-    for i, config_fname in enumerate(['paper13.1', 'paper14.1', 'paper15.1']):
+    for i, config_fname in enumerate(['paper13.1a', 'paper13.1b', 'paper14.1a', 'paper14.1b', 'paper15.1a', 'paper15.1b']):
         do3D = False
         for sigma_z in [0]:
-            for min_z in [.15, .225, .3, .375, .45, .525, .6, .675, .75, .825]:
-                max_z = min_z + 0.075
+            for min_z in [.15, .3, .45, .6]:
+                max_z = min_z + 0.15
                 for rw_scheme in ['ZSPEC', 'ZREDMAGIC']:
                     for dset_id in range(len(paths.dm_y1)):
                         command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_dm(" + str(
