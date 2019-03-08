@@ -3,9 +3,9 @@ config_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/'
 corr_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/test5/'
 ang_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/paper3/'
 
-rm_y1_randoms = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10_randoms.fit'
-rm_y1_HL_randoms = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highlum_1.0-04_randoms.fit'
-rm_y1_HHL_randoms = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01_randoms.fit'
+rm_y1_randoms = '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3a/buzzard-3_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_highdens_0.5-10_randoms.fit'
+rm_y1_HL_randoms = '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3a/buzzard-3_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_highlum_1.0-04_randoms.fit'
+rm_y1_HHL_randoms = '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3a/buzzard-3_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_higherlum_1.5-01_randoms.fit'
 
 rm_y3_randoms = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y3/buzzard/flock/buzzard-0/a/buzzard-0_1.6_y3_run_redmapper_v6.4.20_redmagic_highdens_0.5-10_randoms.fit'
 rm_y3_HL_randoms = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y3/buzzard/flock/buzzard-0/a/buzzard-0_1.6_y3_run_redmapper_v6.4.20_redmagic_highlum_1.0-04_randoms.fit'
@@ -27,97 +27,51 @@ rm_mice_y1_HHL = [
     '/nfs/slac/g/ki/ki23/des/jderose/des/MICE/redmagic/mice2_des_run_redmapper_v6.4.16_redmagic_higherlum_1.5-01.fit']
 
 rm_y1 = [
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/b/buzzard_1.6-6b_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/c/buzzard_1.6-6c_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/d/buzzard_1.6-6d_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/e/buzzard_1.6-6e_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/f/buzzard_1.6-6f_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3a/buzzard-3_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3b/buzzard-3_1.9.2+1-6b_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3c/buzzard-3_1.9.2+1-6c_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3d/buzzard-3_1.9.2+1-6d_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3e/buzzard-3_1.9.2+1-6e_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3f/buzzard-3_1.9.2+1-6f_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
 
-    # 2pt bias visibly low at small angles for these runs
-    #'/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-1/a/buzzard-1_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    #'/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-1/b/buzzard-1_1.6-6b_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    #'/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-1/c/buzzard-1_1.6-6c_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    #'/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-1/d/buzzard-1_1.6-6d_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    #'/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-1/e/buzzard-1_1.6-6e_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    #'/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-1/f/buzzard-1_1.6-6f_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/a/buzzard2_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/b/buzzard2_1.6-6b_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/c/buzzard2_1.6-6c_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/d/buzzard2_1.6-6d_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/e/buzzard2_1.6-6e_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/f/buzzard2_1.6-6f_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-
-    # 2pt bias also visibly low for these:
-    #'/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-3/a/buzzard-3_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    #'/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-3/b/buzzard-3_1.6-6b_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    #'/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-3/c/buzzard-3_1.6-6c_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    #'/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-3/d/buzzard-3_1.6-6d_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    #'/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-3/e/buzzard-3_1.6-6e_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    #'/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-3/f/buzzard-3_1.6-6f_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/a/buzzard5_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/b/buzzard5_1.6-6b_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/c/buzzard5_1.6-6c_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/d/buzzard5_1.6-6d_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/e/buzzard5_1.6-6e_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/f/buzzard5_1.6-6f_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-
-    # this one not visibly bad, but since there are no DM catalogs for it;
-    # '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-21/a/buzzard21_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    # '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-21/b/buzzard21_1.6-6b_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    # '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-21/c/buzzard21_1.6-6c_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    # '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-21/d/buzzard21_1.6-6d_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    # '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-21/e/buzzard21_1.6-6e_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
-    # '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-21/f/buzzard21_1.6-6f_run_redmapper_v6.4.18_redmagic_highdens_0.5-10.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4a/buzzard-4_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4b/buzzard-4_1.9.2+1-6b_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4c/buzzard-4_1.9.2+1-6c_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4d/buzzard-4_1.9.2+1-6d_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4e/buzzard-4_1.9.2+1-6e_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4f/buzzard-4_1.9.2+1-6f_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
 ]
 
 rm_y1_HL = [
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/b/buzzard_1.6-6b_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/c/buzzard_1.6-6c_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/d/buzzard_1.6-6d_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/e/buzzard_1.6-6e_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/f/buzzard_1.6-6f_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3a/buzzard-3_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_highlum_1.0-04.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3b/buzzard-3_1.9.2+1-6b_run_redmapper_v6.4.22_redmagic_highlum_1.0-04.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3c/buzzard-3_1.9.2+1-6c_run_redmapper_v6.4.22_redmagic_highlum_1.0-04.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3d/buzzard-3_1.9.2+1-6d_run_redmapper_v6.4.22_redmagic_highlum_1.0-04.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3e/buzzard-3_1.9.2+1-6e_run_redmapper_v6.4.22_redmagic_highlum_1.0-04.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3f/buzzard-3_1.9.2+1-6f_run_redmapper_v6.4.22_redmagic_highlum_1.0-04.fit',
 
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/a/buzzard2_1.6-6a_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/b/buzzard2_1.6-6b_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/c/buzzard2_1.6-6c_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/d/buzzard2_1.6-6d_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/e/buzzard2_1.6-6e_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/f/buzzard2_1.6-6f_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/a/buzzard5_1.6-6a_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/b/buzzard5_1.6-6b_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/c/buzzard5_1.6-6c_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/d/buzzard5_1.6-6d_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/e/buzzard5_1.6-6e_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/f/buzzard5_1.6-6f_run_redmapper_v6.4.18_redmagic_highlum_1.0-04.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4a/buzzard-4_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_highlum_1.0-04.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4b/buzzard-4_1.9.2+1-6b_run_redmapper_v6.4.22_redmagic_highlum_1.0-04.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4c/buzzard-4_1.9.2+1-6c_run_redmapper_v6.4.22_redmagic_highlum_1.0-04.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4d/buzzard-4_1.9.2+1-6d_run_redmapper_v6.4.22_redmagic_highlum_1.0-04.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4e/buzzard-4_1.9.2+1-6e_run_redmapper_v6.4.22_redmagic_highlum_1.0-04.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4f/buzzard-4_1.9.2+1-6f_run_redmapper_v6.4.22_redmagic_highlum_1.0-04.fit',
 ]
 
 rm_y1_HHL = [
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/b/buzzard_1.6-6b_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/c/buzzard_1.6-6c_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/d/buzzard_1.6-6d_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/e/buzzard_1.6-6e_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/f/buzzard_1.6-6f_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3a/buzzard-3_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_higherlum_1.5-01.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3b/buzzard-3_1.9.2+1-6b_run_redmapper_v6.4.22_redmagic_higherlum_1.5-01.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3c/buzzard-3_1.9.2+1-6c_run_redmapper_v6.4.22_redmagic_higherlum_1.5-01.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3d/buzzard-3_1.9.2+1-6d_run_redmapper_v6.4.22_redmagic_higherlum_1.5-01.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3e/buzzard-3_1.9.2+1-6e_run_redmapper_v6.4.22_redmagic_higherlum_1.5-01.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3f/buzzard-3_1.9.2+1-6f_run_redmapper_v6.4.22_redmagic_higherlum_1.5-01.fit',
 
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/a/buzzard2_1.6-6a_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/b/buzzard2_1.6-6b_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/c/buzzard2_1.6-6c_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/d/buzzard2_1.6-6d_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/e/buzzard2_1.6-6e_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-2/f/buzzard2_1.6-6f_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/a/buzzard5_1.6-6a_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/b/buzzard5_1.6-6b_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/c/buzzard5_1.6-6c_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/d/buzzard5_1.6-6d_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/e/buzzard5_1.6-6e_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-    '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-5/f/buzzard5_1.6-6f_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01.fit',
-
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4a/buzzard-4_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_higherlum_1.5-01.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4b/buzzard-4_1.9.2+1-6b_run_redmapper_v6.4.22_redmagic_higherlum_1.5-01.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4c/buzzard-4_1.9.2+1-6c_run_redmapper_v6.4.22_redmagic_higherlum_1.5-01.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4d/buzzard-4_1.9.2+1-6d_run_redmapper_v6.4.22_redmagic_higherlum_1.5-01.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4e/buzzard-4_1.9.2+1-6e_run_redmapper_v6.4.22_redmagic_higherlum_1.5-01.fit',
+    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4f/buzzard-4_1.9.2+1-6f_run_redmapper_v6.4.22_redmagic_higherlum_1.5-01.fit',
 ]
 
 rm_y3 = [
