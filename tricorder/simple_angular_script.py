@@ -15,5 +15,5 @@ if __name__ == '__main__':
                             command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_halos(" + str(
                                 dset_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'"+rw_scheme+"','Z',"+str(random_oversamp)+")"
                             print command_str
-                            subprocess.call(["bsub", "-W", "47:00", "-R", "rusage[mem=4000]", "-o", "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/logs/%J.out",
+                            subprocess.call(["bsub", "-W", "47:00", "-n", "2", "-R", "span[hosts=1]", "-o", "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/logs/%J.out",
                                              "-e", "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/logs/%J.err", "python", "-c", command_str])
