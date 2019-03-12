@@ -2,6 +2,7 @@
 from __future__ import division
 import matplotlib.pyplot as plt
 from astropy.io import fits
+from astropy.table import Table
 import treecorr
 import yaml
 import numpy as np
@@ -12,6 +13,8 @@ import yaml
 import sys
 import os
 import paths
+from glob import glob
+import pandas as pd
 
 from make_data_randoms import (generate_randoms_radec, index_to_radec,
                                radec_to_index)
@@ -220,6 +223,60 @@ def calc_3pt_noisy_photoz_mice(dset_id, config_fname, do3D, min_z, max_z, sigma_
         '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
         '_rsamp'+str(random_oversamp)+'.xi'
     output_file_name = config_fname+'_MICEdset' + \
+        str(dset_id)+'_sigma'+str(sigma_z) + \
+        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
+        '_rsamp'+str(random_oversamp)+'.'+outvar
+
+    if not do3D:
+        if (outvar == 'zeta') | (outvar == 'ddd'):
+            np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
+        np.save(os.path.join(paths.ang_out_dir, output_file_name), output)
+    else:
+        if (outvar == 'zeta') | (outvar == 'ddd'):
+            np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
+        np.save(os.path.join(paths.corr_out_dir, output_file_name), output)
+
+def calc_3pt_noisy_photoz_halos(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp, outvar='zeta'):
+
+    for i,fname in enumerate(glob('/u/ki/jderose/public_html/bcc/catalog/halos/semihemisphere/buzzard/flock/buzzard-'+str(dset_id)+'/*fits')):
+        if i == 0:
+            data = pd.DataFrame(Table(fits.getdata(fname)).to_pandas())
+        else:
+            data = pd.concat([data,pd.DataFrame(Table(fits.getdata(fname)).to_pandas())])
+
+    randoms = generate_randoms(data, random_oversamp, 'Z')
+
+    ra_var = 'RA'
+    dec_var = 'DEC'
+
+    data[dec_var] = -data[dec_var]
+    data[ra_var] = data[ra_var] - 180
+    data = data[data['MVIR'] > 1e13]
+    data = data[data[ra_var] > 0]
+    data = data[data[ra_var] < 90]
+    data = data[data[dec_var] > -60]
+    data = data[data[dec_var] < -40]
+
+    data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
+    data_slice = get_zslice(data, min_z, max_z, zvar)
+    randoms_slice = get_zslice(randoms, min_z, max_z, random_zvar)
+
+    # randoms_slice = randoms_slice[np.random.rand(len(randoms_slice)) < (
+    #    len(data_slice)/len(randoms_slice)*random_oversamp)]
+
+    if (outvar == 'zeta') | (outvar == 'ddd'):
+        xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
+                      ra_var=ra_var, dec_var=dec_var,
+                      data_zvar=zvar, random_zvar=random_zvar,)
+    output = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
+                      ra_var=ra_var, dec_var=dec_var,
+                      data_zvar=zvar, random_zvar=random_zvar, outvar=outvar)
+
+    xi_file_name = config_fname + \
+        '_halosdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
+        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
+        '_rsamp'+str(random_oversamp)+'.xi'
+    output_file_name = config_fname+'_halosdset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
         '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
         '_rsamp'+str(random_oversamp)+'.'+outvar
