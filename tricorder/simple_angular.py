@@ -27,6 +27,13 @@ def load_config(config_fname):
 def get_zslice(data, min_z, max_z, zvar):
     return data[(data[zvar] > min_z) & (data[zvar] < max_z)]
 
+def downselect_pz(input_data, target_cts, target_bins, input_zvar, oversamp):
+    
+    input_labels = np.digitize(input_data[input_zvar], target_bins)
+    input_cts, _ = np.histogram(
+        input_data[input_zvar], bins=target_bins, range=(0, 1))
+    input_weights = target_cts/(input_cts+1e-40)
+    return input_data[np.random.rand(len(input_data)) < oversamp*input_weights[input_labels-1]]
 
 def downselect(input_data, target, input_zvar, target_zvar, oversamp):
     target_cts, bins = np.histogram(
@@ -254,11 +261,18 @@ def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z,
     ra_var = 'azim_ang'
     dec_var = 'polar_ang'
 
-    weight_data = fits.getdata(paths.rm_y1[0])
+    if min_z == .6:
+        weight_data = fits.getdata(paths.rm_y1_HL[0])
+    else:
+        weight_data = fits.getdata(paths.rm_y1[0])
+    
     weight_data_slice = get_zslice(weight_data, min_z, max_z, rw_scheme)
 
-    data_slice = downselect(data, weight_data_slice, 'redshift', 'ZSPEC', 3)
-    randoms_slice = downselect(randoms, data_slice, 'Z', 'redshift', 1)
+    target_cts, target_bins = np.histogram(
+        weight_data_slice['ZREDMAGIC']+np.random.normal(scale=weight_data_slice['ZREDMAGIC_E']), range=(0, 1), bins=100)    
+
+    data_slice = downselect_pz(data, target_cts, target_bins, 'redshift', 2)
+    randoms_slice = downselect_pz(randoms, target_cts, target_bins, 'Z', 5)
 
     if (outvar == 'zeta') | (outvar == 'ddd'):
         xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
@@ -269,9 +283,9 @@ def calc_3pt_noisy_photoz_dm(dset_id, config_fname, do3D, min_z, max_z, sigma_z,
                       data_zvar=zvar, random_zvar=random_zvar, outvar=outvar)
 
     xi_file_name = config_fname + \
-        '_dm3dset'+str(dset_id)+'_sigma'+str(sigma_z) + \
+        '_dm2x5RWdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
         '_'+rw_scheme+'_'+str(min_z)+'_'+str(max_z)+'.xi'
-    output_file_name = config_fname+'_dm3dset' + \
+    output_file_name = config_fname+'_dm2x5RWdset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
         '_'+rw_scheme+'_'+str(min_z)+'_'+str(max_z)+'.'+outvar
 
@@ -316,10 +330,10 @@ def calc_3pt_noisy_photoz(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zv
                     data_zvar=zvar, random_zvar=random_zvar,)
 
     xi_file_name = config_fname + \
-        '_rmdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
+        '_newbuzzardrmdset'+str(dset_id)+'_sigma'+str(sigma_z) + \
         '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
         '_rsamp'+str(random_oversamp)+'.xi'
-    zeta_file_name = config_fname+'_rmdset' + \
+    zeta_file_name = config_fname+'_newbuzzardrmdset' + \
         str(dset_id)+'_sigma'+str(sigma_z) + \
         '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
         '_rsamp'+str(random_oversamp)+'.zeta'
