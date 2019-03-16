@@ -238,24 +238,12 @@ def calc_3pt_noisy_photoz_mice(dset_id, config_fname, do3D, min_z, max_z, sigma_
 
 def calc_3pt_noisy_photoz_halos(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp, outvar='zeta'):
 
-    for i,fname in enumerate(glob('/u/ki/jderose/public_html/bcc/catalog/halos/semihemisphere/buzzard/flock/buzzard-'+str(dset_id)+'/*fits')):
-        if i == 0:
-            data = pd.DataFrame(Table(fits.getdata(fname)).to_pandas())
-        else:
-            data = pd.concat([data,pd.DataFrame(Table(fits.getdata(fname)).to_pandas())])
+    data = pd.read_pickle('/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/buzzard_halos/halos-'+str(dset_id)+'.pkl')
 
     randoms = generate_randoms(data, random_oversamp, 'Z')
 
     ra_var = 'RA'
     dec_var = 'DEC'
-
-    data[dec_var] = -data[dec_var]
-    data[ra_var] = data[ra_var] - 180
-    data = data[data['MVIR'] > 1e13]
-    data = data[data[ra_var] > 0]
-    data = data[data[ra_var] < 90]
-    data = data[data[dec_var] > -60]
-    data = data[data[dec_var] < -40]
 
     data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
     data_slice = get_zslice(data, min_z, max_z, zvar)
