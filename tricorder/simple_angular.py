@@ -243,6 +243,7 @@ def calc_3pt_noisy_photoz_mice(dset_id, jk_id, config_fname, do3D, min_z, max_z,
 
 def calc_3pt_noisy_photoz_MICEdm(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp, rw_scheme, outvar='zeta'):
     data = fits.getdata(paths.dm_mice_y1[dset_id])
+    data = data[data['redshift'] < 1.0]
 
     if min_z == .6:
         weight_data = fits.getdata(paths.rm_mice_y1_HL[0])
