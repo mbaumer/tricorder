@@ -252,8 +252,8 @@ def calc_3pt_noisy_photoz_MICEdm(dset_id, jk_id, config_fname, do3D, min_z, max_
     else:
         weight_data = fits.getdata(paths.rm_mice_y1[0])
 
-    ra_var = 'ra'
-    dec_var = 'dec'
+    ra_var = 'RA'
+    dec_var = 'DEC'
     
     data[dec_var] = -data[dec_var]
     data = data[data[ra_var] > 0]
