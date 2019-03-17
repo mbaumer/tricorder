@@ -14,7 +14,7 @@ if __name__ == '__main__':
                         for dset_id in [0]:
                             for jk_id in range(15):
                                 command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_mice(" + str(
-                                    dset_id) + ", '" + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'"+rw_scheme+"','Z',"+str(random_oversamp)+")"
+                                    dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'"+rw_scheme+"','Z',"+str(random_oversamp)+")"
                                 print command_str
                                 subprocess.call(["bsub", "-W", "47:00", "-o", "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs/%J.out",
                                                  "-e", "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs/%J.err", "python", "-c", command_str])
