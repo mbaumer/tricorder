@@ -1,7 +1,7 @@
 config_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/'
 
 corr_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/test5/'
-ang_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/paper3/'
+ang_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/new_jk_runs'
 
 rm_y1_randoms = '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3a/buzzard-3_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_highdens_0.5-10_randoms.fit'
 rm_y1_HL_randoms = '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3a/buzzard-3_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_highlum_1.0-04_randoms.fit'
@@ -25,6 +25,9 @@ rm_mice_y1_HL = [
     '/nfs/slac/g/ki/ki23/des/jderose/des/MICE/redmagic/mice2_des_run_redmapper_v6.4.16_redmagic_highlum_1.0-04.fit']
 rm_mice_y1_HHL = [
     '/nfs/slac/g/ki/ki23/des/jderose/des/MICE/redmagic/mice2_des_run_redmapper_v6.4.16_redmagic_higherlum_1.5-01.fit']
+dm_mice_y1 = [
+    '/nfs/slac/g/ki/ki23/des/jderose/des/MICE/dm/dm_v0.fits'
+]
 
 rm_y1 = [
     '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3a/buzzard-3_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
