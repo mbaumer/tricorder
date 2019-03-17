@@ -385,16 +385,18 @@ def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, s
     #remove jk region
     jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/buzzard_jk.pkl", "rb" ) )
     data_inds = jk_classifier.predict(zip(data_slice[ra_var],data_slice[dec_var]))
-    random_inds = jk_classifier.predict(zip(randoms_slice[ra_var],randoms_slice[dec_var]))
+    random_inds = jk_classifier.predict(zip(randoms_slice['RA'],randoms_slice['DEC']))
     data_slice = data_slice[data_inds != jk_id]
     randoms_slice = randoms_slice[random_inds != jk_id]
 
     if (outvar == 'zeta') | (outvar == 'ddd'):
         xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
                       ra_var=ra_var, dec_var=dec_var,
+                      random_ra_var='RA',random_dec_var='DEC',
                       data_zvar=zvar, random_zvar=random_zvar,)
     output = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
                       ra_var=ra_var, dec_var=dec_var,
+                      random_ra_var='RA',random_dec_var='DEC',
                       data_zvar=zvar, random_zvar=random_zvar, outvar=outvar)
 
     xi_file_name = config_fname + \
