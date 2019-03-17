@@ -4,7 +4,7 @@ import paths
 # do3Ds = [True]
 
 if __name__ == '__main__':
-    for i, config_fname in enumerate(['paper13.1', 'paper13.1a', 'paper14.1', 'paper14.1a', 'paper15.1', 'paper15.1a']):
+    for i, config_fname in enumerate(['paper13.1', 'paper14.1', 'paper15.1']):
         do3D = False
         for sigma_z in [0]:
             for min_z in [.15, .3, .45, .6, .75]:

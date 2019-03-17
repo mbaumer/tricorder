@@ -204,19 +204,16 @@ def calc_3pt_noisy_photoz_mice(dset_id, jk_id, config_fname, do3D, min_z, max_z,
     data = data[data[dec_var] > -60]
     data = data[data[dec_var] < -40]
 
-    #remove jk region
-    jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/rectangle_0_90_-60_-40_jk.pkl", "rb" ) )
-    data_inds = jk_classifier.predict(zip(data[ra_var],data[dec_var]))
-    random_inds = jk_classifier.predict(zip(randoms[ra_var],randoms[dec_var]))
-    data = data[data_inds != jk_id]
-    randoms = randoms[random_inds != jk_id]
-
     data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
     data_slice = get_zslice(data, min_z, max_z, zvar)
     randoms_slice = get_zslice(randoms, min_z, max_z, random_zvar)
 
-    # randoms_slice = randoms_slice[np.random.rand(len(randoms_slice)) < (
-    #    len(data_slice)/len(randoms_slice)*random_oversamp)]
+    #remove jk region
+    jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/rectangle_0_90_-60_-40_jk.pkl", "rb" ) )
+    data_inds = jk_classifier.predict(zip(data_slice[ra_var],data_slice[dec_var]))
+    random_inds = jk_classifier.predict(zip(randoms_slice[ra_var],randoms_slice[dec_var]))
+    data_slice = data_slice[data_inds != jk_id]
+    randoms_slice = randoms_slice[random_inds != jk_id]
 
     if (outvar == 'zeta') | (outvar == 'ddd'):
         xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
@@ -246,16 +243,23 @@ def calc_3pt_noisy_photoz_mice(dset_id, jk_id, config_fname, do3D, min_z, max_z,
 
 def calc_3pt_noisy_photoz_MICEdm(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp, rw_scheme, outvar='zeta'):
     data = fits.getdata(paths.dm_mice_y1[dset_id])
-    randoms = generate_randoms(data, random_oversamp, zvar)
+
+    if min_z == .6:
+        weight_data = fits.getdata(paths.rm_mice_y1_HL[0])
+    elif min_z == .75:
+        weight_data = fits.getdata(paths.rm_mice_y1_HHL[0])
+    else:
+        weight_data = fits.getdata(paths.rm_mice_y1[0])
 
     ra_var = 'ra'
     dec_var = 'dec'
-
-    if min_z == .6:
-        weight_data = fits.getdata(paths.rm_mice_y1[0])
-    else:
-        weight_data = fits.getdata(paths.rm_mice_y1_HL[0])
     
+    data[dec_var] = -data[dec_var]
+    data = data[data[ra_var] > 0]
+    data = data[data[ra_var] < 90]
+    data = data[data[dec_var] > -60]
+    data = data[data[dec_var] < -40]
+
     weight_data_slice = get_zslice(weight_data, min_z, max_z, rw_scheme)
 
     if rw_scheme == 'ZSPEC':
@@ -266,7 +270,15 @@ def calc_3pt_noisy_photoz_MICEdm(dset_id, jk_id, config_fname, do3D, min_z, max_
             weight_data_slice['ZREDMAGIC']+np.random.normal(scale=weight_data_slice['ZREDMAGIC_E']), range=(0, 1), bins=100)    
 
     data_slice = downselect_pz(data, target_cts, target_bins, 'redshift', 2)
+    randoms = generate_randoms(data_slice, random_oversamp, 'redshift')
     randoms_slice = downselect_pz(randoms, target_cts, target_bins, 'Z', 5)
+
+    #remove jk region
+    jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/rectangle_0_90_-60_-40_jk.pkl", "rb" ) )
+    data_inds = jk_classifier.predict(zip(data_slice[ra_var],data_slice[dec_var]))
+    random_inds = jk_classifier.predict(zip(randoms_slice[ra_var],randoms_slice[dec_var]))
+    data_slice = data_slice[data_inds != jk_id]
+    randoms_slice = randoms_slice[random_inds != jk_id]
 
     if (outvar == 'zeta') | (outvar == 'ddd'):
         xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
