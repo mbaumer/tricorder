@@ -50,7 +50,7 @@ def downselect(input_data, target, input_zvar, target_zvar, oversamp):
 
 
 def calc_2pt(data, randoms, config_fname, do3D, ra_var='RA', dec_var='DEC',
-             random_ra_var='RA', random_dec_var='DEC', data_zvar=None, random_zvar=None,):
+             random_ra_var='RA', random_dec_var='DEC', data_zvar=None, random_zvar=None,outfname=''):
     if do3D:
         assert data_zvar is not None
         assert random_zvar is not None
@@ -84,7 +84,7 @@ def calc_2pt(data, randoms, config_fname, do3D, ra_var='RA', dec_var='DEC',
 
 def calc_3pt(data, randoms, config_fname, do3D, ra_var='RA',
              dec_var='DEC', random_ra_var='RA', random_dec_var='DEC',
-             data_zvar=None, random_zvar=None, outvar='zeta'):
+             data_zvar=None, random_zvar=None, outvar='zeta',outfname=''):
 
     if do3D:
         assert data_zvar is not None
@@ -128,6 +128,44 @@ def calc_3pt(data, randoms, config_fname, do3D, ra_var='RA',
                     metric=config_3pt['metric'])
         output, varzeta = ddd.calculateZeta(
             ddr=ddr, drd=drd, rdd=rdd, rrd=rrd, rdr=rdr, drr=drr, rrr=rrr)
+        return output
+    elif outvar == 'ddd':
+        ddd = treecorr.NNNCorrelation(config=config_3pt)
+        ddr = treecorr.NNNCorrelation(config=config_3pt)
+        drd = treecorr.NNNCorrelation(config=config_3pt)
+        rdd = treecorr.NNNCorrelation(config=config_3pt)
+        ddd.process(cat, metric=config_3pt['metric'])
+        ddd.write(outfname+'.ddd')
+        ddr.process(cat, cat,  random_cat, metric=config_3pt['metric'])
+        ddr.write(outfname+'.ddr')
+        drd.process(cat, random_cat, cat, metric=config_3pt['metric'])
+        drd.write(outfname+'.drd')
+        rdd.process(random_cat, cat, cat, metric=config_3pt['metric'])
+        rdd.write(outfname+'.rdd')
+        return
+    elif outvar == 'rdr':
+        rdr = treecorr.NNNCorrelation(config=config_3pt)
+        rdr.process(random_cat, cat,  random_cat, metric=config_3pt['metric'])
+        print rdr.ntri, rdr.tot
+        rdr.write(outfname+'.rdr')
+        return
+    elif outvar == 'rrd':
+        rrd = treecorr.NNNCorrelation(config=config_3pt)
+        rrd.process(random_cat, random_cat,  cat, metric=config_3pt['metric'])
+        print rrd.ntri, rrd.tot
+        rrd.write(outfname+'.rrd')
+        return
+    elif outvar == 'drr':
+        drr = treecorr.NNNCorrelation(config=config_3pt)
+        drr.process(cat, random_cat,  random_cat, metric=config_3pt['metric'])
+        print drr.ntri, drr.tot
+        drr.write(outfname+'.drr')
+        return
+    elif outvar == 'rrr':
+        rrr = treecorr.NNNCorrelation(config=config_3pt)
+        rrr.process(random_cat, random_cat,  random_cat, metric=config_3pt['metric'])
+        rrr.write(outfname+'.rrr')
+        return
     else:
         nnn = treecorr.NNNCorrelation(config=config_3pt)
         toc = time.time()
@@ -138,7 +176,7 @@ def calc_3pt(data, randoms, config_fname, do3D, ra_var='RA',
         tic = time.time()
         print '3PCF took', tic - toc
         output = nnn.ntri
-    return output
+        return output
 
 
 def calc_3pt_noisy_photoz_lss(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp):
@@ -187,13 +225,10 @@ def calc_3pt_noisy_photoz_mice(dset_id, jk_id, config_fname, do3D, min_z, max_z,
 
     if min_z == .6:
         data = fits.getdata(paths.rm_mice_y1_HL[dset_id])
-        randoms = generate_randoms(data, random_oversamp, zvar)
     elif min_z == .75:
         data = fits.getdata(paths.rm_mice_y1_HHL[dset_id])
-        randoms = generate_randoms(data, random_oversamp, zvar)
     else:
         data = fits.getdata(paths.rm_mice_y1[dset_id])
-        randoms = generate_randoms(data, random_oversamp, zvar)
 
     ra_var = 'RA'
     dec_var = 'DEC'
@@ -206,7 +241,7 @@ def calc_3pt_noisy_photoz_mice(dset_id, jk_id, config_fname, do3D, min_z, max_z,
 
     data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
     data_slice = get_zslice(data, min_z, max_z, zvar)
-    randoms_slice = get_zslice(randoms, min_z, max_z, random_zvar)
+    randoms_slice = generate_randoms(data_slice, random_oversamp, zvar)
 
     #remove jk region
     jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/rectangle_0_90_-60_-40_jk.pkl", "rb" ) )
@@ -215,31 +250,25 @@ def calc_3pt_noisy_photoz_mice(dset_id, jk_id, config_fname, do3D, min_z, max_z,
     data_slice = data_slice[data_inds != jk_id]
     randoms_slice = randoms_slice[random_inds != jk_id]
 
+    file_name = config_fname + \
+        '_MICEdset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
+        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
+        '_rsamp'+str(random_oversamp)
+        
+    xi_file_path = os.path.join(paths.ang_out_dir, file_name+'.xi')
+    output_file_path = os.path.join(paths.ang_out_dir, file_name)
+    
     if (outvar == 'zeta') | (outvar == 'ddd'):
         xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
                       ra_var=ra_var, dec_var=dec_var,
                       data_zvar=zvar, random_zvar=random_zvar,)
-    output = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
+        if not do3D:
+            np.save(xi_file_path, xi)
+        else:
+            np.save(xi_file_path, xi)
+    calc_3pt(data_slice, randoms_slice, config_fname, do3D,
                       ra_var=ra_var, dec_var=dec_var,
-                      data_zvar=zvar, random_zvar=random_zvar, outvar=outvar)
-
-    xi_file_name = config_fname + \
-        '_MICEdset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
-        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
-        '_rsamp'+str(random_oversamp)+'.xi'
-    output_file_name = config_fname+'_MICEdset' + \
-        str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
-        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
-        '_rsamp'+str(random_oversamp)+'.'+outvar
-
-    if not do3D:
-        if (outvar == 'zeta') | (outvar == 'ddd'):
-            np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
-        np.save(os.path.join(paths.ang_out_dir, output_file_name), output)
-    else:
-        if (outvar == 'zeta') | (outvar == 'ddd'):
-            np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
-        np.save(os.path.join(paths.corr_out_dir, output_file_name), output)
+                      data_zvar=zvar, random_zvar=random_zvar, outvar=outvar, outfname=output_file_path)
 
 def calc_3pt_noisy_photoz_MICEdm(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp, rw_scheme, outvar='zeta'):
     data = fits.getdata(paths.dm_mice_y1[dset_id])
