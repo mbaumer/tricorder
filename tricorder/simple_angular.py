@@ -255,22 +255,23 @@ def calc_3pt_noisy_photoz_mice(dset_id, jk_id, config_fname, do3D, min_z, max_z,
         '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
         '_rsamp'+str(random_oversamp)
         
-    xi_file_path = os.path.join(paths.ang_out_dir, file_name+'.xi')
-    output_file_path = os.path.join(paths.ang_out_dir, file_name)
+    if not do3D:
+        xi_file_path = os.path.join(paths.ang_out_dir, file_name+'.xi')
+        output_file_path = os.path.join(paths.ang_out_dir, file_name)
+    else: 
+        xi_file_path = os.path.join(paths.corr_out_dir, file_name+'.xi')
+        output_file_path = os.path.join(paths.corr_out_dir, file_name)
     
     if (outvar == 'zeta') | (outvar == 'ddd'):
         xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
                       ra_var=ra_var, dec_var=dec_var,
                       data_zvar=zvar, random_zvar=random_zvar,)
-        if not do3D:
-            np.save(xi_file_path, xi)
-        else:
-            np.save(xi_file_path, xi)
+        np.save(xi_file_path, xi)
     calc_3pt(data_slice, randoms_slice, config_fname, do3D,
                       ra_var=ra_var, dec_var=dec_var,
                       data_zvar=zvar, random_zvar=random_zvar, outvar=outvar, outfname=output_file_path)
 
-def calc_3pt_noisy_photoz_MICEdm(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp, rw_scheme, outvar='zeta'):
+def calc_3pt_noisy_photoz_MICEdm(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, dm_oversamp, random_oversamp, rw_scheme, outvar='zeta'):
     data = fits.getdata(paths.dm_mice_y1[dset_id])
     data = data[data['redshift'] < 1.0]
 
@@ -299,9 +300,9 @@ def calc_3pt_noisy_photoz_MICEdm(dset_id, jk_id, config_fname, do3D, min_z, max_
         target_cts, target_bins = np.histogram(
             weight_data_slice['ZREDMAGIC']+np.random.normal(scale=weight_data_slice['ZREDMAGIC_E']), range=(0, 1), bins=100)    
 
-    data_slice = downselect_pz(data, target_cts, target_bins, 'redshift', 2)
-    randoms = generate_randoms(data_slice, 2*random_oversamp, 'redshift')
-    randoms_slice = downselect_pz(randoms, target_cts, target_bins, 'Z', random_oversamp)
+    data_slice = downselect_pz(data, target_cts, target_bins, 'redshift', dm_oversamp)
+    randoms_slice = generate_randoms(data_slice, random_oversamp, 'redshift')
+    #randoms_slice = downselect_pz(randoms, target_cts, target_bins, 'Z', random_oversamp)
 
     #remove jk region
     jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/rectangle_0_90_-60_-40_jk.pkl", "rb" ) )
@@ -310,42 +311,38 @@ def calc_3pt_noisy_photoz_MICEdm(dset_id, jk_id, config_fname, do3D, min_z, max_
     data_slice = data_slice[data_inds != jk_id]
     randoms_slice = randoms_slice[random_inds != jk_id]
 
+    file_name = config_fname + \
+        '_MICEdmdset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
+        '_'+rw_scheme+'_'+str(min_z)+'_'+str(max_z) + \
+        '_rsamp'+str(dm_oversamp)+'x'+str(random_oversamp)
+        
+    if not do3D:
+        xi_file_path = os.path.join(paths.ang_out_dir, file_name+'.xi')
+        output_file_path = os.path.join(paths.ang_out_dir, file_name)
+    else: 
+        xi_file_path = os.path.join(paths.corr_out_dir, file_name+'.xi')
+        output_file_path = os.path.join(paths.corr_out_dir, file_name)
+
     if (outvar == 'zeta') | (outvar == 'ddd'):
         xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
                       ra_var=ra_var, dec_var=dec_var,
                       data_zvar=zvar, random_zvar=random_zvar,)
-    output = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
+        np.save(xi_file_path, xi)
+    calc_3pt(data_slice, randoms_slice, config_fname, do3D,
                       ra_var=ra_var, dec_var=dec_var,
-                      data_zvar=zvar, random_zvar=random_zvar, outvar=outvar)
-
-    xi_file_name = config_fname + \
-        '_MICEdmdset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
-        '_'+rw_scheme+'_'+str(min_z)+'_'+str(max_z)+'.xi'
-    output_file_name = config_fname+'_MICEdmdset' + \
-        str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
-        '_'+rw_scheme+'_'+str(min_z)+'_'+str(max_z)+'.'+outvar
-
-    if not do3D:
-        if (outvar == 'zeta') | (outvar == 'ddd'):
-            np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
-        np.save(os.path.join(paths.ang_out_dir, output_file_name), output)
-    else:
-        if (outvar == 'zeta') | (outvar == 'ddd'):
-            np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
-        np.save(os.path.join(paths.corr_out_dir, output_file_name), output)
+                      data_zvar=zvar, random_zvar=random_zvar, outvar=outvar, outfname=output_file_path)
 
 def calc_3pt_noisy_photoz_halos(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp, outvar='zeta'):
 
     data = pd.read_pickle('/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/buzzard_halos/halos-'+str(dset_id)+'.pkl')
-
-    randoms = generate_randoms(data, random_oversamp, 'Z')
 
     ra_var = 'RA'
     dec_var = 'DEC'
 
     data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
     data_slice = get_zslice(data, min_z, max_z, zvar)
-    randoms_slice = get_zslice(randoms, min_z, max_z, random_zvar)
+    randoms_slice = generate_randoms(data_slice, random_oversamp, 'Z')
+    #randoms_slice = get_zslice(randoms, min_z, max_z, random_zvar)
 
     #remove jk region
     jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/rectangle_0_90_-60_-40_jk.pkl", "rb" ) )
@@ -357,34 +354,29 @@ def calc_3pt_noisy_photoz_halos(dset_id, jk_id, config_fname, do3D, min_z, max_z
     # randoms_slice = randoms_slice[np.random.rand(len(randoms_slice)) < (
     #    len(data_slice)/len(randoms_slice)*random_oversamp)]
 
+    file_name = config_fname + \
+        '_halosdset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
+        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
+        '_rsamp'+str(random_oversamp)
+        
+    if not do3D:
+        xi_file_path = os.path.join(paths.ang_out_dir, file_name+'.xi')
+        output_file_path = os.path.join(paths.ang_out_dir, file_name)
+    else: 
+        xi_file_path = os.path.join(paths.corr_out_dir, file_name+'.xi')
+        output_file_path = os.path.join(paths.corr_out_dir, file_name)
+    
     if (outvar == 'zeta') | (outvar == 'ddd'):
         xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
                       ra_var=ra_var, dec_var=dec_var,
                       data_zvar=zvar, random_zvar=random_zvar,)
-    output = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
+        np.save(xi_file_path, xi)
+    calc_3pt(data_slice, randoms_slice, config_fname, do3D,
                       ra_var=ra_var, dec_var=dec_var,
-                      data_zvar=zvar, random_zvar=random_zvar, outvar=outvar)
-
-    xi_file_name = config_fname + \
-        '_halosdset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
-        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
-        '_rsamp'+str(random_oversamp)+'.xi'
-    output_file_name = config_fname+'_halosdset' + \
-        str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
-        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
-        '_rsamp'+str(random_oversamp)+'.'+outvar
-
-    if not do3D:
-        if (outvar == 'zeta') | (outvar == 'ddd'):
-            np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
-        np.save(os.path.join(paths.ang_out_dir, output_file_name), output)
-    else:
-        if (outvar == 'zeta') | (outvar == 'ddd'):
-            np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
-        np.save(os.path.join(paths.corr_out_dir, output_file_name), output)
+                      data_zvar=zvar, random_zvar=random_zvar, outvar=outvar, outfname=output_file_path)
 
 
-def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, rw_scheme, random_oversamp, outvar='zeta'):
+def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, dm_oversamp,random_oversamp, rw_scheme, outvar='zeta'):
     randoms = fits.getdata(paths.dm_y1_randoms)
     data = fits.getdata(paths.dm_y1[dset_id])
     data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
@@ -408,7 +400,7 @@ def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, s
         target_cts, target_bins = np.histogram(
             weight_data_slice['ZREDMAGIC']+np.random.normal(scale=weight_data_slice['ZREDMAGIC_E']), range=(0, 1), bins=100)    
 
-    data_slice = downselect_pz(data, target_cts, target_bins, zvar, 2)
+    data_slice = downselect_pz(data, target_cts, target_bins, zvar, dm_oversamp)
     randoms_slice = downselect_pz(randoms, target_cts, target_bins, 'Z', random_oversamp)
 
     #remove jk region
@@ -418,34 +410,29 @@ def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, s
     data_slice = data_slice[data_inds != jk_id]
     randoms_slice = randoms_slice[random_inds != jk_id]
 
+    file_name = config_fname + \
+        '_dmdset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
+        '_'+rw_scheme+'_'+str(min_z)+'_'+str(max_z) + \
+        '_rsamp'+str(dm_oversamp)+'x'+str(random_oversamp)
+        
+    if not do3D:
+        xi_file_path = os.path.join(paths.ang_out_dir, file_name+'.xi')
+        output_file_path = os.path.join(paths.ang_out_dir, file_name)
+    else: 
+        xi_file_path = os.path.join(paths.corr_out_dir, file_name+'.xi')
+        output_file_path = os.path.join(paths.corr_out_dir, file_name)
+
     if (outvar == 'zeta') | (outvar == 'ddd'):
         xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
                       ra_var=ra_var, dec_var=dec_var,
-                      random_ra_var='RA',random_dec_var='DEC',
                       data_zvar=zvar, random_zvar=random_zvar,)
-    output = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
+        np.save(xi_file_path, xi)
+    calc_3pt(data_slice, randoms_slice, config_fname, do3D,
                       ra_var=ra_var, dec_var=dec_var,
-                      random_ra_var='RA',random_dec_var='DEC',
-                      data_zvar=zvar, random_zvar=random_zvar, outvar=outvar)
-
-    xi_file_name = config_fname + \
-        '_dm2x5RWdset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
-        '_'+rw_scheme+'_'+str(min_z)+'_'+str(max_z)+'.xi'
-    output_file_name = config_fname+'_dm2x5RWdset' + \
-        str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
-        '_'+rw_scheme+'_'+str(min_z)+'_'+str(max_z)+'.'+outvar
-
-    if not do3D:
-        if (outvar == 'zeta') | (outvar == 'ddd'):
-            np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
-        np.save(os.path.join(paths.ang_out_dir, output_file_name), output)
-    else:
-        if (outvar == 'zeta') | (outvar == 'ddd'):
-            np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
-        np.save(os.path.join(paths.corr_out_dir, output_file_name), output)
+                      data_zvar=zvar, random_zvar=random_zvar, outvar=outvar, outfname=output_file_path)
 
 
-def calc_3pt_noisy_photoz(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp):
+def calc_3pt_noisy_photoz(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp, outvar='zeta'):
 
     if min_z == .6:
         randoms = fits.getdata(paths.rm_y1_HL_randoms)
@@ -474,28 +461,26 @@ def calc_3pt_noisy_photoz(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigm
     data_slice = data_slice[data_inds != jk_id]
     randoms_slice = randoms_slice[random_inds != jk_id]
 
-    xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
-                  ra_var=ra_var, dec_var=dec_var,
-                  data_zvar=zvar, random_zvar=random_zvar,)
-    zeta = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
-                    ra_var=ra_var, dec_var=dec_var,
-                    data_zvar=zvar, random_zvar=random_zvar,)
-
-    xi_file_name = config_fname + \
+    file_name = config_fname + \
         '_newbuzzardrmdset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
         '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
-        '_rsamp'+str(random_oversamp)+'.xi'
-    zeta_file_name = config_fname+'_newbuzzardrmdset' + \
-        str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
-        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
-        '_rsamp'+str(random_oversamp)+'.zeta'
-
+        '_rsamp'+str(random_oversamp)
+        
     if not do3D:
-        np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
-        np.save(os.path.join(paths.ang_out_dir, zeta_file_name), zeta)
-    else:
-        np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
-        np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
+        xi_file_path = os.path.join(paths.ang_out_dir, file_name+'.xi')
+        output_file_path = os.path.join(paths.ang_out_dir, file_name)
+    else: 
+        xi_file_path = os.path.join(paths.corr_out_dir, file_name+'.xi')
+        output_file_path = os.path.join(paths.corr_out_dir, file_name)
+    
+    if (outvar == 'zeta') | (outvar == 'ddd'):
+        xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
+                      ra_var=ra_var, dec_var=dec_var,
+                      data_zvar=zvar, random_zvar=random_zvar,)
+        np.save(xi_file_path, xi)
+    calc_3pt(data_slice, randoms_slice, config_fname, do3D,
+                      ra_var=ra_var, dec_var=dec_var,
+                      data_zvar=zvar, random_zvar=random_zvar, outvar=outvar, outfname=output_file_path)
 
 
 def calc_3pt_noisy_photoz_y3(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp):
