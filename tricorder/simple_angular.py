@@ -400,7 +400,7 @@ def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, s
         target_cts, target_bins = np.histogram(
             weight_data_slice['ZREDMAGIC']+np.random.normal(scale=weight_data_slice['ZREDMAGIC_E']), range=(0, 1), bins=100)    
 
-    data_slice = downselect_pz(data, target_cts, target_bins, zvar, dm_oversamp)
+    data_slice = downselect_pz(data, target_cts, target_bins, 'redshift', dm_oversamp)
     randoms_slice = downselect_pz(randoms, target_cts, target_bins, 'Z', random_oversamp)
 
     #remove jk region
