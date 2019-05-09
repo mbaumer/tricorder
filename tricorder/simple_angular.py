@@ -17,6 +17,8 @@ from glob import glob
 import pandas as pd
 import pickle
 
+np.random.seed(12)
+
 from make_data_randoms import (generate_randoms_radec, index_to_radec,
                                radec_to_index)
 
@@ -407,8 +409,8 @@ def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, s
     jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/buzzard_jk.pkl", "rb" ) )
     data_inds = jk_classifier.predict(zip(data_slice[ra_var],data_slice[dec_var]))
     random_inds = jk_classifier.predict(zip(randoms_slice['RA'],randoms_slice['DEC']))
-    data_slice = data_slice[data_inds == jk_id]
-    randoms_slice = randoms_slice[random_inds == jk_id]
+    data_slice = data_slice[data_inds != jk_id]
+    randoms_slice = randoms_slice[random_inds != jk_id]
 
     file_name = config_fname + \
         '_dmdset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
