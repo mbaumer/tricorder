@@ -2,8 +2,8 @@ import subprocess
 import paths
 
 # do3Ds = [True]
-outlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs2/%J.out"
-errlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs2/%J.err"
+outlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs3/%J.out"
+errlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs3/%J.err"
 ncpus = "2"
 primary_dset_id = 0
 
