@@ -485,6 +485,9 @@ def calc_3pt_noisy_photoz(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigm
                       data_zvar=zvar, random_zvar=random_zvar, outvar=outvar, outfname=output_file_path)
 
 
+
+
+
 def calc_3pt_noisy_photoz_y3(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp):
 
     if min_z == .6:
@@ -530,6 +533,63 @@ def calc_3pt_noisy_photoz_y3(dset_id, config_fname, do3D, min_z, max_z, sigma_z,
     else:
         np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
         np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
+
+
+
+def calc_3pt_randxrand(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, dm_oversamp,random_oversamp, rw_scheme, outvar='zeta'):
+    randoms = fits.getdata(paths.dm_y1_randoms)
+    data = fits.getdata(paths.dm_y1_randoms)
+    data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
+
+    ra_var = 'RA'
+    dec_var = 'DEC'
+
+    if min_z == .6:
+        weight_data = fits.getdata(paths.rm_y1_HL[0])
+    elif min_z == .75:
+        weight_data = fits.getdata(paths.rm_y1_HHL[0])
+    else:
+        weight_data = fits.getdata(paths.rm_y1[0])
+    
+    weight_data_slice = get_zslice(weight_data, min_z, max_z, rw_scheme)
+
+    if rw_scheme == 'ZSPEC':
+        target_cts, target_bins = np.histogram(
+            weight_data_slice['ZSPEC'], range=(0, 1), bins=100)   
+    else:
+        target_cts, target_bins = np.histogram(
+            weight_data_slice['ZREDMAGIC']+np.random.normal(scale=weight_data_slice['ZREDMAGIC_E']), range=(0, 1), bins=100)    
+
+    data_slice = downselect_pz(data, target_cts, target_bins, 'Z', dm_oversamp)
+    randoms_slice = downselect_pz(randoms, target_cts, target_bins, 'Z', random_oversamp)
+
+    #remove jk region
+    jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/buzzard_jk.pkl", "rb" ) )
+    data_inds = jk_classifier.predict(zip(data_slice[ra_var],data_slice[dec_var]))
+    random_inds = jk_classifier.predict(zip(randoms_slice['RA'],randoms_slice['DEC']))
+    data_slice = data_slice[data_inds != jk_id]
+    randoms_slice = randoms_slice[random_inds != jk_id]
+
+    file_name = config_fname + \
+        '_randxranddset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
+        '_'+rw_scheme+'_'+str(min_z)+'_'+str(max_z) + \
+        '_rsamp'+str(dm_oversamp)+'x'+str(random_oversamp)
+        
+    if not do3D:
+        xi_file_path = os.path.join(paths.ang_out_dir, file_name+'.xi')
+        output_file_path = os.path.join(paths.ang_out_dir, file_name)
+    else: 
+        xi_file_path = os.path.join(paths.corr_out_dir, file_name+'.xi')
+        output_file_path = os.path.join(paths.corr_out_dir, file_name)
+
+    if (outvar == 'zeta') | (outvar == 'ddd'):
+        xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
+                      ra_var=ra_var, dec_var=dec_var,
+                      data_zvar=zvar, random_zvar=random_zvar,)
+        np.save(xi_file_path, xi)
+    calc_3pt(data_slice, randoms_slice, config_fname, do3D,
+                      ra_var=ra_var, dec_var=dec_var,
+                      data_zvar=zvar, random_zvar=random_zvar, outvar=outvar, outfname=output_file_path)
 
 
 def generate_randoms(data, oversamp, zvar,
