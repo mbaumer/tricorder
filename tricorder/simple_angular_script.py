@@ -47,7 +47,7 @@ if __name__ == '__main__':
                                         dset_ids = [primary_dset_id]
                                     for dset_id in dset_ids:
                                         command_str = "import simple_angular; simple_angular.calc_3pt_randxrand(" + str(
-                                            dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'redshift','Z',"+str(dm_oversamp)+","+str(random_oversamp)+", '"+rw_scheme+"', outvar='"+outvar+"')"
+                                            dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'Z','Z',"+str(dm_oversamp)+","+str(random_oversamp)+", '"+rw_scheme+"', outvar='"+outvar+"')"
                                         print command_str
                                         subprocess.call(["bsub", "-W", "12:00", "-n", ncpus, "-R", "span[hosts=1]", "-o", outlogpath,
                                                          "-e", errlogpath, "python", "-c", command_str])
