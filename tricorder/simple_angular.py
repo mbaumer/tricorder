@@ -537,7 +537,8 @@ def calc_3pt_noisy_photoz_y3(dset_id, config_fname, do3D, min_z, max_z, sigma_z,
 
 
 def calc_3pt_randxrand(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, dm_oversamp,random_oversamp, rw_scheme, outvar='zeta'):
-    randoms = fits.getdata(paths.dm_y1_randoms)
+    np.random.seed(dset_id)
+    randoms = fits.getdata(paths.dm_y1_randoms2)
     data = fits.getdata(paths.dm_y1_randoms)
     data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
 

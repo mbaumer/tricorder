@@ -11,7 +11,7 @@ if __name__ == '__main__':
     for i, config_fname in enumerate(['newpaper13.1']):
         do3D = False
         for sigma_z in [0]:
-            for min_z in [.15,.3,.45,.6]:
+            for min_z in [.15, .3, .45, .6]:
                 max_z = min_z + 0.15
                 for random_oversamp in [10, 20]:
                     for jk_id in [-1]:
@@ -23,7 +23,7 @@ if __name__ == '__main__':
                                 #print command_str
                                 # subprocess.call(["bsub", "-W", "47:00", "-n", ncpus, "-R", "span[hosts=1]", "-o", outlogpath,
                                 #                 "-e", errlogpath, "python", "-c", command_str])
-                                for dm_oversamp in [5,10]:
+                                for dm_oversamp in [1, 5, 10]:
                                     # command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_MICEdm(" + str(
                                     #     dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'redshift','Z',"+str(dm_oversamp)+","+str(random_oversamp)+", '"+rw_scheme+"', outvar='"+outvar+"')"
                                     # print command_str
