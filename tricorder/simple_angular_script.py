@@ -41,6 +41,9 @@ if __name__ == '__main__':
                                     #     subprocess.call(["bsub", "-W", "12:00", "-n", ncpus, "-R", "span[hosts=1]", "-o", outlogpath,
                                     #                      "-e", errlogpath, "python", "-c", command_str])
 
+                                    if min_z != .45:
+                                        continue
+
                                     if jk_id == -1:
                                         dset_ids = range(len(paths.dm_y1))
                                     else:
