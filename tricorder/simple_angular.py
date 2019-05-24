@@ -433,7 +433,6 @@ def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, s
                       ra_var=ra_var, dec_var=dec_var,
                       data_zvar=zvar, random_zvar=random_zvar, outvar=outvar, outfname=output_file_path)
 
-
 def calc_3pt_noisy_photoz(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp, outvar='zeta'):
 
     if min_z == .6:
@@ -460,8 +459,8 @@ def calc_3pt_noisy_photoz(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigm
     jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/buzzard_jk.pkl", "rb" ) )
     data_inds = jk_classifier.predict(zip(data_slice[ra_var],data_slice[dec_var]))
     random_inds = jk_classifier.predict(zip(randoms_slice[ra_var],randoms_slice[dec_var]))
-    data_slice = data_slice[data_inds != jk_id]
-    randoms_slice = randoms_slice[random_inds != jk_id]
+    data_slice = data_slice[data_inds == jk_id]
+    randoms_slice = randoms_slice[random_inds == jk_id]
 
     file_name = config_fname + \
         '_newbuzzardrm2dset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
@@ -487,8 +486,7 @@ def calc_3pt_noisy_photoz(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigm
 
 
 
-
-def calc_3pt_noisy_photoz_y3(dset_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp):
+def calc_3pt_noisy_photoz_y3(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp, outvar='zeta'):
 
     if min_z == .6:
         randoms = fits.getdata(paths.rm_y3_HL_randoms)
@@ -502,7 +500,6 @@ def calc_3pt_noisy_photoz_y3(dset_id, config_fname, do3D, min_z, max_z, sigma_z,
 
     ra_var = 'RA'
     dec_var = 'DEC'
-    print len(randoms)
 
     data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
     data_slice = get_zslice(data, min_z, max_z, zvar)
@@ -511,28 +508,33 @@ def calc_3pt_noisy_photoz_y3(dset_id, config_fname, do3D, min_z, max_z, sigma_z,
     randoms_slice = randoms_slice[np.random.rand(len(randoms_slice)) < (
         len(data_slice)/len(randoms_slice)*random_oversamp)]
 
-    xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
-                  ra_var=ra_var, dec_var=dec_var,
-                  data_zvar=zvar, random_zvar=random_zvar,)
-    zeta = calc_3pt(data_slice, randoms_slice, config_fname, do3D,
-                    ra_var=ra_var, dec_var=dec_var,
-                    data_zvar=zvar, random_zvar=random_zvar,)
+    #remove jk region
+    jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/buzzard_jk.pkl", "rb" ) )
+    data_inds = jk_classifier.predict(zip(data_slice[ra_var],data_slice[dec_var]))
+    random_inds = jk_classifier.predict(zip(randoms_slice[ra_var],randoms_slice[dec_var]))
+    data_slice = data_slice[data_inds != jk_id]
+    randoms_slice = randoms_slice[random_inds != jk_id]
 
-    xi_file_name = config_fname + \
-        '_rmy3dset'+str(dset_id)+'_sigma'+str(sigma_z) + \
+    file_name = config_fname + \
+        '_rmy3dset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
         '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
-        '_rsamp'+str(random_oversamp)+'.xi'
-    zeta_file_name = config_fname+'_rmy3dset' + \
-        str(dset_id)+'_sigma'+str(sigma_z) + \
-        '_'+str(zvar)+'_'+str(min_z)+'_'+str(max_z) + \
-        '_rsamp'+str(random_oversamp)+'.zeta'
-
+        '_rsamp'+str(random_oversamp)
+        
     if not do3D:
-        np.save(os.path.join(paths.ang_out_dir, xi_file_name), xi)
-        np.save(os.path.join(paths.ang_out_dir, zeta_file_name), zeta)
-    else:
-        np.save(os.path.join(paths.corr_out_dir, xi_file_name), xi)
-        np.save(os.path.join(paths.corr_out_dir, zeta_file_name), zeta)
+        xi_file_path = os.path.join(paths.ang_out_dir, file_name+'.xi')
+        output_file_path = os.path.join(paths.ang_out_dir, file_name)
+    else: 
+        xi_file_path = os.path.join(paths.corr_out_dir, file_name+'.xi')
+        output_file_path = os.path.join(paths.corr_out_dir, file_name)
+    
+    if (outvar == 'zeta') | (outvar == 'ddd'):
+        xi = calc_2pt(data_slice, randoms_slice, config_fname, do3D,
+                      ra_var=ra_var, dec_var=dec_var,
+                      data_zvar=zvar, random_zvar=random_zvar,)
+        np.save(xi_file_path, xi)
+    calc_3pt(data_slice, randoms_slice, config_fname, do3D,
+                      ra_var=ra_var, dec_var=dec_var,
+                      data_zvar=zvar, random_zvar=random_zvar, outvar=outvar, outfname=output_file_path)
 
 
 

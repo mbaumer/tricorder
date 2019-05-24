@@ -1,7 +1,7 @@
 config_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/'
 
 corr_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/test5/'
-ang_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/dmtest2'
+ang_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/indiv_jk_runs2'
 
 rm_y1_randoms = '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3a/buzzard-3_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_highdens_0.5-10_randoms.fit'
 rm_y1_HL_randoms = '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3a/buzzard-3_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_highlum_1.0-04_randoms.fit'
@@ -41,7 +41,8 @@ rm_y1 = [
     '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4a/buzzard-4_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
     '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4b/buzzard-4_1.9.2+1-6b_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
     '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4c/buzzard-4_1.9.2+1-6c_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
-    '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4d/buzzard-4_1.9.2+1-6d_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
+    # this one is bad b/c of joe healpix error!
+    #'/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4d/buzzard-4_1.9.2+1-6d_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
     '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4e/buzzard-4_1.9.2+1-6e_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
     '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_4f/buzzard-4_1.9.2+1-6f_run_redmapper_v6.4.22_redmagic_highdens_0.5-10.fit',
 ]
