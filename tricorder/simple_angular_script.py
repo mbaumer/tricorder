@@ -14,7 +14,7 @@ if __name__ == '__main__':
             for min_z in [.15, .3, .45, .6]:
                 max_z = min_z + 0.15
                 for random_oversamp in [10, 20]:
-                    for jk_id in [-1]:
+                    for jk_id in range(15):
                         for outvar in ['ddd', 'drr', 'rdr', 'rrd', 'rrr']:
                             for rw_scheme in ['ZSPEC']:
                                 # MICE
