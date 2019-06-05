@@ -381,6 +381,7 @@ def calc_3pt_noisy_photoz_halos(dset_id, jk_id, config_fname, do3D, min_z, max_z
 def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, dm_oversamp,random_oversamp, rw_scheme, outvar='zeta'):
     randoms = fits.getdata(paths.dm_y1_randoms)
     data = fits.getdata(paths.dm_y1[dset_id])
+    data = data[data['polar_ang'] > -60]
     data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
 
     ra_var = 'azim_ang'
