@@ -16,7 +16,7 @@ if __name__ == '__main__':
                 for random_oversamp in [20]:
                     for jk_id in [-1]:
                         for outvar in ['ddd', 'drr', 'rdr', 'rrd', 'rrr']:
-                            for rw_scheme in ['ZSPEC']:
+                            for rw_scheme in ['ZSPEC', 'ZREDMAGIC']:
                                 # MICE
                                 # command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_mice(" + str(
                                 #    dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'"+rw_scheme+"','Z',"+str(random_oversamp)+", outvar='"+outvar+"')"
