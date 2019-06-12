@@ -11,19 +11,19 @@ if __name__ == '__main__':
     for i, config_fname in enumerate(['newpaper13.1']):
         do3D = False
         for sigma_z in [0]:
-            for min_z in [.45]:
-                max_z = min_z + 0.15
-                for random_oversamp in [5, 10, 15, 20]:
+            for min_z in [.75]:
+                max_z = min_z + 0.1
+                for random_oversamp in [20]:
                     for jk_id in [-1]:
                         for outvar in ['ddd', 'drr', 'rdr', 'rrd', 'rrr']:
-                            for rw_scheme in ['ZSPEC']:
+                            for rw_scheme in ['ZSPEC','ZREDMAGIC']:
                                 # MICE
                                 # command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_mice(" + str(
                                 #    dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'"+rw_scheme+"','Z',"+str(random_oversamp)+", outvar='"+outvar+"')"
                                 #print command_str
                                 # subprocess.call(["bsub", "-W", "47:00", "-n", ncpus, "-R", "span[hosts=1]", "-o", outlogpath,
                                 #                 "-e", errlogpath, "python", "-c", command_str])
-                                for dm_oversamp in [3, 6, 9, 12]:
+                                for dm_oversamp in [12]:
                                     # command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_MICEdm(" + str(
                                     #     dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'redshift','Z',"+str(dm_oversamp)+","+str(random_oversamp)+", '"+rw_scheme+"', outvar='"+outvar+"')"
                                     # print command_str
