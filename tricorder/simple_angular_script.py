@@ -8,10 +8,10 @@ ncpus = "2"
 primary_dset_id = 0
 
 if __name__ == '__main__':
-    for i, config_fname in enumerate(['newpaper13.1_newu2','newpaper13.1_newu2_fid','newpaper13.1_newu2_down']):
+    for i, config_fname in enumerate(['newpaper13.1_newu2_fid', 'newpaper13.1_newu2_down']):
         do3D = False
         for sigma_z in [0]:
-            for min_z in [.15,.3,.45,.6]:
+            for min_z in [.15, .3, .45, .6]:
                 max_z = min_z + 0.15
                 for random_oversamp in [20]:
                     for jk_id in [-1]:
