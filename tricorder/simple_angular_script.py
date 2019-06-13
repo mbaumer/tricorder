@@ -8,15 +8,19 @@ ncpus = "2"
 primary_dset_id = 0
 
 if __name__ == '__main__':
-    for i, config_fname in enumerate(['newpaper13.1_newu2_fid', 'newpaper13.1_newu2_down']):
+    for i, config_fname in enumerate(['newpaper13.1_newu2_fid']):
         do3D = False
-        for sigma_z in [0]:
+        for sigma_z in [0, 0.005, 0.01, 0.02, 0.03]:
             for min_z in [.15, .3, .45, .6]:
                 max_z = min_z + 0.15
                 for random_oversamp in [20]:
                     for jk_id in [-1]:
                         for outvar in ['ddd', 'drr', 'rdr', 'rrd', 'rrr']:
-                            for rw_scheme in ['ZSPEC']:
+                            if sigma_z == 0:
+                                zlist = ['ZREDMAGIC']
+                            else:
+                                zlist = ['ZSPEC']
+                            for rw_scheme in zlist:
                                 # MICE
                                 # command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_mice(" + str(
                                 #    dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'"+rw_scheme+"','Z',"+str(random_oversamp)+", outvar='"+outvar+"')"
