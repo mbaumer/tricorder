@@ -136,7 +136,10 @@ def calc_3pt(data, randoms, config_fname, do3D, ra_var='RA',
         ddr = treecorr.NNNCorrelation(config=config_3pt)
         drd = treecorr.NNNCorrelation(config=config_3pt)
         rdd = treecorr.NNNCorrelation(config=config_3pt)
+        tic = time.time()
         ddd.process(cat, metric=config_3pt['metric'])
+        toc = time.time()
+        print 'ddd took: ', toc-tic
         ddd.write(outfname+'.ddd')
         ddr.process(cat, cat,  random_cat, metric=config_3pt['metric'])
         ddr.write(outfname+'.ddr')
