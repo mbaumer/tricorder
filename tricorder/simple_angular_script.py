@@ -4,7 +4,7 @@ import paths
 # do3Ds = [True]
 outlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs3/%J.out"
 errlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs3/%J.err"
-ncpus = "2"
+ncpus = "1"
 primary_dset_id = 0
 
 if __name__ == '__main__':
