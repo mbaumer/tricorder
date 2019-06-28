@@ -168,7 +168,10 @@ def calc_3pt(data, randoms, config_fname, do3D, ra_var='RA',
         return
     elif outvar == 'rrr':
         rrr = treecorr.NNNCorrelation(config=config_3pt)
+        tic = time.time()
         rrr.process(random_cat, random_cat,  random_cat, metric=config_3pt['metric'])
+        toc = time.time()
+        print 'rrr took: ', toc-tic
         rrr.write(outfname+'.rrr')
         return
     else:

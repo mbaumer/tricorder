@@ -4,19 +4,19 @@ import paths
 # do3Ds = [True]
 outlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs3/%J.out"
 errlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs3/%J.err"
-ncpus = "1"
+ncpus = "2"
 primary_dset_id = 0
 
 if __name__ == '__main__':
     for i, config_fname in enumerate(['newpaper13.1', 'newpaper13.1_newu', 'newpaper13.1_newu2', 'newpaper14.1', 'paper15.1']):
         do3D = False
         for sigma_z in [0]:
-            for min_z in [.45]:
+            for min_z in [.15,.3,.45]:
                 max_z = min_z + 0.15
-                for random_oversamp in [1]:
+                for random_oversamp in [20]:
                     for jk_id in [-1]:
                         # , 'drr', 'rdr', 'rrd', 'rrr']:
-                        for outvar in ['ddd']:
+                        for outvar in ['rrr']:
                             if sigma_z == 0:
                                 zlist = ['ZSPEC']
                             else:
@@ -70,7 +70,7 @@ if __name__ == '__main__':
                                     command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz(" + str(
                                         dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'"+rw_scheme+"','Z',"+str(random_oversamp)+", outvar='"+outvar+"')"
                                     print command_str
-                                    subprocess.call(["bsub", "-W", "08:00", "-n", ncpus, "-C", "1", "-R", "span[hosts=1]", "-o", outlogpath,
+                                    subprocess.call(["bsub", "-W", "24:00", "-n", ncpus, "-C", "1", "-R", "span[hosts=1]", "-o", outlogpath,
                                                      "-e", errlogpath, "python", "-c", command_str])
 
                                 # Y3
