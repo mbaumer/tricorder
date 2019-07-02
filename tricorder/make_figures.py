@@ -45,6 +45,8 @@ def get_zspec(is11k=False):
         r = np.logspace(config['2PCF']['min_sep'],np.log10(config['2PCF']['max_sep']),num=config['2PCF']['nbins'])
         b1_mean = np.mean(b1[(r > config['3PCF']['min_sep']*config['3PCF']['min_u']) & (r < config['3PCF']['max_sep']*config['3PCF']['max_u'])])
         b1_std = np.std(b1[(r > config['3PCF']['min_sep']*config['3PCF']['min_u']) & (r < config['3PCF']['max_sep']*config['3PCF']['max_u'])])
+        
+        figure = cc.plotter.plot(figsize='column',extents=[(0,3),(-3,3)]);
         figure.axes[2].axvspan(b1_mean-b1_std, b1_mean+b1_std, alpha=0.3, color='b')
         figure.axes[2].axvspan(b1_mean-2*b1_std, b1_mean+2*b1_std, alpha=0.3, color='b')
 
@@ -56,11 +58,10 @@ def get_zspec(is11k=False):
         else:
             str11k = ''
  
-        figure = cc.plotter.plot(figsize='column',extents=[(0,3),(-3,3)]);
         axarr = figure.get_axes()
         plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
         plt.legend()
-        plt.savefig('./figures/rm_bin'+str(i+1)+str11k+'.pdf',dpi=300,bbox_inches='tight')
+        plt.savefig('./figures/spec_bin'+str(i+1)+str11k+'.pdf',dpi=300,bbox_inches='tight')
 
 def get_zspec_zrm(is11k=False):
     path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/photoz_syst/'
