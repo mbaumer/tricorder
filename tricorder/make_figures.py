@@ -160,9 +160,9 @@ def get_u_figs(is11k=False):
         plt.savefig('./figures/u_bin'+str(i+1)+str11k+'.pdf',dpi=300,bbox_inches='tight')
         
 if __name__ == '__main__':
-    #get_zspec_zrm()
-    #get_zspec_zrm(is11k=True)
-    #get_tolerance_figs()
-    #get_tolerance_figs(is11k=True)
-    get_u_figs()
-    get_u_figs(is11k=True)
+    get_zspec_zrm()
+    get_zspec_zrm(is11k=True)
+    get_tolerance_figs()
+    get_tolerance_figs(is11k=True)
+    #get_u_figs()
+    #get_u_figs(is11k=True)
