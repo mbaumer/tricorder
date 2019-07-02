@@ -106,7 +106,7 @@ def plot_data_vectors(qdm,qrm,v=None,b1=1,b2=0,b1MAP=1,b2MAP=0,rm_color='g',dm_c
     plt.ylabel('q')
     plt.legend()
     
-def make_inference(red_qdm,red_qrm,covmat_src=None,max_pca_comps=None):
+def make_inference(red_qdm,red_qrm,covmat_src=None,max_pca_comps=None,is11k=False):
     
     if max_pca_comps is None:
         rmcov = np.cov(red_qrm.T)
@@ -122,7 +122,10 @@ def make_inference(red_qdm,red_qrm,covmat_src=None,max_pca_comps=None):
     
     if covmat_src is None:
         #icov = np.linalg.inv(dmcov/red_qdm.shape[0]+rmcov)
-        icov = np.linalg.inv(rmcov/len(red_qrm)+dmcov/len(red_qdm))
+        if is11k:
+            icov = np.linalg.inv(rmcov/len(red_qrm)+dmcov/len(red_qdm))
+        else:
+            icov = np.linalg.inv(rmcov+dmcov/len(red_qdm))
     else:
         #use input data to assemble covmat (used for MICE)
         red_covmat_src = ((covmat_src[:,5:] + np.flip(covmat_src[:,:5],axis=1))/2.0).reshape(covmat_src.shape[0],5)[:,-5:]
