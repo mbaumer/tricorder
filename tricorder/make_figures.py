@@ -111,9 +111,9 @@ def get_tolerance_figs(is11k=False):
         plt.legend()
 
         if is11k:
-                str11k = '_11k'
-            else:
-                str11k = ''
+            str11k = '_11k'
+        else:
+            str11k = ''
 
         plt.savefig('./figures/tol_bin'+str(i+1)+str11k+'.pdf',dpi=300,bbox_inches='tight')
 
@@ -153,9 +153,9 @@ def get_u_figs(is11k=False):
         plt.legend()
         
         if is11k:
-                str11k = '_11k'
-            else:
-                str11k = ''
+            str11k = '_11k'
+        else:
+            str11k = ''
 
         plt.savefig('./figures/u_bin'+str(i+1)+str11k+'.pdf',dpi=300,bbox_inches='tight')
         
