@@ -162,7 +162,7 @@ def get_u_figs(is11k=False):
 if __name__ == '__main__':
     #get_zspec_zrm()
     #get_zspec_zrm(is11k=True)
-    get_tolerance_figs()
-    get_tolerance_figs(is11k=True)
+    #get_tolerance_figs()
+    #get_tolerance_figs(is11k=True)
     get_u_figs()
     get_u_figs(is11k=True)
