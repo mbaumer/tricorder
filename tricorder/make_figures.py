@@ -39,8 +39,12 @@ def get_zspec(is11k=False):
         summary = cc.analysis.get_summary()
         summaries.append(summary)
        
-        xi1 = plottools.load_res_xi_indep(path,'dm',config_fname,zmin,zmax,'12x20')
-        xi2 = plottools.load_res_xi_indep(path,'newbuzzardrm2',config_fname,zmin,zmax,'20')
+        if ((zmin == .15) | (zmin == .45)):
+            xi1 = plottools.load_res_xi_indep(path,'dm',config_fname,zmin,zmax,'12x20')
+            xi2 = plottools.load_res_xi_indep(path,'newbuzzardrm2',config_fname,zmin,zmax,'20')
+        else:
+            xi1 = plottools.load_res_xi_indep(path,'dm',config_fname,zmin,zmax,'10x10')
+            xi2 = plottools.load_res_xi_indep(path,'newbuzzardrm2',config_fname,zmin,zmax,'10')
         b1 = np.sqrt(np.mean(xi2,axis=0)/np.mean(xi1,axis=0))
         r = np.logspace(config['2PCF']['min_sep'],np.log10(config['2PCF']['max_sep']),num=config['2PCF']['nbins'])
         b1_mean = np.mean(b1[(r > config['3PCF']['min_sep']*config['3PCF']['min_u']) & (r < config['3PCF']['max_sep']*config['3PCF']['max_u'])])
