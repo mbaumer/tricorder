@@ -100,7 +100,7 @@ def get_zspec_zrm(is11k=False):
         summary = cc.analysis.get_summary()
         summaries.append(summary)
        
-	    if is11k:
+        if is11k:
             str11k = '_11k'
         else:
             str11k = ''
