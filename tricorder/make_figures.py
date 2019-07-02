@@ -1,7 +1,10 @@
 #### Make figures for paper (in eps/pdf format)
-%matplotlib inline
 from __future__ import division
 import numpy as np
+
+import matplotlib
+matplotlib.use('agg')
+
 import matplotlib.pyplot as plt
 import chainconsumer
 from scipy.optimize import minimize
@@ -46,17 +49,17 @@ def get_zspec_zrm(is11k=False):
         
         summary = cc.analysis.get_summary()
         summaries.append(summary)
-        
+       
+	if is11k:
+            str11k = '_11k'
+        else:
+            str11k = ''
+ 
         figure = cc.plotter.plot(figsize='column',extents=[(0,3),(-3,3)]);
         axarr = figure.get_axes()
         plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
         plt.legend()
-        plt.figure()
-        if is11k:
-            str11k = '_11k'
-        else:
-            str11k = ''
-        plt.savefig('./figures/rm_bin'+str(i+1)+str11k+'.eps')
+        plt.savefig('./figures/rm_bin'+str(i+1)+str11k+'.pdf',dpi=300,bbox_inches='tight')
         
 if __name__ == '__main__':
     get_zspec_zrm()
