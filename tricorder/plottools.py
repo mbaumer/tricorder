@@ -116,9 +116,6 @@ def make_inference(red_qdm,red_qrm,covmat_src=None,max_pca_comps=None,is11k=Fals
         pca.fit(red_qrm)
         print pca.explained_variance_ratio_
         rmcov = pca.get_covariance()
-        
-    qrm_mean = np.mean(red_qrm,axis=0)
-    qdm_mean = np.mean(red_qdm,axis=0)
     
     if covmat_src is None:
         #icov = np.linalg.inv(dmcov/red_qdm.shape[0]+rmcov)
@@ -126,11 +123,12 @@ def make_inference(red_qdm,red_qrm,covmat_src=None,max_pca_comps=None,is11k=Fals
             icov = np.linalg.inv(rmcov/len(red_qrm)+dmcov/len(red_qdm))
         else:
             icov = np.linalg.inv(rmcov+dmcov/len(red_qdm))
+        qrm_mean = np.mean(red_qrm,axis=0)
+        qdm_mean = np.mean(red_qdm,axis=0)
     else:
-        #use input data to assemble covmat (used for MICE)
-        red_covmat_src = ((covmat_src[:,5:] + np.flip(covmat_src[:,:5],axis=1))/2.0).reshape(covmat_src.shape[0],5)[:,-5:]
-        covmat = np.cov(red_covmat_src.T) + dmcov/red_qdm.shape[0]
-        icov = np.linalg.inv(covmat)
+        qrm_mean = red_qrm
+        qdm_mean = red_qdm
+        icov = np.linalg.inv(covmat_src)
     samples = infer_bias(qdm_mean,qrm_mean,icov,use_covmat=True)
     
     #cc = chainconsumer.ChainConsumer()
@@ -139,6 +137,8 @@ def make_inference(red_qdm,red_qrm,covmat_src=None,max_pca_comps=None,is11k=Fals
     
     return samples
 
+from glob import glob
+import os.path
 import matplotlib.pyplot as plt
 import treecorr
 import yaml
@@ -153,15 +153,14 @@ def load_config(config_fname):
 def compress_dv(qdm1):
     return ((qdm1[:,5:] + np.flip(qdm1[:,:5],axis=1))/2.0).reshape(qdm1.shape[0],5)[:,-5:]
 
-from glob import glob
-import os.path
 
 
-def load_res(path,dset_name,dset_id,config_fname,zvar,min_z,max_z,rsamp_str):
+
+def load_res(path,dset_name,dset_id,config_fname,zvar,min_z,max_z,rsamp_str,sigma=0,norm=True):
     first_done = False
     for jk_id in range(15):
         try:
-            this = load_files(path+config_fname+'_'+dset_name+'dset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma0_'+zvar+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+rsamp_str,return_all=True)
+            this = load_files(path,dset_name,dset_id,config_fname,zvar,min_z,max_z,rsamp_str,sigma,return_all_norm=norm,jk_id=jk_id,config=config_fname)
         except IOError:
             continue
         this['JK'] = jk_id
@@ -172,19 +171,13 @@ def load_res(path,dset_name,dset_id,config_fname,zvar,min_z,max_z,rsamp_str):
             res1 = pd.concat([res1,this],ignore_index=True)
     return res1
 
-def load_res_indep(path,dset_name,config_fname,zvar,min_z,max_z,rsamp_str,norm=False,sigma=0):
+def load_res_indep(path,dset_name,config_fname,zvar,min_z,max_z,rsamp_str,norm=True,sigma=0):
     first_done = False
     for dset_id in range(24):
-        if norm:
-            try:
-                this = load_files(path+config_fname+'_'+dset_name+'dset'+str(dset_id)+'_jk-1_sigma'+str(sigma)+'_'+zvar+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+rsamp_str,return_all_norm=True,config=config_fname)
-            except IOError:
-                continue
-        else:
-            try:
-                this = load_files(path+config_fname+'_'+dset_name+'dset'+str(dset_id)+'_jk-1_sigma'+str(sigma)+'_'+zvar+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+rsamp_str,return_all=True,config=config_fname)
-            except IOError:
-                continue
+        try:
+            this = load_files(path,dset_name,dset_id,config_fname,zvar,min_z,max_z,rsamp_str,sigma,return_all_norm=norm,config=config_fname)
+        except IOError:
+            continue
         this['DSET'] = dset_id
         if not first_done:
             res1 = this
@@ -224,18 +217,18 @@ def load_res_xi(path,dset_name,dset_id,config_fname,min_z,max_z,rsamp_str):
         xilist.append(this.flatten())
     return xilist
 
-def load_res_xi_indep(path,dset_name,config_fname,min_z,max_z,rsamp_str):
+def load_res_xi_indep(path,dset_name,config_fname,min_z,max_z,rsamp_str,zvar='ZSPEC'):
     xilist = []
     for dset_id in range(24):
         try:
-            this = np.load(path+config_fname+'_'+dset_name+'dset'+str(dset_id)+'_jk-1_sigma0_ZSPEC_'+str(min_z)+'_'+str(max_z)+'_rsamp'+rsamp_str+'.xi.npy')
+            this = np.load(path+config_fname+'_'+dset_name+'dset'+str(dset_id)+'_jk-1_sigma0_'+zvar+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+rsamp_str+'.xi.npy')
         except IOError:
             continue
         xilist.append(this.flatten())
     return xilist
 
-def load_files(runname,get_q=True,config='newpaper13.1',return_all=False,return_all_norm=False):
-    path = ''
+def load_files(path,dset_name,dset_id,config_fname,zvar,min_z,max_z,rsamp_str,sigma=0,get_q=True,jk_id=-1,config='newpaper13.1',return_all=False,return_all_norm=False):
+    runname = config_fname+'_'+dset_name+'dset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma)+'_'+zvar+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+rsamp_str
     ddd = treecorr.NNNCorrelation(config=load_config(config)['3PCF'])
     ddd.read(path+runname+'.ddd')
     ddr = treecorr.NNNCorrelation(config=load_config(config)['3PCF'])
@@ -251,8 +244,14 @@ def load_files(runname,get_q=True,config='newpaper13.1',return_all=False,return_
     rdr = treecorr.NNNCorrelation(config=load_config(config)['3PCF'])
     rdr.read(path+runname+'.rdr')
     rrr = treecorr.NNNCorrelation(config=load_config(config)['3PCF'])
-    rrr.read(path+runname+'.rrr')
-
+    try:
+        rrr.read(path+runname+'.rrr')
+    except IOError:
+        print 'using new randoms'
+        newrunname = config_fname+'_'+dset_name+'dset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma)+'_'+zvar+'_0.3_0.45_rsamp'+rsamp_str
+        rrr.read(path+newrunname+'.rrr')
+        print rrr.ntri
+        
     corr = treecorr.NNNCorrelation(config = load_config(config)['3PCF'])
     dd = treecorr.NNCorrelation(config = load_config(config)['2PCF'])
     zeta = (ddd.ntri/ddd.tot - ddr.ntri/ddr.tot - drd.ntri/drd.tot - rdd.ntri/rdd.tot + rrd.ntri/rrd.tot + drr.ntri/drr.tot + rdr.ntri/rdr.tot - rrr.ntri/rrr.tot)/(rrr.ntri/rrr.tot)
@@ -282,7 +281,6 @@ def load_files(runname,get_q=True,config='newpaper13.1',return_all=False,return_
         return zeta/denom
     else:
         return zeta
-
 
 def old_load_files(runname,rsamp,get_q=True,config='paper13.1',return_all=False):
     path = ''
@@ -371,11 +369,17 @@ def plot_data_vectors(qdm,qrm,v=None,b1=1,b2=0,b1MAP=1,b2MAP=0,rm_color='g',dm_c
     plt.ylabel('q')
     plt.legend()
 
-def plot_dv(res,var,indiv_runs=True,offset=0,**kwargs):
-    if indiv_runs:
-        plt.plot(np.linspace(-1,1,10),res[var].values.reshape(-1,10).T,alpha=.3,color=kwargs['color'])
-    plt.errorbar(np.linspace(-1,1,10)+offset,np.mean(res[var].values.reshape(-1,10),axis=0),
-                 yerr=np.std(res[var].values.reshape(-1,10),axis=0),**kwargs)
+def plot_dv(res,var,indiv_runs=True,offset=0,compressed=False,**kwargs):
+    if compressed:
+        if indiv_runs:
+            plt.plot(np.linspace(.1,.9,5),compress_dv(res[var].values.reshape(-1,10)).T,alpha=.3,color=kwargs['color'])
+        plt.errorbar(np.linspace(.1,.9,5)+offset,np.mean(compress_dv(res[var].values.reshape(-1,10)),axis=0),
+                     yerr=np.std(compress_dv(res[var].values.reshape(-1,10)),axis=0),**kwargs)
+    else:
+        if indiv_runs:
+            plt.plot(np.linspace(-.9,.9,10),res[var].values.reshape(-1,10).T,alpha=.3,color=kwargs['color'])
+        plt.errorbar(np.linspace(-.9,.9,10)+offset,np.mean(res[var].values.reshape(-1,10),axis=0),
+                     yerr=np.std(res[var].values.reshape(-1,10),axis=0),**kwargs)
     
 def get_max_like(red_qdm,red_qrm):
     b1 = np.linspace(0, 3, 300)
