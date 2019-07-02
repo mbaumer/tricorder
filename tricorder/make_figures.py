@@ -64,7 +64,7 @@ def get_zspec_zrm(is11k=False):
 def get_tolerance_figs(is11k=False):
     oldpath = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/photoz_syst/'
     path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/tolerance_syst/'
-    for zmin in [.15,.3,.45,.6]:
+    for i,zmin in enumerate([.15,.3,.45,.6]):
         #config_fname = 'newpaper13.1'
         #config = plottools.load_config(config_fname)
         zmax = zmin+.15
@@ -121,7 +121,7 @@ def get_u_figs(is11k=False):
     oldpath = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/photoz_syst/'
     path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/tolerance_syst/'   
     #testing choice of u
-    for zmin in [.15,.3,.45,.6]:
+    for i,zmin in enumerate([.15,.3,.45,.6]):
         config_fname = 'newpaper13.1'
         zmax = zmin+.15
         cc = chainconsumer.ChainConsumer()
