@@ -13,6 +13,72 @@ reload(plottools)
 import palettable
 from matplotlib.colors import LogNorm
 
+from astropy.io import fits
+import paths
+import skymapper as skm
+
+matplotlib.rcParams.update({'font.size': 18})
+matplotlib.rc('xtick', labelsize=14) 
+matplotlib.rc('ytick', labelsize=14) 
+matplotlib.rc('font', family='serif')
+
+def make_easy_figures():
+    ## 
+    ##Footprint of simulated gals
+    ##
+    HD = fits.getdata(paths.rm_y1[0])
+    HL = fits.getdata(paths.rm_y1_HL[0])
+    HHL = fits.getdata(paths.rm_y1_HHL[0])
+
+    slice1 = HD[((HD['ZREDMAGIC'] > .15) & (HD['ZREDMAGIC'] < .3))]
+    slice2 = HD[((HD['ZREDMAGIC'] > .3) & (HD['ZREDMAGIC'] < .45))]
+    slice3 = HD[((HD['ZREDMAGIC'] > .45) & (HD['ZREDMAGIC'] < .6))]
+    slice4 = HL[((HL['ZREDMAGIC'] > .6) & (HL['ZREDMAGIC'] < .75))]
+    slice5 = HHL[((HHL['ZREDMAGIC'] > .75) & (HHL['ZREDMAGIC'] < .9))]
+
+    sample = np.concatenate([slice1,slice2,slice3,slice4,slice5])
+    skm.plotDensity(sample['RA'],sample['DEC'],sep=10)
+
+    plt.savefig('./figures/skymap.pdf',dpi=300,bbox_inches='tight')
+    plt.savefig('./figures/skymap.png',dpi=300,bbox_inches='tight')
+
+    plt.figure()
+    
+    ##
+    ## Redmagic n(z) histogram
+    ##
+    plt.hist(slice1['ZSPEC'],histtype='step',bins=100,range=(0,1))
+    plt.hist(slice2['ZSPEC'],histtype='step',bins=100,range=(0,1))
+    plt.hist(slice3['ZSPEC'],histtype='step',bins=100,range=(0,1))
+    plt.hist(slice4['ZSPEC'],histtype='step',bins=100,range=(0,1))
+    plt.hist(slice5['ZSPEC'],histtype='step',bins=100,range=(0,1));
+    plt.axvspan(.15,.3,alpha=.2,color='b')
+    plt.axvspan(.3,.45,alpha=.2,color='orange')
+    plt.axvspan(.45,.6,alpha=.2,color='g')
+    plt.axvspan(.6,.75,alpha=.2,color='r')
+    plt.axvspan(.75,.9,alpha=.2,color='violet')
+    plt.xlabel('True Redshift')
+    plt.ylabel('N(z)')
+
+    plt.savefig('./figures/tomobins.pdf',dpi=300,bbox_inches='tight')
+    plt.savefig('./figures/tomobins.png',dpi=300,bbox_inches='tight')
+
+    plt.figure()
+
+    ##
+    ## Redmagic errors vs redshift
+    ##
+
+    plt.hist2d(sample['ZREDMAGIC'],sample['ZREDMAGIC_E'],bins=100,norm=LogNorm());
+    plt.vlines([.3,.45,.6,.75],0.007,0.1,linestyle='--',color='r')
+    plt.ylim(0.007,0.1);
+    plt.xlabel(r'$z_{RM}$')
+    plt.ylabel(r'$\sigma(z_{RM})$')
+
+    plt.savefig('./figures/redmagic_errors.pdf',dpi=300,bbox_inches='tight')
+    plt.savefig('./figures/redmagic_errors.png',dpi=300,bbox_inches='tight')
+
+
 def get_zspec(is11k=False):
     summaries = []
     for i,zmin in enumerate([.15,.3,.45,.6]):
@@ -269,10 +335,11 @@ def get_gaussian_photoz(is11k=False):
         
 
 if __name__ == '__main__':
+    make_easy_figures()
     #get_zspec()
     #get_zspec(is11k=True)
-    get_zspec_zrm()
-    get_zspec_zrm(is11k=True)
+    #get_zspec_zrm()
+    #get_zspec_zrm(is11k=True)
     #get_gaussian_photoz()
     #get_gaussian_photoz(is11k=True)
     #get_tolerance_figs()
