@@ -293,12 +293,7 @@ def get_zspec_both():
 
         figure.axes[2].plot(np.linspace(0,3,100),plottools.get_lazeyras_schmidt_2015(np.linspace(0,3,100)),label='Lazeyras+Schmidt 2015')
         figure.axes[2].plot(np.linspace(0,3,100),plottools.get_hoffman_2015(np.linspace(0,3,100)),label='Hoffman 2015')
-
-        if is11k:
-            str11k = '_11k'
-        else:
-            str11k = ''
- 
+        
         axarr = figure.get_axes()
         plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
         plt.legend()
