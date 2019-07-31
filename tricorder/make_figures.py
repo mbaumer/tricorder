@@ -122,6 +122,8 @@ def make_triangle_diagrams():
 
 def make_covariance_fig():
 
+    path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/photoz_syst/'
+
     zmin = .45
     zmax = zmin+.15
     data = plottools.load_res_indep(path, 'dm','newpaper13.1','ZSPEC',zmin,zmax,'12x20',sigma=0)
@@ -240,7 +242,7 @@ def get_zspec(is11k=False):
             str11k = ''
  
         axarr = figure.get_axes()
-        plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
+        #plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
         plt.legend()
         plt.savefig('./figures/spec_bin'+str(i+1)+str11k+'.pdf',dpi=300,bbox_inches='tight')
         plt.savefig('./figures/spec_bin'+str(i+1)+str11k+'.png',dpi=300,bbox_inches='tight')
@@ -510,10 +512,11 @@ def get_gaussian_photoz(is11k=False):
 if __name__ == '__main__':
     #make_easy_figures()
     make_data_vector_plots()
+    make_triangle_diagrams()
     make_covariance_fig()
     get_zspec_both()
-    #get_zspec()
-    #get_zspec(is11k=True)
+    get_zspec()
+    get_zspec(is11k=True)
     get_zspec_zrm()
     get_zspec_zrm(is11k=True)
     get_gaussian_photoz()
