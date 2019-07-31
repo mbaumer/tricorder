@@ -512,7 +512,7 @@ def get_gaussian_photoz(is11k=False):
 if __name__ == '__main__':
     #make_easy_figures()
     make_data_vector_plots()
-    make_triangle_diagrams()
+    #make_triangle_diagrams()
     make_covariance_fig()
     get_zspec_both()
     get_zspec()
