@@ -269,10 +269,10 @@ def get_gaussian_photoz(is11k=False):
         
 
 if __name__ == '__main__':
-    get_zspec()
-    get_zspec(is11k=True)
-    #get_zspec_zrm()
-    #get_zspec_zrm(is11k=True)
+    #get_zspec()
+    #get_zspec(is11k=True)
+    get_zspec_zrm()
+    get_zspec_zrm(is11k=True)
     #get_gaussian_photoz()
     #get_gaussian_photoz(is11k=True)
     #get_tolerance_figs()
