@@ -133,6 +133,65 @@ def get_zspec(is11k=False):
         plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
         plt.legend()
         plt.savefig('./figures/spec_bin'+str(i+1)+str11k+'.pdf',dpi=300,bbox_inches='tight')
+        plt.savefig('./figures/spec_bin'+str(i+1)+str11k+'.png',dpi=300,bbox_inches='tight')
+
+def get_zspec_both():
+    summaries = []
+    for i,zmin in enumerate([.15,.3,.45,.6]):
+        if zmin != .45:
+            path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/tolerance_syst/'
+            config_fname = 'newpaper14.1'
+        else:
+            path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/photoz_syst/'
+            config_fname = 'newpaper13.1'
+        config = plottools.load_config(config_fname)
+        zmax = zmin+.15
+        cc = chainconsumer.ChainConsumer()
+        if ((zmin == .15) | (zmin == .45)):
+            data1 = plottools.load_res_indep(path,'dm',config_fname,'ZSPEC',zmin,zmax,'12x20',sigma=0)
+            data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZSPEC',zmin,zmax,'20',sigma=0)
+        else:
+            data1 = plottools.load_res_indep(path,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=0)
+            data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZSPEC',zmin,zmax,'10',sigma=0)
+        red_qdm = plottools.compress_dv(data1['Q'].values.reshape(-1,10))
+        red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
+        samples = plottools.make_inference(red_qdm,red_qrm,is11k=False)
+        cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'DES Y1-like',color='b')
+        samples2 = plottools.make_inference(red_qdm,red_qrm,is11k=True)
+        cc.add_chain(samples2.flatchain,parameters=['b1','b2'],name=r'12,000 sq. deg. survey', color='k')
+        
+        summary = cc.analysis.get_summary()
+        summaries.append(summary)
+       
+        if ((zmin == .15) | (zmin == .45)):
+            xi1 = plottools.load_res_xi_indep(path,'dm',config_fname,zmin,zmax,'12x20')
+            xi2 = plottools.load_res_xi_indep(path,'newbuzzardrm2',config_fname,zmin,zmax,'20')
+        else:
+            xi1 = plottools.load_res_xi_indep(path,'dm',config_fname,zmin,zmax,'10x10')
+            xi2 = plottools.load_res_xi_indep(path,'newbuzzardrm2',config_fname,zmin,zmax,'10')
+        #b1 = np.sqrt(np.mean(xi2,axis=0)/np.mean(xi1,axis=0))
+        b1 = np.sqrt(xi2/np.mean(xi1,axis=0))
+        r = np.logspace(config['2PCF']['min_sep'],np.log10(config['2PCF']['max_sep']),num=config['2PCF']['nbins'])
+        b1_mean = np.mean(b1[:,(r > config['3PCF']['min_sep']*config['3PCF']['min_u']) & (r < config['3PCF']['max_sep']*config['3PCF']['max_u'])])
+        b1_std = np.std(b1[:,(r > config['3PCF']['min_sep']*config['3PCF']['min_u']) & (r < config['3PCF']['max_sep']*config['3PCF']['max_u'])])
+        
+        figure = cc.plotter.plot(figsize='column',extents=[(0,3),(-3,3)]);
+        figure.axes[2].axvspan(b1_mean-b1_std, b1_mean+b1_std, alpha=0.3, color='b')
+        figure.axes[2].axvspan(b1_mean-2*b1_std, b1_mean+2*b1_std, alpha=0.3, color='b')
+
+        figure.axes[2].plot(np.linspace(0,3,100),plottools.get_lazeyras_schmidt_2015(np.linspace(0,3,100)),label='Lazeyras+Schmidt 2015')
+        figure.axes[2].plot(np.linspace(0,3,100),plottools.get_hoffman_2015(np.linspace(0,3,100)),label='Hoffman 2015')
+
+        if is11k:
+            str11k = '_11k'
+        else:
+            str11k = ''
+ 
+        axarr = figure.get_axes()
+        plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
+        plt.legend()
+        plt.savefig('./figures/spec_bin'+str(i+1)+str11k+'.pdf',dpi=300,bbox_inches='tight')
+        plt.savefig('./figures/spec_bin'+str(i+1)+str11k+'.png',dpi=300,bbox_inches='tight')
 
 def get_zspec_zrm(is11k=False):
     path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/photoz_syst/'
@@ -182,6 +241,7 @@ def get_zspec_zrm(is11k=False):
         plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
         plt.legend()
         plt.savefig('./figures/rm_bin'+str(i+1)+str11k+'.pdf',dpi=300,bbox_inches='tight')
+        plt.savefig('./figures/rm_bin'+str(i+1)+str11k+'.png',dpi=300,bbox_inches='tight')
 
 def get_tolerance_figs(is11k=False):
     oldpath = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/photoz_syst/'
@@ -238,6 +298,7 @@ def get_tolerance_figs(is11k=False):
             str11k = ''
 
         plt.savefig('./figures/tol_bin'+str(i+1)+str11k+'.pdf',dpi=300,bbox_inches='tight')
+        plt.savefig('./figures/tol_bin'+str(i+1)+str11k+'.png',dpi=300,bbox_inches='tight')
 
 def get_u_figs(is11k=False): 
     oldpath = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/photoz_syst/'
@@ -280,6 +341,7 @@ def get_u_figs(is11k=False):
             str11k = ''
 
         plt.savefig('./figures/u_bin'+str(i+1)+str11k+'.pdf',dpi=300,bbox_inches='tight')
+        plt.savefig('./figures/u_bin'+str(i+1)+str11k+'.png',dpi=300,bbox_inches='tight')
 
 
 def get_gaussian_photoz(is11k=False):
@@ -332,10 +394,12 @@ def get_gaussian_photoz(is11k=False):
             str11k = ''
 
         plt.savefig('./figures/gauss_bin'+str(i+1)+str11k+'.pdf',dpi=300,bbox_inches='tight')
+        plt.savefig('./figures/gauss_bin'+str(i+1)+str11k+'.png',dpi=300,bbox_inches='tight')
         
 
 if __name__ == '__main__':
-    make_easy_figures()
+    #make_easy_figures()
+    get_zspec_both()
     #get_zspec()
     #get_zspec(is11k=True)
     #get_zspec_zrm()
