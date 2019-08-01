@@ -293,7 +293,7 @@ def get_zspec_both():
 
         figure.axes[2].plot(np.linspace(0,3,100),plottools.get_lazeyras_schmidt_2015(np.linspace(0,3,100)),label='Lazeyras+Schmidt 2015')
         figure.axes[2].plot(np.linspace(0,3,100),plottools.get_hoffman_2015(np.linspace(0,3,100)),label='Hoffman 2015')
-        
+
         axarr = figure.get_axes()
         plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
         plt.legend()
@@ -505,18 +505,18 @@ def get_gaussian_photoz(is11k=False):
         
 
 if __name__ == '__main__':
-    #make_easy_figures()
-    make_data_vector_plots()
-    #make_triangle_diagrams()
-    make_covariance_fig()
-    get_zspec_both()
-    get_zspec()
-    get_zspec(is11k=True)
-    get_zspec_zrm()
-    get_zspec_zrm(is11k=True)
-    get_gaussian_photoz()
-    get_gaussian_photoz(is11k=True)
-    get_tolerance_figs()
-    get_tolerance_figs(is11k=True)
-    get_u_figs()
-    get_u_figs(is11k=True)
+    # make_easy_figures()
+    # make_data_vector_plots()
+    make_triangle_diagrams()
+    # make_covariance_fig()
+    # get_zspec_both()
+    # get_zspec()
+    # get_zspec(is11k=True)
+    # get_zspec_zrm()
+    # get_zspec_zrm(is11k=True)
+    # get_gaussian_photoz()
+    # get_gaussian_photoz(is11k=True)
+    # get_tolerance_figs()
+    # get_tolerance_figs(is11k=True)
+    # get_u_figs()
+    # get_u_figs(is11k=True)
