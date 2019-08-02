@@ -229,11 +229,7 @@ def get_zspec(is11k=False):
         b1_mean = np.mean(b1[:,(r > config['3PCF']['min_sep']*config['3PCF']['min_u']) & (r < config['3PCF']['max_sep']*config['3PCF']['max_u'])])
         b1_std = np.std(b1[:,(r > config['3PCF']['min_sep']*config['3PCF']['min_u']) & (r < config['3PCF']['max_sep']*config['3PCF']['max_u'])])
         
-        cc.configure(legend_kwargs={"loc": "upper left"})
-
-
-
-        plt.figure()
+        cc.configure(legend_kwargs={"loc": "upper left"},label_font_size=18,tick_font_size=14)
 
         figure = cc.plotter.plot(figsize='column',extents=[(0,3),(-3,3)]);
         figure.axes[2].axvspan(b1_mean-b1_std, b1_mean+b1_std, alpha=0.3, color='b')
@@ -293,7 +289,7 @@ def get_zspec_both():
         b1_mean = np.mean(b1[:,(r > config['3PCF']['min_sep']*config['3PCF']['min_u']) & (r < config['3PCF']['max_sep']*config['3PCF']['max_u'])])
         b1_std = np.std(b1[:,(r > config['3PCF']['min_sep']*config['3PCF']['min_u']) & (r < config['3PCF']['max_sep']*config['3PCF']['max_u'])])
         
-        cc.configure(legend_kwargs={"loc": "upper left"})
+        cc.configure(legend_kwargs={"loc": "upper left"},label_font_size=18,tick_font_size=14)
 
         figure = cc.plotter.plot(figsize='column',extents=[(0,3),(-3,3)]);
         figure.axes[2].axvspan(b1_mean-b1_std, b1_mean+b1_std, alpha=0.3, color='b')
@@ -307,6 +303,47 @@ def get_zspec_both():
         plt.legend()
         plt.savefig('./figures/both_bin'+str(i+1)+'.pdf',dpi=300,bbox_inches='tight')
         plt.savefig('./figures/both_bin'+str(i+1)+'.png',dpi=300,bbox_inches='tight')
+
+def get_zrm_only(is11k=False):
+    path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/photoz_syst/'
+    summaries = []
+    for i,zmin in enumerate([.15,.3,.45,.6]):
+        if zmin != .45:
+            path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/tolerance_syst/'
+            config_fname = 'newpaper14.1'
+        else:
+            path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/photoz_syst/'
+            config_fname = 'newpaper13.1'
+        config = plottools.load_config(config_fname)
+        zmax = zmin+.15
+        cc = chainconsumer.ChainConsumer()
+        if zmin != .45:
+            data1 = plottools.load_res_indep(path,'dm',config_fname,'ZREDMAGIC',zmin,zmax,'10x10',sigma=0)
+            data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZREDMAGIC',zmin,zmax,'10',sigma=0)
+        else:
+            data1 = plottools.load_res_indep(path,'dm',config_fname,'ZREDMAGIC',zmin,zmax,'12x20',sigma=0)
+            data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZREDMAGIC',zmin,zmax,'20',sigma=0)
+        red_qdm = plottools.compress_dv(data1['Q'].values.reshape(-1,10))
+        red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
+        samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
+        cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'redMaGiC redshifts')
+        
+        summary = cc.analysis.get_summary()
+        summaries.append(summary)
+       
+        if is11k:
+            str11k = '_11k'
+        else:
+            str11k = ''
+ 
+        cc.configure(legend_kwargs={"loc": "upper left"})
+
+        figure = cc.plotter.plot(figsize='column',extents=[(0,3),(-3,3)]);
+        axarr = figure.get_axes()
+        plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax),y=1)
+        plt.legend()
+        plt.savefig('./figures/rm_bin'+str(i+1)+str11k+'.pdf',dpi=300,bbox_inches='tight')
+        plt.savefig('./figures/rm_bin'+str(i+1)+str11k+'.png',dpi=300,bbox_inches='tight')
 
 def get_zspec_zrm(is11k=False):
     path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/photoz_syst/'
@@ -522,14 +559,11 @@ if __name__ == '__main__':
     # make_data_vector_plots()
     # make_triangle_diagrams()
     # make_covariance_fig()
-
-    matplotlib.rcParams.update({'font.size': 18})
-    matplotlib.rc('xtick', labelsize=14) 
-    matplotlib.rc('ytick', labelsize=14) 
-    matplotlib.rc('font', family='serif')
-
-    # get_zspec_both()
-    get_zspec()
+    get_zspec_both()
+    # get_zspec()
+    # get_zspec(is11k=True)
+    # get_zrm_only()
+    # get_zrm_only(is11k=True)
     # get_zspec(is11k=True)
     # get_zspec_zrm()
     # get_zspec_zrm(is11k=True)
