@@ -289,7 +289,7 @@ def get_zspec_both():
         b1_mean = np.mean(b1[:,(r > config['3PCF']['min_sep']*config['3PCF']['min_u']) & (r < config['3PCF']['max_sep']*config['3PCF']['max_u'])])
         b1_std = np.std(b1[:,(r > config['3PCF']['min_sep']*config['3PCF']['min_u']) & (r < config['3PCF']['max_sep']*config['3PCF']['max_u'])])
         
-        cc.configure(legend_kwargs={"loc": "upper left"},label_font_size=18,tick_font_size=14)
+        cc.configure(legend_kwargs={"loc": "upper left"},label_font_size=14,tick_font_size=14)
 
         figure = cc.plotter.plot(figsize='column',extents=[(0,3),(-3,3)]);
         figure.axes[2].axvspan(b1_mean-b1_std, b1_mean+b1_std, alpha=0.3, color='b')
@@ -336,7 +336,7 @@ def get_zrm_only(is11k=False):
         else:
             str11k = ''
  
-        cc.configure(legend_kwargs={"loc": "upper left"})
+        cc.configure(legend_kwargs={"loc": "upper left"},label_font_size=14,tick_font_size=14)
 
         figure = cc.plotter.plot(figsize='column',extents=[(0,3),(-3,3)]);
         axarr = figure.get_axes()
@@ -388,7 +388,7 @@ def get_zspec_zrm(is11k=False):
         else:
             str11k = ''
  
-        cc.configure(legend_kwargs={"loc": "upper left"})
+        cc.configure(legend_kwargs={"loc": "upper left"},label_font_size=14,tick_font_size=14)
 
         figure = cc.plotter.plot(figsize='column',extents=[(0,3),(-3,3)]);
         axarr = figure.get_axes()
@@ -441,7 +441,7 @@ def get_tolerance_figs(is11k=False):
         samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
         cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'Tolerance $= 30\%$')
 
-        cc.configure(legend_kwargs={"loc": "upper left"})
+        cc.configure(legend_kwargs={"loc": "upper left"},label_font_size=14,tick_font_size=14)
         figure = cc.plotter.plot(figsize='column',extents=[(0,3),(-3,3)]);
         axarr = figure.get_axes()
         plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax),y=1)
@@ -485,7 +485,7 @@ def get_u_figs(is11k=False):
         samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
         cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'$.9 < u < 1$')
         
-        cc.configure(legend_kwargs={"loc": "upper left"})
+        cc.configure(legend_kwargs={"loc": "upper left"},label_font_size=14,tick_font_size=14)
         figure = cc.plotter.plot(figsize='column',extents=[(0,3),(-3,3)]);
         axarr = figure.get_axes()
         plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax),y=1)
@@ -539,7 +539,7 @@ def get_gaussian_photoz(is11k=False):
         summary = cc.analysis.get_summary()
         summaries.append(summary)
         
-        cc.configure(legend_kwargs={"loc": "upper left"})
+        cc.configure(legend_kwargs={"loc": "upper left"},label_font_size=14,tick_font_size=14)
         figure = cc.plotter.plot(figsize='column',extents=[(0,3),(-3,3)]);
         axarr = figure.get_axes()
         plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax),y=1)
@@ -560,16 +560,16 @@ if __name__ == '__main__':
     # make_triangle_diagrams()
     # make_covariance_fig()
     get_zspec_both()
-    # get_zspec()
-    # get_zspec(is11k=True)
-    # get_zrm_only()
-    # get_zrm_only(is11k=True)
-    # get_zspec(is11k=True)
-    # get_zspec_zrm()
-    # get_zspec_zrm(is11k=True)
-    # get_gaussian_photoz()
-    # get_gaussian_photoz(is11k=True)
-    # get_tolerance_figs()
-    # get_tolerance_figs(is11k=True)
-    # get_u_figs()
-    # get_u_figs(is11k=True)
+    get_zspec()
+    get_zspec(is11k=True)
+    get_zrm_only()
+    get_zrm_only(is11k=True)
+    get_zspec(is11k=True)
+    get_zspec_zrm()
+    get_zspec_zrm(is11k=True)
+    get_gaussian_photoz()
+    get_gaussian_photoz(is11k=True)
+    get_tolerance_figs()
+    get_tolerance_figs(is11k=True)
+    get_u_figs()
+    get_u_figs(is11k=True)
