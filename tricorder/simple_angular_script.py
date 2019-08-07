@@ -8,7 +8,7 @@ ncpus = "2"
 primary_dset_id = 0
 
 if __name__ == '__main__':
-    for i, config_fname in enumerate(['enrique_diffu','paper_3dval1.config']):
+    for i, config_fname in enumerate(['paper_3dval1','paper_3dval2','paper_3dval3']):
         #do3D = False
         for sigma_z in [0]:
             for min_z in [.15, .3, .45, .6]:
