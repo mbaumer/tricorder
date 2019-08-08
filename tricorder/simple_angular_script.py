@@ -1,14 +1,14 @@
 import subprocess
 import paths
 
-do3Ds = [True, True, True]
+do3Ds = [True, True]
 outlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs3/%J.out"
 errlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs3/%J.err"
 ncpus = "2"
 primary_dset_id = 0
 
 if __name__ == '__main__':
-    for i, config_fname in enumerate(['paper_3dval1','paper_3dval2','paper_3dval3']):
+    for i, config_fname in enumerate(['paper_3dval4','paper_3dval5']):
         #do3D = False
         for sigma_z in [0]:
             for min_z in [.15, .3, .45, .6]:
