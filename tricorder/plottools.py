@@ -171,11 +171,11 @@ def load_res(path,dset_name,dset_id,config_fname,zvar,min_z,max_z,rsamp_str,sigm
             res1 = pd.concat([res1,this],ignore_index=True)
     return res1
 
-def load_res_indep(path,dset_name,config_fname,zvar,min_z,max_z,rsamp_str,norm=True,sigma=0):
+def load_res_indep(path,dset_name,config_fname,zvar,min_z,max_z,rsamp_str,norm=True,sigma=0,use_alt_randoms=True):
     first_done = False
     for dset_id in range(24):
         try:
-            this = load_files(path,dset_name,dset_id,config_fname,zvar,min_z,max_z,rsamp_str,sigma,return_all_norm=norm,config=config_fname)
+            this = load_files(path,dset_name,dset_id,config_fname,zvar,min_z,max_z,rsamp_str,sigma,return_all_norm=norm,config=config_fname,use_alt_randoms=use_alt_randoms)
         except IOError:
             continue
         this['DSET'] = dset_id
@@ -227,7 +227,7 @@ def load_res_xi_indep(path,dset_name,config_fname,min_z,max_z,rsamp_str,zvar='ZS
         xilist.append(this.flatten())
     return xilist
 
-def load_files(path,dset_name,dset_id,config_fname,zvar,min_z,max_z,rsamp_str,sigma=0,get_q=True,jk_id=-1,config='newpaper13.1',return_all=False,return_all_norm=False):
+def load_files(path,dset_name,dset_id,config_fname,zvar,min_z,max_z,rsamp_str,sigma=0,get_q=True,jk_id=-1,config='newpaper13.1',return_all=False,return_all_norm=False,use_alt_randoms=True):
     runname = config_fname+'_'+dset_name+'dset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma)+'_'+zvar+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+rsamp_str
     ddd = treecorr.NNNCorrelation(config=load_config(config)['3PCF'])
     ddd.read(path+runname+'.ddd')
@@ -247,10 +247,14 @@ def load_files(path,dset_name,dset_id,config_fname,zvar,min_z,max_z,rsamp_str,si
     try:
         rrr.read(path+runname+'.rrr')
     except IOError:
-        print 'using new randoms'
-        newrunname = config_fname+'_'+dset_name+'dset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma)+'_'+zvar+'_0.3_0.45_rsamp'+rsamp_str
-        rrr.read(path+newrunname+'.rrr')
-        print rrr.ntri
+        print 'missing randoms'
+        if use_alt_randoms:
+            print 'using new randoms'
+            newrunname = config_fname+'_'+dset_name+'dset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma)+'_'+zvar+'_0.3_0.45_rsamp'+rsamp_str
+            rrr.read(path+newrunname+'.rrr')
+            print rrr.ntri
+        else:
+            raise IOError
         
     corr = treecorr.NNNCorrelation(config = load_config(config)['3PCF'])
     dd = treecorr.NNCorrelation(config = load_config(config)['2PCF'])
