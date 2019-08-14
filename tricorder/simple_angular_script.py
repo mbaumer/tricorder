@@ -1,12 +1,55 @@
 import subprocess
 import paths
 from time import sleep
+import os.path
 
 do3Ds = [False]
 outlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.out"
 errlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.err"
 ncpus = "2"
 primary_dset_id = 0
+walltime = '47:00'
+memlimit = '4000'
+
+def nice_job_submit(do3D, outvar, config_fname, dset_flavor, dset_id, jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp, dm_oversamp=None, sleep_time=20):
+
+    if do3D:
+        checkpath = paths.corr_out_dir
+    else:
+        checkpath = paths.ang_out_dir
+
+    if outvar == 'ddd':
+        checkoutvar = 'rdd' # last one to be written in a ddd job.
+    else:
+        checkoutvar = outvar
+
+    if dset_flavor == 'dm':
+        oversamp_str = str(dm_oversamp) + 'x' + str(random_oversamp)
+    elif: dset_flavor == 'newbuzzardrm2':
+        oversamp_str = str(random_oversamp)
+    else:
+        raise ValueError('Unknown dset_flavor: '+dset_flavor)
+
+    outfile = checkpath + '/' + config_fname + \
+    '_'+dset_flavor+'dset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
+    '_'+rw_scheme+'_'+str(min_z)+'_'+str(max_z) + \
+    '_rsamp'+oversamp_str+'.' + checkoutvar
+
+    if os.path.exists(outfile):
+        print 'already done; continuing'
+        continue
+    else: 
+        if dset_flavor == 'dm':
+            command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_dm(" + str(
+                dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'redshift','Z',"+str(dm_oversamp)+","+str(random_oversamp)+", '"+rw_scheme+"', outvar='"+outvar+"')"
+        else:
+            command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz(" + str(
+                dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'"+rw_scheme+"','Z',"+str(random_oversamp)+", outvar='"+outvar+"')"
+                                    
+        print command_str
+        subprocess.call(["bsub", "-W", walltime, "-n", ncpus, "-C", "1", "-R", "span[hosts=1] rusage[mem="+memlimit+"]", "-o", outlogpath,
+                        "-e", errlogpath, "python", "-c", command_str])
+        sleep(sleep_time)
 
 if __name__ == '__main__':
     for i, config_fname in enumerate(['newpaper14.1_newu2']):
@@ -23,44 +66,18 @@ if __name__ == '__main__':
                                 zlist = ['ZSPEC']
 
                             for rw_scheme in zlist:
-                                # MICE
-                                # command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_mice(" + str(
-                                #    dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'"+rw_scheme+"','Z',"+str(random_oversamp)+", outvar='"+outvar+"')"
-                                #print command_str
-                                # subprocess.call(["bsub", "-W", "47:00", "-n", ncpus, "-C", "1", "-R", "span[hosts=1]", "-o", outlogpath,
-                                #                 "-e", errlogpath, "python", "-c", command_str])
+                               
                                 for dm_oversamp in [10]:
-                                    # command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_MICEdm(" + str(
-                                    #     dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'redshift','Z',"+str(dm_oversamp)+","+str(random_oversamp)+", '"+rw_scheme+"', outvar='"+outvar+"')"
-                                    # print command_str
-                                    # subprocess.call(["bsub", "-W", "47:00", "-n", ncpus, "-C", "1", "-R", "span[hosts=1]", "-o", outlogpath,
-                                    #                  "-e", errlogpath, "python", "-c", command_str])
 
                                     if jk_id == -1:
                                         dset_ids = range(len(paths.dm_y1))
                                     else:
                                         dset_ids = [primary_dset_id]
                                     for dset_id in dset_ids:
-                                        command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_dm(" + str(
-                                            dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3Ds[i])+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'redshift','Z',"+str(dm_oversamp)+","+str(random_oversamp)+", '"+rw_scheme+"', outvar='"+outvar+"')"
-                                        print command_str
-                                        sleep(20)
-                                        subprocess.call(["bsub", "-W", "47:00", "-n", ncpus, "-C", "1", "-R", "span[hosts=1] rusage[mem=4000]", "-o", outlogpath,
-                                                         "-e", errlogpath, "python", "-c", command_str])
 
-                                #     if min_z != .45:
-                                #         continue
-
-                                #     if jk_id == -1:
-                                #         dset_ids = range(len(paths.dm_y1))
-                                #     else:
-                                #         dset_ids = [primary_dset_id]
-                                #     for dset_id in dset_ids:
-                                #         command_str = "import simple_angular; simple_angular.calc_3pt_randxrand(" + str(
-                                #             dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'Z','Z',"+str(dm_oversamp)+","+str(random_oversamp)+", '"+rw_scheme+"', outvar='"+outvar+"')"
-                                #         print command_str
-                                #         subprocess.call(["bsub", "-W", "12:00", "-n", ncpus, "-C", "1", "-R", "span[hosts=1]", "-o", outlogpath,
-                                #                          "-e", errlogpath, "python", "-c", command_str])
+                                        nice_job_submit(do3D, outvar, config_fname, 'dm', dset_id, 
+                                            jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp,
+                                            dm_oversamp=dm_oversamp)
 
                                 # RMY1
                                 if jk_id == -1:
@@ -68,31 +85,5 @@ if __name__ == '__main__':
                                 else:
                                     dset_ids = [primary_dset_id]
                                 for dset_id in dset_ids:
-                                    command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz(" + str(
-                                        dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3Ds[i])+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'"+rw_scheme+"','Z',"+str(random_oversamp)+", outvar='"+outvar+"')"
-                                    print command_str
-                                    sleep(20)
-                                    subprocess.call(["bsub", "-W", "47:00", "-n", ncpus, "-C", "1", "-R", "span[hosts=1] rusage[mem=4000]", "-o", outlogpath,
-                                                     "-e", errlogpath, "python", "-c", command_str])
-
-                                # Y3
-                                # if jk_id == -1:
-                                #     dset_ids = range(len(paths.rm_y3))
-                                # else:
-                                #     dset_ids = [primary_dset_id]
-                                # for dset_id in dset_ids:
-                                #     command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_y3(" + str(
-                                #         dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'"+rw_scheme+"','Z',"+str(random_oversamp)+", outvar='"+outvar+"')"
-                                #     print command_str
-                                #     subprocess.call(["bsub", "-W", "24:00", "-n", ncpus, "-C", "1", "-R", "span[hosts=1]", "-o", outlogpath,
-                                #                      "-e", errlogpath, "python", "-c", command_str])
-                            # if jk_id == -1:
-                            #     dset_ids = [0, 1, 2, 3]
-                            # else:
-                            #     dset_ids = [primary_dset_id]
-                            # for dset_id in dset_ids:
-                            #     command_str = "import simple_angular; simple_angular.calc_3pt_noisy_photoz_halos(" + str(
-                            #         dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'Z','Z',"+str(random_oversamp)+", outvar='"+outvar+"')"
-                            #     print command_str
-                            #     subprocess.call(["bsub", "-W", "12:00", "-n", ncpus, "-C", "1", "-R", "span[hosts=1]", "-o", outlogpath,
-                            #                      "-e", errlogpath, "python", "-c", command_str])
+                                    nice_job_submit(do3D, outvar, config_fname, 'newbuzzardrm2', dset_id, 
+                                            jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp)
