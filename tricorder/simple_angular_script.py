@@ -5,14 +5,14 @@ from time import sleep
 do3Ds = [False]
 outlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.out"
 errlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.err"
-ncpus = "2"
+ncpus = "1"
 primary_dset_id = 0
 
 if __name__ == '__main__':
     for i, config_fname in enumerate(['newpaper14.1_newu2']):
         #do3D = False
         for sigma_z in [0]:
-            for min_z in [.45]:
+            for min_z in [.3,.6,.15]:
                 max_z = min_z + 0.15
                 for random_oversamp in [10]:
                     for jk_id in [-1]:
@@ -45,7 +45,7 @@ if __name__ == '__main__':
                                             dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3Ds[i])+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'redshift','Z',"+str(dm_oversamp)+","+str(random_oversamp)+", '"+rw_scheme+"', outvar='"+outvar+"')"
                                         print command_str
                                         sleep(10)
-                                        subprocess.call(["bsub", "-W", "47:00", "-n", ncpus, "-C", "1", "-R", "span[hosts=1]", "-o", outlogpath,
+                                        subprocess.call(["bsub", "-W", "47:00", "-n", ncpus, "-C", "1", "-R", "span[hosts=1] rusage[mem=4000]", "-o", outlogpath,
                                                          "-e", errlogpath, "python", "-c", command_str])
 
                                 #     if min_z != .45:
@@ -72,7 +72,7 @@ if __name__ == '__main__':
                                         dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3Ds[i])+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'"+rw_scheme+"','Z',"+str(random_oversamp)+", outvar='"+outvar+"')"
                                     print command_str
                                     sleep(10)
-                                    subprocess.call(["bsub", "-W", "47:00", "-n", ncpus, "-C", "1", "-R", "span[hosts=1]", "-o", outlogpath,
+                                    subprocess.call(["bsub", "-W", "47:00", "-n", ncpus, "-C", "1", "-R", "span[hosts=1] rusage[mem=4000]", "-o", outlogpath,
                                                      "-e", errlogpath, "python", "-c", command_str])
 
                                 # Y3
