@@ -12,7 +12,7 @@ if __name__ == '__main__':
     for i, config_fname in enumerate(['newpaper14.1_newu2']):
         #do3D = False
         for sigma_z in [0]:
-            for min_z in [.45, .3, .6, .15]:
+            for min_z in [.45]:
                 max_z = min_z + 0.15
                 for random_oversamp in [10]:
                     for jk_id in [-1]:
