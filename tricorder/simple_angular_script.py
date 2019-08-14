@@ -34,7 +34,9 @@ def nice_job_submit(do3D, outvar, config_fname, dset_flavor, dset_id, jk_id, sig
     outfile = checkpath + '/' + config_fname + \
         '_'+dset_flavor+'dset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
         '_'+rw_scheme+'_'+str(min_z)+'_'+str(max_z) + \
-        '_rsamp'+oversamp_str+'.' + checkoutvar
+        '_rsamp'+oversamp_str + '.' + checkoutvar
+
+    print outfile
 
     if os.path.exists(outfile):
         print 'already done; continuing'
