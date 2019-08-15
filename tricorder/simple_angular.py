@@ -391,10 +391,6 @@ def calc_3pt_noisy_photoz_halos(dset_id, jk_id, config_fname, do3D, min_z, max_z
 
 
 def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, dm_oversamp,random_oversamp, rw_scheme, outvar='zeta'):
-    randoms = persistent_load_fits(paths.dm_y1_randoms)
-    data = persistent_load_fits(paths.dm_y1[dset_id])
-    data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
-
     ra_var = 'azim_ang'
     dec_var = 'polar_ang'
 
@@ -404,6 +400,11 @@ def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, s
         weight_data = persistent_load_fits(paths.rm_y1_HHL[0])
     else:
         weight_data = persistent_load_fits(paths.rm_y1[0])
+
+    data = persistent_load_fits(paths.dm_y1[dset_id])
+    data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
+
+    randoms = persistent_load_fits(paths.dm_y1_randoms)
     
     weight_data_slice = get_zslice(weight_data, min_z, max_z, rw_scheme)
 
