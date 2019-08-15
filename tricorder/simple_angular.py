@@ -23,7 +23,7 @@ np.random.seed(12)
 from make_data_randoms import (generate_randoms_radec, index_to_radec,
                                radec_to_index)
 
-@retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=2, max=300)+wait_random(0, 10))
+#@retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=2, max=300)+wait_random(0, 10))
 def persistent_load_fits(fpath):
     print 'attempting load of ' + fpath
     return fits.getdata(fpath)
