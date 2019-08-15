@@ -16,11 +16,17 @@ import paths
 from glob import glob
 import pandas as pd
 import pickle
+from tenacity import *
 
 np.random.seed(12)
 
 from make_data_randoms import (generate_randoms_radec, index_to_radec,
                                radec_to_index)
+
+@retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=2, max=300)+wait_random(0, 10))
+def persistent_load_fits(fpath):
+    print 'attempting load of ' + fpath
+    return fits.getdata(fpath)
 
 
 def load_config(config_fname):
@@ -385,19 +391,19 @@ def calc_3pt_noisy_photoz_halos(dset_id, jk_id, config_fname, do3D, min_z, max_z
 
 
 def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, dm_oversamp,random_oversamp, rw_scheme, outvar='zeta'):
-    randoms = fits.getdata(paths.dm_y1_randoms)
-    data = fits.getdata(paths.dm_y1[dset_id])
+    randoms = persistent_load_fits(paths.dm_y1_randoms)
+    data = persistent_load_fits(paths.dm_y1[dset_id])
     data[zvar] += np.random.normal(size=len(data), scale=sigma_z)
 
     ra_var = 'azim_ang'
     dec_var = 'polar_ang'
 
     if min_z == .6:
-        weight_data = fits.getdata(paths.rm_y1_HL[0])
+        weight_data = persistent_load_fits(paths.rm_y1_HL[0])
     elif min_z == .75:
-        weight_data = fits.getdata(paths.rm_y1_HHL[0])
+        weight_data = persistent_load_fits(paths.rm_y1_HHL[0])
     else:
-        weight_data = fits.getdata(paths.rm_y1[0])
+        weight_data = persistent_load_fits(paths.rm_y1[0])
     
     weight_data_slice = get_zslice(weight_data, min_z, max_z, rw_scheme)
 
@@ -412,11 +418,11 @@ def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, s
     randoms_slice = downselect_pz(randoms, target_cts, target_bins, 'Z', random_oversamp)
 
     #remove jk region
-    jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/buzzard_jk.pkl", "rb" ) )
-    data_inds = jk_classifier.predict(zip(data_slice[ra_var],data_slice[dec_var]))
-    random_inds = jk_classifier.predict(zip(randoms_slice['RA'],randoms_slice['DEC']))
-    data_slice = data_slice[data_inds != jk_id]
-    randoms_slice = randoms_slice[random_inds != jk_id]
+    # jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/buzzard_jk.pkl", "rb" ) )
+    # data_inds = jk_classifier.predict(zip(data_slice[ra_var],data_slice[dec_var]))
+    # random_inds = jk_classifier.predict(zip(randoms_slice['RA'],randoms_slice['DEC']))
+    # data_slice = data_slice[data_inds != jk_id]
+    # randoms_slice = randoms_slice[random_inds != jk_id]
 
     file_name = config_fname + \
         '_dmdset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
@@ -442,14 +448,14 @@ def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, s
 def calc_3pt_noisy_photoz(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigma_z, zvar, random_zvar, random_oversamp, outvar='zeta'):
 
     if min_z == .6:
-        randoms = fits.getdata(paths.rm_y1_HL_randoms)
-        data = fits.getdata(paths.rm_y1_HL[dset_id])
+        randoms = persistent_load_fits(paths.rm_y1_HL_randoms)
+        data = persistent_load_fits(paths.rm_y1_HL[dset_id])
     elif min_z == .75:
-        randoms = fits.getdata(paths.rm_y1_HHL_randoms)
-        data = fits.getdata(paths.rm_y1_HHL[dset_id])
+        randoms = persistent_load_fits(paths.rm_y1_HHL_randoms)
+        data = persistent_load_fits(paths.rm_y1_HHL[dset_id])
     else:
-        randoms = fits.getdata(paths.rm_y1_randoms)
-        data = fits.getdata(paths.rm_y1[dset_id])
+        randoms = persistent_load_fits(paths.rm_y1_randoms)
+        data = persistent_load_fits(paths.rm_y1[dset_id])
 
     ra_var = 'RA'
     dec_var = 'DEC'
@@ -462,11 +468,11 @@ def calc_3pt_noisy_photoz(dset_id, jk_id, config_fname, do3D, min_z, max_z, sigm
         len(data_slice)/len(randoms_slice)*random_oversamp)]
 
     #remove jk region
-    jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/buzzard_jk.pkl", "rb" ) )
-    data_inds = jk_classifier.predict(zip(data_slice[ra_var],data_slice[dec_var]))
-    random_inds = jk_classifier.predict(zip(randoms_slice[ra_var],randoms_slice[dec_var]))
-    data_slice = data_slice[data_inds != jk_id]
-    randoms_slice = randoms_slice[random_inds != jk_id]
+    # jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/buzzard_jk.pkl", "rb" ) )
+    # data_inds = jk_classifier.predict(zip(data_slice[ra_var],data_slice[dec_var]))
+    # random_inds = jk_classifier.predict(zip(randoms_slice[ra_var],randoms_slice[dec_var]))
+    # data_slice = data_slice[data_inds != jk_id]
+    # randoms_slice = randoms_slice[random_inds != jk_id]
 
     file_name = config_fname + \
         '_newbuzzardrm2dset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma_z) + \
