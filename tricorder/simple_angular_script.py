@@ -6,7 +6,7 @@ import os.path
 do3Ds = [False, False]
 outlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.out"
 errlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.err"
-ncpus = "4"
+ncpus = "1"
 primary_dset_id = 0
 walltime = '95:00'
 memlimit = '2000'
