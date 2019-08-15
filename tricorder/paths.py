@@ -1,3 +1,6 @@
+
+## CAUTION: Only use NFS paths!! Otherwise you'll have disk access problems...
+
 config_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/'
 
 corr_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/paper_validation'
@@ -14,9 +17,13 @@ rm_y3_HHL_randoms = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y3/buzzard/f
 #dm_y1_randoms = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_highdens_0.5-10_randoms.fit'
 #dm_y3_randoms = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y3/buzzard/flock/buzzard-0/a/buzzard-0_1.6_y3_run_redmapper_v6.4.20_redmagic_highdens_0.5-10_randoms.fit'
 
-dm_y1_randoms = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01_randoms.fit'
-dm_y1_randoms2 = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/b/buzzard_1.6-6b_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01_randoms.fit'
-dm_y3_randoms = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y3/buzzard/flock/buzzard-0/a/buzzard-0_1.6_y3_run_redmapper_v6.4.20_redmagic_higherlum_1.5-01_randoms.fit'
+#dm_y1_randoms = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01_randoms.fit'
+dm_y1_randoms = '/nfs/slac/des/fs1/g/sims/erykoff/clusters/mocks/Buzzard/buzzard-1.6/des-y1a1/redmapper_v6.4.18/redmagic_a/buzzard_1.6-6a_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01_randoms.fit'
+#dm_y1_randoms2 = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y1/buzzard/flock/buzzard-0/b/buzzard_1.6-6b_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01_randoms.fit'
+dm_y1_randoms2 = '/nfs/slac/des/fs1/g/sims/erykoff/clusters/mocks/Buzzard/buzzard-1.6/des-y1a1/redmapper_v6.4.18/redmagic_b/buzzard_1.6-6b_run_redmapper_v6.4.18_redmagic_higherlum_1.5-01_randoms.fit'
+#dm_y3_randoms = '/u/ki/jderose/public_html/bcc/catalog/redmagic/y3/buzzard/flock/buzzard-0/a/buzzard-0_1.6_y3_run_redmapper_v6.4.20_redmagic_higherlum_1.5-01_randoms.fit'
+dm_y3_randoms = '/nfs/slac/des/fs1/g/sims/erykoff/clusters/mocks/Buzzard/buzzard-1.6/des-y3a1/redmapper_v6.4.20/redmagic_0/buzzard-0_1.6_y3_run_redmapper_v6.4.20_redmagic_higherlum_1.5-01_randoms.fit'
+
 
 lss_y1_randoms = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/lss_y1_randoms.fits'
 

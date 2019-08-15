@@ -6,7 +6,7 @@ import os.path
 do3Ds = [False,False]
 outlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.out"
 errlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.err"
-ncpus = "2"
+ncpus = "4"
 primary_dset_id = 0
 walltime = '95:00'
 memlimit = '4000'
@@ -55,7 +55,7 @@ def nice_job_submit(do3D, outvar, config_fname, dset_flavor, dset_id, jk_id, sig
 
 
 if __name__ == '__main__':
-    for i, config_fname in enumerate(['larger_scales2', 'larger_scales1']):
+    for i, config_fname in enumerate(['larger_scales1']):
         #do3D = False
         for sigma_z in [0]:
             for min_z in [.45, .3, .6, .15]:
