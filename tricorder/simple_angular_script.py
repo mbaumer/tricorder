@@ -6,13 +6,13 @@ import os.path
 do3Ds = [False, False]
 outlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.out"
 errlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.err"
-ncpus = "1"
+ncpus = "4"
 primary_dset_id = 0
 walltime = '95:00'
-memlimit = '4000'
+memlimit = '2000'
 
 
-def nice_job_submit(do3D, outvar, config_fname, dset_flavor, dset_id, jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp, dm_oversamp=None, sleep_time=20):
+def nice_job_submit(do3D, outvar, config_fname, dset_flavor, dset_id, jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp, dm_oversamp=None, sleep_time=5):
 
     if do3D:
         checkpath = paths.corr_out_dir
@@ -48,7 +48,8 @@ def nice_job_submit(do3D, outvar, config_fname, dset_flavor, dset_id, jk_id, sig
                 dset_id) + ", " + str(jk_id) + ", '" + config_fname + "', "+str(do3D)+", " + str(min_z) + "," + str(max_z) + "," + str(sigma_z) + ",'"+rw_scheme+"','Z',"+str(random_oversamp)+", outvar='"+outvar+"')"
 
         print command_str
-        subprocess.call(["bsub", "-W", walltime, "-n", ncpus, "-C", "1", "-R", "span[hosts=1] rusage[mem="+memlimit+"]", "-o", outlogpath,
+        subprocess.call(["bsub", "-W", walltime, "-n", ncpus, "-C", "1", "-R", "span[hosts=1] rusage[mem="+memlimit+"] select[hname!=deft0001 && hname!=deft0002 && hname!=deft0003 && hname!=deft0004 && hname!=deft0005 && hname!=deft0006 && hname!=deft0007 && hname!=deft0008 && hname!=deft0009 && hname!=deft0010 && hname!=deft0011 && hname!=deft0012 && hname!=deft0013 && hname!=deft0014 && hname!=deft0015 && hname!=deft0016 && hname!=deft0017 && hname!=deft0018 && hname!=deft0019 && hname!=deft0020 && hname!=deft0021 && hname!=deft0022 && hname!=deft0023 && hname!=deft0024 && hname!=deft0025 && hname!=deft0026 && hname!=deft0027 && hname!=deft0028]",
+                         "-o", outlogpath,
                          "-e", errlogpath, "python", "-c", command_str])
         sleep(sleep_time)
         return
@@ -62,7 +63,7 @@ if __name__ == '__main__':
                 max_z = min_z + 0.15
                 for random_oversamp in [10]:
                     for jk_id in [-1]:
-                        for outvar in ['ddd', 'drr', 'rdr', 'rrd', 'rrr']:
+                        for outvar in ['ddd', 'rrr', 'drr', 'rdr', 'rrd']:
                             if sigma_z == 0:
                                 zlist = ['ZSPEC']
                             else:
@@ -70,17 +71,17 @@ if __name__ == '__main__':
 
                             for rw_scheme in zlist:
 
-                                # for dm_oversamp in [10]:
+                                for dm_oversamp in [10]:
 
-                                #     if jk_id == -1:
-                                #         dset_ids = range(len(paths.dm_y1))
-                                #     else:
-                                #         dset_ids = [primary_dset_id]
-                                #     for dset_id in dset_ids:
+                                    if jk_id == -1:
+                                        dset_ids = range(len(paths.dm_y1))
+                                    else:
+                                        dset_ids = [primary_dset_id]
+                                    for dset_id in dset_ids:
 
-                                #         nice_job_submit(do3Ds[i], outvar, config_fname, 'dm', dset_id,
-                                #                         jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp,
-                                #                         dm_oversamp=dm_oversamp)
+                                        nice_job_submit(do3Ds[i], outvar, config_fname, 'dm', dset_id,
+                                                        jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp,
+                                                        dm_oversamp=dm_oversamp)
 
                                 # RMY1
                                 if jk_id == -1:
