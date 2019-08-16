@@ -3,7 +3,7 @@ import paths
 from time import sleep
 import os.path
 
-do3Ds = [False, False]
+do3Ds = [False]
 outlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.out"
 errlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.err"
 ncpus = "4"
