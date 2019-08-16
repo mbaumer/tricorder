@@ -3,7 +3,7 @@ import paths
 from time import sleep
 import os.path
 
-do3Ds = [False]
+do3Ds = [False,False,False]
 outlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.out"
 errlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.err"
 ncpus = "4"
@@ -12,7 +12,7 @@ walltime = '95:00'
 memlimit = '2000'
 
 
-def nice_job_submit(do3D, outvar, config_fname, dset_flavor, dset_id, jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp, dm_oversamp=None, sleep_time=5):
+def nice_job_submit(do3D, outvar, config_fname, dset_flavor, dset_id, jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp, dm_oversamp=None, sleep_time=1):
 
     if do3D:
         checkpath = paths.corr_out_dir
@@ -56,7 +56,7 @@ def nice_job_submit(do3D, outvar, config_fname, dset_flavor, dset_id, jk_id, sig
 
 
 if __name__ == '__main__':
-    for i, config_fname in enumerate(['larger_scales1']):
+    for i, config_fname in enumerate(['larger_scales1_oldu','larger_scales2','larger_scales2_oldu']):
         #do3D = False
         for sigma_z in [0]:
             for min_z in [.45, .3, .6, .15]:
