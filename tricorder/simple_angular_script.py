@@ -3,16 +3,16 @@ import paths
 from time import sleep
 import os.path
 
-do3Ds = [False,False,False]
+do3Ds = [False]
 outlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.out"
 errlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.err"
 ncpus = "4"
 primary_dset_id = 0
-walltime = '95:00'
+walltime = '47:00'
 memlimit = '2000'
 
 
-def nice_job_submit(do3D, outvar, config_fname, dset_flavor, dset_id, jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp, dm_oversamp=None, sleep_time=1):
+def nice_job_submit(do3D, outvar, config_fname, dset_flavor, dset_id, jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp, dm_oversamp=None, sleep_time=.1):
 
     if do3D:
         checkpath = paths.corr_out_dir
@@ -56,38 +56,39 @@ def nice_job_submit(do3D, outvar, config_fname, dset_flavor, dset_id, jk_id, sig
 
 
 if __name__ == '__main__':
-    for i, config_fname in enumerate(['newpaper14.1','newpaper14.1_newu','newpaper14.1_newu2']):
+    for i, config_fname in enumerate(['newpaper14.1_newu2']):
         #do3D = False
-        for sigma_z in [0]:
-            for min_z in [.45, .3, .6, .15]:
-                max_z = min_z + 0.15
-                for random_oversamp in [10]:
-                    for jk_id in [-1]:
-                        for outvar in ['ddd', 'rrr', 'drr', 'rdr', 'rrd']:
-                            if sigma_z == 0:
-                                zlist = ['ZSPEC']
-                            else:
-                                zlist = ['ZSPEC']
+        for z_width in [0.1, 0.05, 0.03]:
+            for sigma_z in [0, 0.01]:
+                for min_z in [.45, .3, .6, .15]:
+                    max_z = min_z + z_width
+                    for random_oversamp in [10]:
+                        for jk_id in [-1]:
+                            for outvar in ['ddd', 'rrr', 'drr', 'rdr', 'rrd']:
+                                if sigma_z == 0:
+                                    zlist = ['ZSPEC']
+                                else:
+                                    zlist = ['ZSPEC']
 
-                            for rw_scheme in zlist:
+                                for rw_scheme in zlist:
 
-                                for dm_oversamp in [10]:
+                                    for dm_oversamp in [10]:
 
+                                        if jk_id == -1:
+                                            dset_ids = range(len(paths.dm_y1))
+                                        else:
+                                            dset_ids = [primary_dset_id]
+                                        for dset_id in dset_ids:
+
+                                            nice_job_submit(do3Ds[i], outvar, config_fname, 'dm', dset_id,
+                                                            jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp,
+                                                            dm_oversamp=dm_oversamp)
+
+                                    # RMY1
                                     if jk_id == -1:
-                                        dset_ids = range(len(paths.dm_y1))
+                                        dset_ids = range(len(paths.rm_y1))
                                     else:
                                         dset_ids = [primary_dset_id]
                                     for dset_id in dset_ids:
-
-                                        nice_job_submit(do3Ds[i], outvar, config_fname, 'dm', dset_id,
-                                                        jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp,
-                                                        dm_oversamp=dm_oversamp)
-
-                                # RMY1
-                                if jk_id == -1:
-                                    dset_ids = range(len(paths.rm_y1))
-                                else:
-                                    dset_ids = [primary_dset_id]
-                                for dset_id in dset_ids:
-                                    nice_job_submit(do3Ds[i], outvar, config_fname, 'newbuzzardrm2', dset_id,
-                                                    jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp)
+                                        nice_job_submit(do3Ds[i], outvar, config_fname, 'newbuzzardrm2', dset_id,
+                                                        jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp)
