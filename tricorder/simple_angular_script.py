@@ -3,7 +3,7 @@ import paths
 from time import sleep
 import os.path
 
-do3Ds = [False]
+do3Ds = [True]
 outlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.out"
 errlogpath = "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/logs4/%J.err"
 ncpus = "4"
@@ -56,11 +56,11 @@ def nice_job_submit(do3D, outvar, config_fname, dset_flavor, dset_id, jk_id, sig
 
 
 if __name__ == '__main__':
-    for i, config_fname in enumerate(['newpaper14.1_newu2']):
+    for i, config_fname in enumerate(['paper_3dval4']):
         #do3D = False
-        for z_width in [0.1, 0.05, 0.03]:
-            for sigma_z in [0, 0.01]:
-                for min_z in [.45, .3, .6, .15]:
+        for z_width in [0.15]:
+            for sigma_z in [0.001, 0.003, 0.005, 0.01, 0.02]:
+                for min_z in [.15, .45, .3, .6,]:
                     max_z = min_z + z_width
                     for random_oversamp in [10]:
                         for jk_id in [-1]:
