@@ -56,7 +56,7 @@ def nice_job_submit(do3D, outvar, config_fname, dset_flavor, dset_id, jk_id, sig
 
 
 if __name__ == '__main__':
-    for i, config_fname in enumerate(['fiducial3d_halfu', 'fiducial3d_75u', 'fiducial3d_tolup', 'fiducial3d_toldown', 'fiducial3d_25Mpc', 'fiducial3d_35Mpc']):
+    for i, config_fname in enumerate(['fiducial3d_25Mpc']):
         #do3D = False
         for z_width in [0.15]:
             for sigma_z in [0]:
