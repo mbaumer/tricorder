@@ -66,7 +66,7 @@ if __name__ == '__main__':
                         for jk_id in [-1]:
                             for outvar in ['ddd', 'rrr', 'drr', 'rdr', 'rrd']:
                                 if sigma_z == 0:
-                                    zlist = ['ZSPEC']
+                                    zlist = ['ZREDMAGIC']
                                 else:
                                     zlist = ['ZSPEC']
 
