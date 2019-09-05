@@ -10,6 +10,8 @@ import emcee
 import chainconsumer 
 from sklearn.decomposition import PCA
 
+from glob import glob
+
 def load_config(config_fname):
     config_path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/'+config_fname+'.config'
     with open(config_path) as f:
@@ -42,7 +44,7 @@ def plot_qarr(qvec,**kwargs):
 def infer_bias(q_dm_infer,q_gal_infer,icov,use_covmat=True):
     def lnprior(theta):
         b1, b2 = theta
-        if 0 < b1 < 3 and -3 < b2 < 3:
+        if 0 < b1 < 10 and -10 < b2 < 10:
             return 0.0
         return -np.inf
 
@@ -61,7 +63,7 @@ def infer_bias(q_dm_infer,q_gal_infer,icov,use_covmat=True):
         #return -.5*np.sum(np.dot(np.dot(resid,icov),resid)) + ln_prior
 
     ndim, nwalkers = 2, 50
-    p0 = [np.array([3*np.random.rand(),6*np.random.rand()-3]) for i in range(nwalkers)]
+    p0 = [np.array([10*np.random.rand(),20*np.random.rand()-10]) for i in range(nwalkers)]
 
     if use_covmat:
         sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
@@ -120,9 +122,17 @@ def make_inference(red_qdm,red_qrm,covmat_src=None,max_pca_comps=None,is11k=Fals
     if covmat_src is None:
         #icov = np.linalg.inv(dmcov/red_qdm.shape[0]+rmcov)
         if is11k:
-            icov = np.linalg.inv(rmcov/len(red_qrm)+dmcov/len(red_qdm))
+            #icov = np.linalg.inv(rmcov/len(red_qrm)+dmcov/len(red_qdm))
+            # corrected for https://arxiv.org/pdf/astro-ph/0608064.pdf 
+            icov = np.linalg.inv(rmcov/len(red_qrm)+dmcov/len(red_qdm))*(len(red_qrm)-red_qrm.shape[1]-1)/(len(red_qrm)-1)
+            #Let's see how it goes taking out the DM errors:
+            #icov = np.linalg.inv(rmcov/len(red_qrm))*(len(red_qrm)-red_qrm.shape[1]-1)/(len(red_qrm)-1)
         else:
-            icov = np.linalg.inv(rmcov+dmcov/len(red_qdm))
+            #icov = np.linalg.inv(rmcov+dmcov/len(red_qdm))
+            # corrected for https://arxiv.org/pdf/astro-ph/0608064.pdf 
+            icov = np.linalg.inv(rmcov+dmcov/len(red_qdm))*(len(red_qrm)-red_qrm.shape[1]-1)/(len(red_qrm)-1)
+            #Let's see how it goes taking out the DM errors:
+            #icov = np.linalg.inv(rmcov)*(len(red_qrm)-red_qrm.shape[1]-1)/(len(red_qrm)-1)
         qrm_mean = np.mean(red_qrm,axis=0)
         qdm_mean = np.mean(red_qdm,axis=0)
     else:
@@ -217,11 +227,11 @@ def load_res_xi(path,dset_name,dset_id,config_fname,min_z,max_z,rsamp_str):
         xilist.append(this.flatten())
     return xilist
 
-def load_res_xi_indep(path,dset_name,config_fname,min_z,max_z,rsamp_str,zvar='ZSPEC'):
+def load_res_xi_indep(path,dset_name,config_fname,min_z,max_z,rsamp_str,zvar='ZSPEC',sigma=0):
     xilist = []
     for dset_id in range(24):
         try:
-            this = np.load(path+config_fname+'_'+dset_name+'dset'+str(dset_id)+'_jk-1_sigma0_'+zvar+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+rsamp_str+'.xi.npy')
+            this = np.load(path+config_fname+'_'+dset_name+'dset'+str(dset_id)+'_jk-1_sigma'+str(sigma)+'_'+zvar+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+rsamp_str+'.xi.npy')
         except IOError:
             continue
         xilist.append(this.flatten())
@@ -250,9 +260,15 @@ def load_files(path,dset_name,dset_id,config_fname,zvar,min_z,max_z,rsamp_str,si
         print 'missing randoms'
         if use_alt_randoms:
             print 'using new randoms'
-            newrunname = config_fname+'_'+dset_name+'dset'+str(dset_id)+'_jk'+str(jk_id)+'_sigma'+str(sigma)+'_'+zvar+'_0.3_0.45_rsamp'+rsamp_str
-            rrr.read(path+newrunname+'.rrr')
-            print rrr.ntri
+            newrunnamelist = glob(path+config_fname+'_'+dset_name+'dset*_jk'+str(jk_id)+'_sigma'+str(sigma)+'_'+zvar+'_'+str(min_z)+'_'+str(max_z)+'_rsamp'+rsamp_str+'.rrr')
+            if newrunnamelist != []:
+                newrunname = newrunnamelist[-1]
+                print newrunname
+                rrr.read(newrunname)
+                print rrr.ntri
+            else:
+                print 'couldnt find alternate rrr file'
+                raise IOError
         else:
             raise IOError
         
@@ -265,11 +281,20 @@ def load_files(path,dset_name,dset_id,config_fname,zvar,min_z,max_z,rsamp_str,si
     xi = np.load(path+runname+'.xi.npy')
     
     from scipy.interpolate import UnivariateSpline
+    
     yfit = UnivariateSpline(dd.logr[xi != 0],np.log(xi)[xi != 0],k=4)
     xi1 = np.exp(yfit(corr.logr*(1+corr.u*np.abs(corr.v))))
     xi2 = np.exp(yfit(corr.logr))
     xi3 = np.exp(yfit(corr.logr*corr.u))
     denom = (xi1*xi2+xi2*xi3+xi3*xi1)
+    
+    #insert elisabeth stuff here
+    
+    yfit = UnivariateSpline(dd.logr[xi != 0],np.log(xi)[xi != 0],k=4)
+    xi1 = np.exp(yfit(np.log(np.exp(corr.logr)*(1+corr.u*np.abs(corr.v)))))
+    xi2 = np.exp(yfit(np.log(np.exp(corr.logr))))
+    xi3 = np.exp(yfit(np.log(np.exp(corr.logr)*corr.u)))
+    correct_denom = (xi1*xi2+xi2*xi3+xi3*xi1)
     
     if return_all:
         return pd.DataFrame(np.array([ddd.ntri.flatten().T,ddr.ntri.flatten().T,drd.ntri.flatten().T,
@@ -279,7 +304,7 @@ def load_files(path,dset_name,dset_id,config_fname,zvar,min_z,max_z,rsamp_str,si
     if return_all_norm:
         return pd.DataFrame(np.array([ddd.ntri.flatten().T/ddd.tot,ddr.ntri.flatten().T/ddr.tot,drd.ntri.flatten().T/drd.tot,
                              rdd.ntri.flatten().T/rdd.tot,drr.ntri.flatten().T/drr.tot,rdr.ntri.flatten().T/rdr.tot, 
-                             rrd.ntri.flatten().T/rrd.tot,rrr.ntri.flatten().T/rrr.tot,zeta.flatten().T,denom.flatten().T,(zeta/denom).flatten().T, dddrrr.flatten().T, oldest.flatten().T]).T, columns=['DDD','DDR','DRD','RDD','DRR','RDR','RRD','RRR','ZETA','DENOM','Q','DDD/RRR','OLDEST'])
+                             rrd.ntri.flatten().T/rrd.tot,rrr.ntri.flatten().T/rrr.tot,zeta.flatten().T,denom.flatten().T, correct_denom.flatten().T, (zeta/correct_denom).flatten().T, dddrrr.flatten().T, oldest.flatten().T]).T, columns=['DDD','DDR','DRD','RDD','DRR','RDR','RRD','RRR','ZETA','DENOM','CORRECTDENOM','Q','DDD/RRR','OLDEST'])
     
     if get_q:
         return zeta/denom
