@@ -18,6 +18,8 @@ import pandas as pd
 import pickle
 from tenacity import *
 
+from scipy.stats import binned_statistic
+
 np.random.seed(12)
 
 from make_data_randoms import (generate_randoms_radec, index_to_radec,
@@ -413,10 +415,20 @@ def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, s
             weight_data_slice['ZSPEC'], range=(0, 1), bins=100)   
     else:
         target_cts, target_bins = np.histogram(
-            weight_data_slice['ZREDMAGIC']+np.random.normal(scale=weight_data_slice['ZREDMAGIC_E']), range=(0, 1), bins=100)    
+           weight_data_slice['ZREDMAGIC'], range=(0, 1), bins=100)  
+        # this was for angular case -- just reweighting to n(z)
+        #target_cts, target_bins = np.histogram(
+        #    weight_data_slice['ZREDMAGIC']+np.random.normal(scale=weight_data_slice['ZREDMAGIC_E']), range=(0, 1), bins=100)    
 
     data_slice = downselect_pz(data, target_cts, target_bins, 'redshift', dm_oversamp)
     randoms_slice = downselect_pz(randoms, target_cts, target_bins, 'Z', random_oversamp)
+
+    if zvar == 'ZREDMAGIC':
+        sigmas_vs_z, zerr_bins, _ = binned_statistic(weight_data_slice['ZREDMAGIC'],weight_data_slice['ZREDMAGIC_E'], bins=100, range=(0,1))
+        data_slice_sigmas = sigmas_vs_z[np.digitize(data_slice[zvar],zerr_bins)-1] # -1 to avoid underflow bin
+        randoms_slice_sigmas = sigmas_vs_z[np.digitize(randoms_slice[random_zvar],zerr_bins)-1]
+        data_slice[zvar] = data_slice[zvar]+np.random.normal(scale=data_slice_sigmas)
+        randoms_slice[random_zvar] = randoms_slice[random_zvar]+np.random.normal(scale=randoms_slice_sigmas)
 
     #remove jk region
     # jk_classifier = pickle.load( open( "/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/jk_classifiers/buzzard_jk.pkl", "rb" ) )

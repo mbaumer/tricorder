@@ -56,7 +56,7 @@ def nice_job_submit(do3D, outvar, config_fname, dset_flavor, dset_id, jk_id, sig
 
 
 if __name__ == '__main__':
-    for i, config_fname in enumerate(['fiducial3d_25Mpc']):
+    for i, config_fname in enumerate(['paper_3dval4']):
         #do3D = False
         for z_width in [0.15]:
             for sigma_z in [0]:
@@ -85,10 +85,10 @@ if __name__ == '__main__':
                                                             dm_oversamp=dm_oversamp)
 
                                     # RMY1
-                                    if jk_id == -1:
-                                        dset_ids = range(len(paths.rm_y1))
-                                    else:
-                                        dset_ids = [primary_dset_id]
-                                    for dset_id in dset_ids:
-                                        nice_job_submit(do3Ds[i], outvar, config_fname, 'newbuzzardrm2', dset_id,
-                                                        jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp)
+                                    # if jk_id == -1:
+                                    #     dset_ids = range(len(paths.rm_y1))
+                                    # else:
+                                    #     dset_ids = [primary_dset_id]
+                                    # for dset_id in dset_ids:
+                                    #     nice_job_submit(do3Ds[i], outvar, config_fname, 'newbuzzardrm2', dset_id,
+                                    #                     jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp)
