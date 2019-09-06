@@ -423,7 +423,7 @@ def calc_3pt_noisy_photoz_dm(dset_id, jk_id, config_fname, do3D, min_z, max_z, s
     data_slice = downselect_pz(data, target_cts, target_bins, 'redshift', dm_oversamp)
     randoms_slice = downselect_pz(randoms, target_cts, target_bins, 'Z', random_oversamp)
 
-    if zvar == 'ZREDMAGIC':
+    if rw_scheme == 'ZREDMAGIC':
         sigmas_vs_z, zerr_bins, _ = binned_statistic(weight_data_slice['ZREDMAGIC'],weight_data_slice['ZREDMAGIC_E'], bins=100, range=(0,1))
         data_slice_sigmas = sigmas_vs_z[np.digitize(data_slice[zvar],zerr_bins)-1] # -1 to avoid underflow bin
         randoms_slice_sigmas = sigmas_vs_z[np.digitize(randoms_slice[random_zvar],zerr_bins)-1]
