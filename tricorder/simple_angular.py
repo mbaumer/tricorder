@@ -44,6 +44,11 @@ def get_zslice(data, min_z, max_z, zvar):
 def downselect_pz(input_data, target_cts, target_bins, input_zvar, oversamp):
     
     input_labels = np.digitize(input_data[input_zvar], target_bins)
+    
+    #kill overflow and underflow bins
+    input_data = input_data[(input_labels != 0) & (input_labels != len(target_bins))]
+    input_labels = input_labels[(input_labels != 0) & (input_labels != len(target_bins))]
+
     input_cts, _ = np.histogram(
         input_data[input_zvar], bins=target_bins, range=(0, 1))
     input_weights = target_cts/(input_cts+1e-40)
