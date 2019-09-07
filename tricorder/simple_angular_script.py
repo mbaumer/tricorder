@@ -84,11 +84,11 @@ if __name__ == '__main__':
                                                             jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp,
                                                             dm_oversamp=dm_oversamp)
 
-                                    # RMY1
-                                    # if jk_id == -1:
-                                    #     dset_ids = range(len(paths.rm_y1))
-                                    # else:
-                                    #     dset_ids = [primary_dset_id]
-                                    # for dset_id in dset_ids:
-                                    #     nice_job_submit(do3Ds[i], outvar, config_fname, 'newbuzzardrm2', dset_id,
-                                    #                     jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp)
+                                    RMY1
+                                    if jk_id == -1:
+                                        dset_ids = range(len(paths.rm_y1))
+                                    else:
+                                        dset_ids = [primary_dset_id]
+                                    for dset_id in dset_ids:
+                                        nice_job_submit(do3Ds[i], outvar, config_fname, 'newbuzzardrm2', dset_id,
+                                                        jk_id, sigma_z, rw_scheme, min_z, max_z, random_oversamp)
