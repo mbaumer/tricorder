@@ -59,14 +59,14 @@ if __name__ == '__main__':
     for i, config_fname in enumerate(['fiducial3d_halfu', 'fiducial3d_75u', 'fiducial3d_tolup', 'fiducial3d_toldown', 'fiducial3d_25Mpc', 'fiducial3d_35Mpc']):
         #do3D = False
         for z_width in [0.15]:
-            for sigma_z in [0]:
+            for sigma_z in [0.02]:
                 for min_z in [.15, .45, .3, .6, ]:
                     max_z = min_z + z_width
                     for random_oversamp in [10]:
                         for jk_id in [-1]:
                             for outvar in ['ddd', 'rrr', 'drr', 'rdr', 'rrd']:
                                 if sigma_z == 0:
-                                    zlist = ['ZREDMAGIC']
+                                    zlist = ['ZSPEC']
                                 else:
                                     zlist = ['ZSPEC']
 
