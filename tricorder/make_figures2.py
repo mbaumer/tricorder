@@ -1,6 +1,8 @@
 #### Make figures for paper (in eps/pdf format)
-
 from __future__ import division
+import matplotlib
+matplotlib.use('agg')
+
 import numpy as np
 import chainconsumer
 from scipy.optimize import minimize
@@ -9,9 +11,6 @@ reload(plottools)
 import palettable
 path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/paper_validation/'
 path2 = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/paper_validation2/'
-
-import matplotlib
-matplotlib.use('agg')
 
 import matplotlib.pyplot as plt
 import chainconsumer
