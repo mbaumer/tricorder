@@ -7,7 +7,6 @@ from scipy.optimize import minimize
 import plottools
 reload(plottools)
 import palettable
-from matplotlib.colors import LogNorm
 path = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/paper_validation/'
 path2 = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/paper_validation2/'
 
@@ -17,7 +16,7 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import chainconsumer
 from scipy.optimize import minimize
-
+from matplotlib.colors import LogNorm
 
 from astropy.io import fits
 import paths
@@ -39,6 +38,7 @@ matplotlib.rc('font', family='serif')
 
 # data vectors ZSPEC
 
+plt.figure()
 config_fname = 'paper_3dval4'
 for i,zmin in enumerate([.15,.3,.45,.6]):
     sigma = 0
