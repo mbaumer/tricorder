@@ -39,6 +39,38 @@ colors2 = palettable.colorbrewer.sequential.Blues_3.hex_colors
 for i,zmin in enumerate([.15,.3,.45,.6]):
     plt.figure()
     zmax = zmin+.15
+    galdata = plottools.load_res_indep(path2,'newbuzzardrm2','fiducial3d_halfu','ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
+    galdata1 = plottools.load_res_indep(path2,'newbuzzardrm2','fiducial3d_75u','ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
+    galdata2 = plottools.load_res_indep(path,'newbuzzardrm2','paper_3dval4','ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
+    
+    data = plottools.load_res_indep(path2,'dm','fiducial3d_halfu','ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
+    data1 = plottools.load_res_indep(path2,'dm','fiducial3d_75u', 'ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
+    data2 = plottools.load_res_indep(path2,'dm','paper_3dval4',   'ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
+    
+    plottools.plot_dv(data,'Q', offset=0.,indiv_runs=False,color=colors2[0]    ,compressed=True)
+    plottools.plot_dv(data1,'Q', offset=0.01,indiv_runs=False,color=colors2[1],compressed=True)
+    plottools.plot_dv(data2,'Q', offset=0.02,indiv_runs=False,color=colors2[2],compressed=True)
+    
+    
+    plottools.plot_dv(galdata,'Q', offset=0.,indiv_runs=False,color=colors[0]   ,label=r'$u > .5$' ,compressed=True)
+    plottools.plot_dv(galdata1,'Q', offset=0.01,indiv_runs=False,color=colors[1],label=r'$u > .75$' ,compressed=True)
+    plottools.plot_dv(galdata2,'Q', offset=0.02,indiv_runs=False,color=colors[2],label=r'$u > .9$' ,compressed=True)
+    
+    plt.xlabel('v')
+    plt.ylabel('Q')
+    plt.title(str(zmin)+r'$<z<$'+str(zmax))
+    plt.legend()
+    plt.savefig('./figures/u_bin'+str(i+1)+'_dvrm.pdf',dpi=300,bbox_inches='tight')
+    plt.savefig('./figures/u_bin'+str(i+1)+'_dvrm.png',dpi=300,bbox_inches='tight')
+    plt.figure()
+
+raise
+
+colors = palettable.colorbrewer.sequential.Reds_3.hex_colors
+colors2 = palettable.colorbrewer.sequential.Blues_3.hex_colors
+for i,zmin in enumerate([.15,.3,.45,.6]):
+    plt.figure()
+    zmax = zmin+.15
     galdata = plottools.load_res_indep(path,'newbuzzardrm2','fiducial3d_halfu','ZSPEC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
     galdata1 = plottools.load_res_indep(path,'newbuzzardrm2','fiducial3d_75u','ZSPEC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
     galdata2 = plottools.load_res_indep(path,'newbuzzardrm2','paper_3dval4','ZSPEC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
