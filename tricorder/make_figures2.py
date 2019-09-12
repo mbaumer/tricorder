@@ -38,7 +38,7 @@ matplotlib.rc('font', family='serif')
 # data vectors ZSPEC
 
 is11k = True
-for i,zmin in enumerate([.6]):
+for i,zmin in enumerate([.15,.3,.45,.6]):
     zmax = zmin+.15
     cc = chainconsumer.ChainConsumer()
     
@@ -100,7 +100,7 @@ for i,zmin in enumerate([.6]):
 # scale inferences
 
 is11k = True
-for zmin in [.15,.3,.45,.6]:
+for i,zmin in enumerate([.15,.3,.45,.6]):
     zmax = zmin+.15
     cc = chainconsumer.ChainConsumer()
     
