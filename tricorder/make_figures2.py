@@ -37,6 +37,87 @@ matplotlib.rc('font', family='serif')
 
 # data vectors ZSPEC
 
+def make_corr_fig(zmin):
+
+    zmax = zmin+.15
+    if zmin == .15:
+        placeholder_sigma = 0.01
+    else: 
+        placeholder_sigma = 0.02
+    data = plottools.load_res_indep(path, 'dm','paper_3dval4','ZSPEC',zmin,zmax,'10x10',sigma=0)
+    data2 = plottools.load_res_indep(path,'dm','paper_3dval4','ZSPEC',zmin,zmax,'10x10',sigma=placeholder_sigma)
+    data3 = plottools.load_res_indep(path2,'dm','paper_3dval4','ZREDMAGIC',zmin,zmax,'10x10',sigma=0)
+    
+    galdata = plottools.load_res_indep(path, 'newbuzzardrm2','paper_3dval4','ZSPEC',zmin,zmax,'10',sigma=0)
+    galdata2 = plottools.load_res_indep(path,'newbuzzardrm2','paper_3dval4','ZSPEC',zmin,zmax,'10',sigma=placeholder_sigma)
+    galdata3 = plottools.load_res_indep(path,'newbuzzardrm2','paper_3dval4','ZREDMAGIC',zmin,zmax,'10',sigma=0)
+    plt.figure()
+    
+    print len(data),len(data2),len(data3)
+    print len(galdata), len(galdata2), len(galdata3)
+    
+    fig,axarr = plt.subplots(2,3,figsize=(8,7))
+    
+    vmin= -1
+    vmax= 1
+    cmap_choice = 'viridis'
+    
+    axarr[0,0].imshow(np.corrcoef(plottools.compress_dv(galdata['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
+    axarr[0,0].set_title(r'True redshifts')
+    axarr[0,0].set_xticks([.1,.3,.5,.7,.9])
+    axarr[0,0].set_yticks([.1,.3,.5,.7,.9])
+    #axarr[0,0].set_xlabel('v')
+    axarr[0,0].set_ylabel('v')
+    axarr[0,1].imshow(np.corrcoef(plottools.compress_dv(galdata2['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
+    axarr[0,1].set_title(r'Galaxies \n \n $\sigma_z = $'+str(placeholder_sigma))
+    #axarr[0,1].set_xlabel('v')
+    #axarr[0,1].set_ylabel('v')
+    axarr[0,1].set_xticks([.1,.3,.5,.7,.9])
+    axarr[0,1].set_yticks([.1,.3,.5,.7,.9])
+    
+    axarr[0,2].imshow(np.corrcoef(plottools.compress_dv(galdata3['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
+    axarr[0,2].set_title(r'RedMaGiC redshifts')
+    #axarr[0,1].set_xlabel('v')
+    #axarr[0,1].set_ylabel('v')
+    axarr[0,2].set_xticks([.1,.3,.5,.7,.9])
+    axarr[0,2].set_yticks([.1,.3,.5,.7,.9])
+    
+    axarr[1,0].imshow(np.corrcoef(plottools.compress_dv(data['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
+    axarr[1,0].set_title(r'True redshifts')
+    axarr[1,0].set_xticks([.1,.3,.5,.7,.9])
+    axarr[1,0].set_yticks([.1,.3,.5,.7,.9])
+    axarr[1,0].set_xlabel('v')
+    axarr[1,0].set_ylabel('v')
+    im = axarr[1,1].imshow(np.corrcoef(plottools.compress_dv(data2['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
+    axarr[1,1].set_title(r'Dark Matter \n \n $\sigma_z = $'+str(placeholder_sigma))
+    axarr[1,1].set_xlabel('v')
+    #axarr[1,1].set_ylabel('v')
+    axarr[1,1].set_xticks([.1,.3,.5,.7,.9])
+    axarr[1,1].set_yticks([.1,.3,.5,.7,.9])
+    
+    axarr[1,2].imshow(np.corrcoef(plottools.compress_dv(data3['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
+    axarr[1,2].set_title(r'RedMaGiC redshifts')
+    axarr[1,2].set_xlabel('v')
+    #axarr[1,1].set_ylabel('v')
+    axarr[1,2].set_xticks([.1,.3,.5,.7,.9])
+    axarr[1,2].set_yticks([.1,.3,.5,.7,.9])
+    
+    #fig.colorbar(im, ax=axarr.ravel().tolist(),shrink=.4,aspect=10)
+    #plt.suptitle(str(zmin)+r'$<z<$'+str(zmax))
+    #plt.tight_layout()
+    cbar_ax = fig.add_axes([.97, 0.2, .04, 0.6])
+    fig.colorbar(im, cax=cbar_ax, orientation="vertical")
+    plt.suptitle(str(zmin)+r'$< z <$'+str(zmax))
+
+for i,zmin in enumerate([.15,.3,.45,.6]):
+    make_corr_fig(zmin)
+    plt.savefig('./figures/cov_bin'+str(i+1)+'.pdf',dpi=300,bbox_inches='tight')
+    plt.savefig('./figures/cov_bin'+str(i+1)+'.png',dpi=300,bbox_inches='tight')
+    plt.figure()
+
+raise
+
+
 is11k = True
 for i,zmin in enumerate([.15,.3,.45,.6]):
     zmax = zmin+.15
@@ -209,84 +290,6 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
     plt.figure()
 
 #covmats
-
-def make_corr_fig(zmin):
-
-    zmax = zmin+.15
-    if zmin == .15:
-        placeholder_sigma = 0.01
-    else: 
-        placeholder_sigma = 0.02
-    data = plottools.load_res_indep(path, 'dm','paper_3dval4','ZSPEC',zmin,zmax,'10x10',sigma=0)
-    data2 = plottools.load_res_indep(path,'dm','paper_3dval4','ZSPEC',zmin,zmax,'10x10',sigma=placeholder_sigma)
-    data3 = plottools.load_res_indep(path2,'dm','paper_3dval4','ZREDMAGIC',zmin,zmax,'10x10',sigma=0)
-    
-    galdata = plottools.load_res_indep(path, 'newbuzzardrm2','paper_3dval4','ZSPEC',zmin,zmax,'10',sigma=0)
-    galdata2 = plottools.load_res_indep(path,'newbuzzardrm2','paper_3dval4','ZSPEC',zmin,zmax,'10',sigma=placeholder_sigma)
-    galdata3 = plottools.load_res_indep(path,'newbuzzardrm2','paper_3dval4','ZREDMAGIC',zmin,zmax,'10',sigma=0)
-    plt.figure()
-    
-    print len(data),len(data2),len(data3)
-    print len(galdata), len(galdata2), len(galdata3)
-    
-    fig,axarr = plt.subplots(2,3,figsize=(8,7))
-    
-    vmin= -1
-    vmax= 1
-    cmap_choice = 'viridis'
-    
-    axarr[0,0].imshow(np.corrcoef(plottools.compress_dv(galdata['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
-    axarr[0,0].set_title(r'True redshifts')
-    axarr[0,0].set_xticks([.1,.3,.5,.7,.9])
-    axarr[0,0].set_yticks([.1,.3,.5,.7,.9])
-    #axarr[0,0].set_xlabel('v')
-    axarr[0,0].set_ylabel('v')
-    axarr[0,1].imshow(np.corrcoef(plottools.compress_dv(galdata2['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
-    axarr[0,1].set_title(r'Galaxies \\ \\ $\sigma_z = $'+str(placeholder_sigma))
-    #axarr[0,1].set_xlabel('v')
-    #axarr[0,1].set_ylabel('v')
-    axarr[0,1].set_xticks([.1,.3,.5,.7,.9])
-    axarr[0,1].set_yticks([.1,.3,.5,.7,.9])
-    
-    axarr[0,2].imshow(np.corrcoef(plottools.compress_dv(galdata3['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
-    axarr[0,2].set_title(r'RedMaGiC redshifts')
-    #axarr[0,1].set_xlabel('v')
-    #axarr[0,1].set_ylabel('v')
-    axarr[0,2].set_xticks([.1,.3,.5,.7,.9])
-    axarr[0,2].set_yticks([.1,.3,.5,.7,.9])
-    
-    axarr[1,0].imshow(np.corrcoef(plottools.compress_dv(data['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
-    axarr[1,0].set_title(r'True redshifts')
-    axarr[1,0].set_xticks([.1,.3,.5,.7,.9])
-    axarr[1,0].set_yticks([.1,.3,.5,.7,.9])
-    axarr[1,0].set_xlabel('v')
-    axarr[1,0].set_ylabel('v')
-    im = axarr[1,1].imshow(np.corrcoef(plottools.compress_dv(data2['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
-    axarr[1,1].set_title(r'Dark Matter \\ \\ $\sigma_z = $'+str(placeholder_sigma))
-    axarr[1,1].set_xlabel('v')
-    #axarr[1,1].set_ylabel('v')
-    axarr[1,1].set_xticks([.1,.3,.5,.7,.9])
-    axarr[1,1].set_yticks([.1,.3,.5,.7,.9])
-    
-    axarr[1,2].imshow(np.corrcoef(plottools.compress_dv(data3['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
-    axarr[1,2].set_title(r'RedMaGiC redshifts')
-    axarr[1,2].set_xlabel('v')
-    #axarr[1,1].set_ylabel('v')
-    axarr[1,2].set_xticks([.1,.3,.5,.7,.9])
-    axarr[1,2].set_yticks([.1,.3,.5,.7,.9])
-    
-    #fig.colorbar(im, ax=axarr.ravel().tolist(),shrink=.4,aspect=10)
-    #plt.suptitle(str(zmin)+r'$<z<$'+str(zmax))
-    #plt.tight_layout()
-    cbar_ax = fig.add_axes([.97, 0.2, .04, 0.6])
-    fig.colorbar(im, cax=cbar_ax, orientation="vertical")
-    plt.suptitle(str(zmin)+r'$< z <$'+str(zmax))
-
-for i,zmin in enumerate([.15,.3,.45,.6]):
-    make_corr_fig(zmin)
-    plt.savefig('./figures/cov_bin'+str(i+1)+'.pdf',dpi=300,bbox_inches='tight')
-    plt.savefig('./figures/cov_bin'+str(i+1)+'.png',dpi=300,bbox_inches='tight')
-    plt.figure()
 
 # DES Y1 contours (spec+photoz), no 2pt or lazeyras comparison
  
