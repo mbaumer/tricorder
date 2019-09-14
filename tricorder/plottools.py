@@ -86,6 +86,39 @@ def infer_bias(q_dm_infer,q_gal_infer,icov,use_covmat=True):
     #cc.plotter.plot(figsize='column',extents=[(0,3),(-1,1)]);
     return sampler
 
+def infer_bias_2pt(xi_gal,xi_dm,icov,use_covmat=True,plot=False):
+    def lnprior(theta):
+        b1 = theta
+        if 0 < b1 < 10:
+            return 0.0
+        return -np.inf
+
+    def lnprob_noerror(bias):
+        ln_prior = lnprior(bias)
+        b1 = bias
+        return -.5*np.sum(((xi_gal-xi_dm*(b1**2))**2/icov)) + ln_prior
+
+    def lnprob(bias):
+        ln_prior = lnprior(bias)
+        b1 = bias
+        resid = (xi_gal-xi_dm*(b1**2))
+        return -5.*np.sum(np.dot(np.dot(resid.T,icov),resid)) + ln_prior
+
+    ndim, nwalkers = 1, 100
+    p0 = [np.array([3*np.random.rand()]) for i in range(nwalkers)]
+
+    if use_covmat:
+        sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
+    else:
+        sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob_noerror)
+    sampler.run_mcmc(p0, 1000)
+    
+    cc = chainconsumer.ChainConsumer()
+    cc.add_chain(sampler.flatchain,parameters=['b1'])
+    if plot:
+        cc.plotter.plot(figsize='column',extents=[(0,3)]);
+    return np.mean(sampler.flatchain), np.std(sampler.flatchain)
+
 def plot_data_vectors(qdm,qrm,v=None,b1=1,b2=0,b1MAP=1,b2MAP=0,rm_color='g',dm_color='b'):
     qdm_mean = np.mean(qdm,axis=0)
     qdm_std = np.std(qdm,axis=0)
