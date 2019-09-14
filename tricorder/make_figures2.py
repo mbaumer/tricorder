@@ -328,7 +328,7 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
 
 colors = palettable.colorbrewer.sequential.Reds_3.hex_colors
 colors2 = palettable.colorbrewer.sequential.Blues_3.hex_colors
-for zmin in [.15,.3,.45,.6]:
+for i,zmin in enumerate([.15,.3,.45,.6]):
     plt.figure()
     zmax = zmin+.15
     galdata = plottools.load_res_indep(path,'newbuzzardrm2','fiducial3d_halfu','ZSPEC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
@@ -360,7 +360,7 @@ for zmin in [.15,.3,.45,.6]:
 
 colors = palettable.colorbrewer.sequential.Reds_3.hex_colors
 colors2 = palettable.colorbrewer.sequential.Blues_3.hex_colors
-for zmin in [.15,.3,.45,.6]:
+for i,zmin in enumerate([.15,.3,.45,.6]):
     plt.figure()
     zmax = zmin+.15
     galdata = plottools.load_res_indep(path2,'newbuzzardrm2','fiducial3d_halfu','ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
@@ -731,7 +731,7 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
 # scale inferences
 
 is11k = True
-for zmin in [.15,.3,.45,.6]:
+for i,zmin in enumerate([.15,.3,.45,.6]):
     zmax = zmin+.15
     cc = chainconsumer.ChainConsumer()
     
