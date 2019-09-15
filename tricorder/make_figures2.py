@@ -192,6 +192,27 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
     
 # 11k degree contours, 2pt and lazeyras comparison.
 
+b1_2pt = [1.71,1.78,1.9,2.22]
+b1_err_2pt = [.064,.064,.071,.074]
+
+b1_spec = [1.51,1.71,1.71,2.1]
+b1_up_spec = [.21,.17,.18,.21]
+b1_down_spec = [.22,.15,.19,.19]
+
+b2_spec = [.21,.49,.35,.7]
+b2_up_spec = [.37,.29,.31,.5]
+b2_down_spec = [.40,.34,.35,.43]
+
+b1_rm = [1.41,1.87,1.69,2.33]
+b1_up_rm = [.38,.37,.28,.98]
+b1_down_rm = [.28,.3,.2,.54]
+
+b2_rm = [-.18,.56,.37,1]
+b2_up_rm = [.52,.83,.61,3.5]
+b2_down_rm = [.42,.58,.49,1.1]
+
+sigmas_list = [0.02,0.03,0.03,0.03]
+
 is11k = True
 for i,zmin in enumerate([.15,.3,.45,.6]):
     zmax = zmin+.15
@@ -205,9 +226,16 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
         red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
         samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
         cc.add_chain(samples.flatchain,parameters=['b1','b2'],name='Spectroscopic Redshifts')
+
+    #replace later once RM is fixed:   
+    #data1 = plottools.load_res_indep(path2,'dm',config_fname,'ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
+    if zmin != .15:
+            data1 = plottools.load_res_indep(path2,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigmas_list[i],use_alt_randoms=False)
+        else:
+            data1 = plottools.load_res_indep(path,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigmas_list[i],use_alt_randoms=False)
         
-    data1 = plottools.load_res_indep(path2,'dm',config_fname,'ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
     data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
+    
     red_qdm = plottools.compress_dv(data1['Q'].values.reshape(-1,10))
     red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
     samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
@@ -218,8 +246,11 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
     figure = cc.plotter.plot(figsize='column',extents=[(0,4),(-4,4)]);
     axarr = figure.get_axes()
 
-    figure.axes[2].plot(np.linspace(0,3,100),plottools.get_lazeyras_schmidt_2015(np.linspace(0,3,100)),label='Lazeyras+Schmidt 2015')
-    figure.axes[2].plot(np.linspace(0,3,100),plottools.get_hoffman_2015(np.linspace(0,3,100)),label='Hoffman 2015')
+    figure.axes[2].axvspan(b1_2pt[i]-b1_err_2pt[i], b1_2pt[i]+b1_err_2pt[i], alpha=0.3, color='b')
+    figure.axes[2].axvspan(b1_2pt[i]-2*b1_err_2pt[i], b1_2pt[i]+2*b1_err_2pt[i], alpha=0.3, color='b')
+
+    figure.axes[2].plot(np.linspace(0,4,100),plottools.get_lazeyras_schmidt_2015(np.linspace(0,4,100)),label='Lazeyras+Schmidt 2015')
+    figure.axes[2].plot(np.linspace(0,4,100),plottools.get_hoffman_2015(np.linspace(0,4,100)),label='Hoffman 2015')
 
     plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
     
@@ -795,3 +826,43 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
     plt.savefig('./figures/scale_bin'+str(i+1)+'_inf.pdf',dpi=300,bbox_inches='tight')
     plt.savefig('./figures/scale_bin'+str(i+1)+'_inf.png',dpi=300,bbox_inches='tight')
     plt.figure()
+
+z = np.array([.15,.3,.45,.6])+0.075
+line1 = plt.errorbar(z-0.01,b1_spec,yerr=np.array([b1_down_spec,b1_up_spec]),linestyle='None',marker='o',color='b',label='Spectroscopic Redshifts')
+line2 = plt.errorbar(z+0.01,b1_rm,yerr=np.array([b1_down_rm,b1_up_rm]),linestyle='None',marker='o',color='r',label='RedMaGiC Redshifts')
+
+from matplotlib.collections import PatchCollection
+from matplotlib.patches import Rectangle, Patch
+
+errorboxes = []
+
+for i in [0,1,2,3]:
+    rect = Rectangle((z[i] - 0.02, b1_2pt[i] - b1_err_2pt[i]), 0.04, 2*b1_err_2pt[i])
+    errorboxes.append(rect)
+
+pc = PatchCollection(errorboxes, facecolor='k', alpha=0.5,
+                         edgecolor='None')
+ax = plt.gca()
+ax.add_collection(pc)
+
+red_patch = Patch(color='k', alpha=0.5, label='Linear bias from 2PCFs')
+plt.legend(handles=[line1,line2,red_patch],loc=2)
+
+plt.xlabel('z')
+plt.ylabel('Linear bias')
+plt.xlim(.15,.75)
+
+plt.savefig('./figures/b1_evolution.pdf',dpi=300,bbox_inches='tight')
+plt.savefig('./figures/b1_evolution.png',dpi=300,bbox_inches='tight')
+plt.figure()
+
+plt.errorbar(z-0.01,b2_spec,yerr=np.array([b2_down_spec,b2_up_spec]),linestyle='None',marker='o',color='b',label='Spectroscopic Redshifts')
+plt.errorbar(z+0.01,b2_rm,yerr=np.array([b2_down_rm,b2_up_rm]),linestyle='None',marker='o',color='r',label='RedMaGiC Redshifts')
+plt.hlines(0,0.2,0.7,linestyles=['--'],colors=['k'])
+
+plt.xlabel('z')
+plt.ylabel('Quadratic bias')
+plt.legend(loc=2)
+plt.xlim(.15,.75)
+plt.savefig('./figures/b2_evolution.pdf',dpi=300,bbox_inches='tight')
+plt.savefig('./figures/b2_evolution.png',dpi=300,bbox_inches='tight')
