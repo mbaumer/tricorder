@@ -230,9 +230,9 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
     #replace later once RM is fixed:   
     #data1 = plottools.load_res_indep(path2,'dm',config_fname,'ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
     if zmin != .15:
-            data1 = plottools.load_res_indep(path2,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigmas_list[i],use_alt_randoms=False)
-        else:
-            data1 = plottools.load_res_indep(path,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigmas_list[i],use_alt_randoms=False)
+        data1 = plottools.load_res_indep(path2,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigmas_list[i],use_alt_randoms=False)
+    else:
+        data1 = plottools.load_res_indep(path,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigmas_list[i],use_alt_randoms=False)
         
     data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
     
