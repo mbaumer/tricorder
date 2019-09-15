@@ -306,7 +306,7 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
         cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'Tolerance = $\pm$ '+tol_labels[j]+' Mpc')
     
     cc.configure(legend_kwargs={"loc": "lower right"},label_font_size=14,tick_font_size=14)
-    figure = cc.plotter.plot(figsize='column',extents=[(0,4),(-4,4)],truth={'b1' : b1_list[i]});
+    figure = cc.plotter.plot(figsize='column',extents=[(0,4),(-4,4)]);
     axarr = figure.get_axes()
     plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
     
@@ -436,7 +436,7 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
         cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'$u >$ '+tol_labels[j])
     
     cc.configure(legend_kwargs={"loc": "lower right"},label_font_size=14,tick_font_size=14)
-    figure = cc.plotter.plot(figsize='column',extents=[(0,4),(-4,4)],truth={'b1' : b1_list[i]});
+    figure = cc.plotter.plot(figsize='column',extents=[(0,4),(-4,4)]);
     axarr = figure.get_axes()
     plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
     
