@@ -294,6 +294,8 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
 is11k = True
 tol_labels = ['2.5','5','7.5']
 for i,zmin in enumerate([.15,.3,.45,.6]):
+    # delete when jobs are finished
+    is zmin == .45: continue
     zmax = zmin+.15
     cc = chainconsumer.ChainConsumer()
     
