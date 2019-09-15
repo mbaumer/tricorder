@@ -160,6 +160,27 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
 
 # DES Y1 contours (spec+photoz), no 2pt or lazeyras comparison
  
+b1_2pt = [1.71,1.78,1.9,2.22]
+b1_err_2pt = [.064,.064,.071,.074]
+
+b1_spec = [1.51,1.71,1.71,2.1]
+b1_up_spec = [.21,.17,.18,.21]
+b1_down_spec = [.22,.15,.19,.19]
+
+b2_spec = [.21,.49,.35,.7]
+b2_up_spec = [.37,.29,.31,.5]
+b2_down_spec = [.40,.34,.35,.43]
+
+b1_rm = [1.41,1.87,1.69,2.33]
+b1_up_rm = [.38,.37,.28,.98]
+b1_down_rm = [.28,.3,.2,.54]
+
+b2_rm = [-.18,.56,.37,1]
+b2_up_rm = [.52,.83,.61,3.5]
+b2_down_rm = [.42,.58,.49,1.1]
+
+sigmas_list = [0.02,0.03,0.03,0.03]
+
 is11k = False
 for i,zmin in enumerate([.15,.3,.45,.6]):
     zmax = zmin+.15
@@ -184,6 +205,8 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
     cc.configure(legend_kwargs={"loc": "lower right"},label_font_size=14,tick_font_size=14)
     figure = cc.plotter.plot(figsize='column',extents=[(0,10),(-10,10)]);
     axarr = figure.get_axes()
+    figure.axes[2].axvspan(b1_2pt[i]-b1_err_2pt[i], b1_2pt[i]+b1_err_2pt[i], alpha=0.3, color='b')
+    figure.axes[2].axvspan(b1_2pt[i]-2*b1_err_2pt[i], b1_2pt[i]+2*b1_err_2pt[i], alpha=0.3, color='b')
     plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
     
     plt.savefig('./figures/bothy1_bin'+str(i+1)+'_inf.pdf',dpi=300,bbox_inches='tight')
@@ -191,27 +214,6 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
     plt.figure()
     
 # 11k degree contours, 2pt and lazeyras comparison.
-
-b1_2pt = [1.71,1.78,1.9,2.22]
-b1_err_2pt = [.064,.064,.071,.074]
-
-b1_spec = [1.51,1.71,1.71,2.1]
-b1_up_spec = [.21,.17,.18,.21]
-b1_down_spec = [.22,.15,.19,.19]
-
-b2_spec = [.21,.49,.35,.7]
-b2_up_spec = [.37,.29,.31,.5]
-b2_down_spec = [.40,.34,.35,.43]
-
-b1_rm = [1.41,1.87,1.69,2.33]
-b1_up_rm = [.38,.37,.28,.98]
-b1_down_rm = [.28,.3,.2,.54]
-
-b2_rm = [-.18,.56,.37,1]
-b2_up_rm = [.52,.83,.61,3.5]
-b2_down_rm = [.42,.58,.49,1.1]
-
-sigmas_list = [0.02,0.03,0.03,0.03]
 
 is11k = True
 for i,zmin in enumerate([.15,.3,.45,.6]):
@@ -295,7 +297,7 @@ is11k = True
 tol_labels = ['2.5','5','7.5']
 for i,zmin in enumerate([.15,.3,.45,.6]):
     # delete when jobs are finished
-    is zmin == .45: continue
+    if zmin == .45: continue
     zmax = zmin+.15
     cc = chainconsumer.ChainConsumer()
     
