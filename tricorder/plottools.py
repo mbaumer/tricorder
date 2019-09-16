@@ -58,7 +58,7 @@ def infer_bias(q_dm_infer,q_gal_infer,icov,use_covmat=True):
         ln_prior = lnprior(bias)
         b1 = bias[0]
         b2 = bias[1]
-        resid = (q_gal_infer-q_dm_infer/b1-b2/(b1**2))
+        resid = (q_gal_infer-q_dm_infer/b1-b2/(2*b1**2))
         return -.5*np.matmul(resid,np.matmul(icov,resid)) + ln_prior
         #return -.5*np.sum(np.dot(np.dot(resid,icov),resid)) + ln_prior
 
