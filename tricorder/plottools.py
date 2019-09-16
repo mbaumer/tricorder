@@ -52,7 +52,7 @@ def infer_bias(q_dm_infer,q_gal_infer,icov,use_covmat=True):
         ln_prior = lnprior(bias)
         b1 = bias[0]
         b2 = bias[1]
-        return -.5*np.sum((((q_gal_infer-q_dm_infer/b1-b2/(b1**2))**2)/icov)) + ln_prior
+        return -.5*np.sum((((q_gal_infer-q_dm_infer/b1-b2/(2*b1**2))**2)/icov)) + ln_prior
 
     def lnprob(bias):
         ln_prior = lnprior(bias)
@@ -76,7 +76,7 @@ def infer_bias(q_dm_infer,q_gal_infer,icov,use_covmat=True):
     summary = cc.analysis.get_summary()
     b1=summary['b1'][1]
     b2=summary['b2'][1]
-    resid = (q_gal_infer-q_dm_infer/b1-b2/(b1**2))
+    resid = (q_gal_infer-q_dm_infer/b1-b2/(2*b1**2))
     print 'chisq is: ', str(.5*np.sum(np.dot(np.dot(resid,icov),resid)))
     print 'alt: ', .5*np.matmul(np.matmul(resid,icov),resid)
     
