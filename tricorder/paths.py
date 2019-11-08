@@ -3,7 +3,7 @@
 
 config_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new2/configs/'
 
-corr_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/paper_validation2'
+corr_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/paper_validation'
 ang_out_dir = '/nfs/slac/des/fs1/g/sims/mbaumer/3pt_sims/new3/paper_validation'
 
 rm_y1_randoms = '/nfs/slac/g/ki/ki19/des/erykoff/clusters/mocks/Buzzard/buzzard-1.9.2+1/des-y1a1/redmapper_v6.4.22/redmagic_3a/buzzard-3_1.9.2+1-6a_run_redmapper_v6.4.22_redmagic_highdens_0.5-10_randoms.fit'
