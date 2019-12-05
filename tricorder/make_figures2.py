@@ -56,239 +56,239 @@ b2_down_rm = [.42,.58,.49,1.1]
 sigmas_list = [0.02,0.03,0.03,0.03]
 
 
-# data vectors ZSPEC
+# # data vectors ZSPEC
 
-plt.figure()
-config_fname = 'paper_3dval4'
-for i,zmin in enumerate([.15,.3,.45,.6]):
-    sigma = 0
-    zmax = zmin+.15
-    data =  plottools.load_res_indep(path,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigma,use_alt_randoms=True)
-    galdata = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZSPEC',zmin,zmax,'10',sigma=sigma,use_alt_randoms=True)
-    print len(data), len(galdata)
-    plottools.plot_dv(data,'Q', offset=0.,indiv_runs=True,color='Blue',label=r'Dark Matter',compressed=True)
-    plottools.plot_dv(galdata,'Q', offset=0.,indiv_runs=True,color='Red',label=r'Galaxies',compressed=True)
-    plt.xlabel('v')
-    plt.ylabel('Q')
-    plt.title(str(zmin)+r'$<z<$'+str(zmax))
-    plt.ylim(-.75,3)
-    plt.legend()
+# plt.figure()
+# config_fname = 'paper_3dval4'
+# for i,zmin in enumerate([.15,.3,.45,.6]):
+#     sigma = 0
+#     zmax = zmin+.15
+#     data =  plottools.load_res_indep(path,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigma,use_alt_randoms=True)
+#     galdata = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZSPEC',zmin,zmax,'10',sigma=sigma,use_alt_randoms=True)
+#     print len(data), len(galdata)
+#     plottools.plot_dv(data,'Q', offset=0.,indiv_runs=True,color='Blue',label=r'Dark Matter',compressed=True)
+#     plottools.plot_dv(galdata,'Q', offset=0.,indiv_runs=True,color='Red',label=r'Galaxies',compressed=True)
+#     plt.xlabel('v')
+#     plt.ylabel('Q')
+#     plt.title(str(zmin)+r'$<z<$'+str(zmax))
+#     plt.ylim(-.75,3)
+#     plt.legend()
 
-    plt.savefig('./figures/spec_bin'+str(i+1)+'_dv.pdf',dpi=300,bbox_inches='tight')
-    plt.savefig('./figures/spec_bin'+str(i+1)+'_dv.png',dpi=300,bbox_inches='tight')
-    plt.figure()
+#     plt.savefig('./figures/spec_bin'+str(i+1)+'_dv.pdf',dpi=300,bbox_inches='tight')
+#     plt.savefig('./figures/spec_bin'+str(i+1)+'_dv.png',dpi=300,bbox_inches='tight')
+#     plt.figure()
 
-# data vectors ZREDMAGIC
+# # data vectors ZREDMAGIC
 
-config_fname = 'paper_3dval4'
-for i,zmin in enumerate([.15,.3,.45,.6]):
-    sigma = 0
-    zmax = zmin+.15
-    data =  plottools.load_res_indep(path2,'dm',config_fname,'ZREDMAGIC',zmin,zmax,'10x10',sigma=sigma,use_alt_randoms=False)
-    galdata = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZREDMAGIC',zmin,zmax,'10',sigma=sigma,use_alt_randoms=False)
-    print len(data), len(galdata)
-    plottools.plot_dv(data,'Q', offset=0.,indiv_runs=True,color='Blue',label=r'Dark Matter',compressed=True)
-    plottools.plot_dv(galdata,'Q', offset=0.,indiv_runs=True,color='Red',label=r'Galaxies',compressed=True)
-    plt.xlabel('v')
-    plt.ylabel('Q')
-    plt.title(str(zmin)+r'$<z<$'+str(zmax))
-    plt.ylim(-.75,3)
-    plt.legend()
+# config_fname = 'paper_3dval4'
+# for i,zmin in enumerate([.15,.3,.45,.6]):
+#     sigma = 0
+#     zmax = zmin+.15
+#     data =  plottools.load_res_indep(path2,'dm',config_fname,'ZREDMAGIC',zmin,zmax,'10x10',sigma=sigma,use_alt_randoms=False)
+#     galdata = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZREDMAGIC',zmin,zmax,'10',sigma=sigma,use_alt_randoms=False)
+#     print len(data), len(galdata)
+#     plottools.plot_dv(data,'Q', offset=0.,indiv_runs=True,color='Blue',label=r'Dark Matter',compressed=True)
+#     plottools.plot_dv(galdata,'Q', offset=0.,indiv_runs=True,color='Red',label=r'Galaxies',compressed=True)
+#     plt.xlabel('v')
+#     plt.ylabel('Q')
+#     plt.title(str(zmin)+r'$<z<$'+str(zmax))
+#     plt.ylim(-.75,3)
+#     plt.legend()
 
-    plt.savefig('./figures/rm_bin'+str(i+1)+'_dv.pdf',dpi=300,bbox_inches='tight')
-    plt.savefig('./figures/rm_bin'+str(i+1)+'_dv.png',dpi=300,bbox_inches='tight')
-    plt.figure()
+#     plt.savefig('./figures/rm_bin'+str(i+1)+'_dv.pdf',dpi=300,bbox_inches='tight')
+#     plt.savefig('./figures/rm_bin'+str(i+1)+'_dv.png',dpi=300,bbox_inches='tight')
+#     plt.figure()
 
-#covmats
+# #covmats
 
-def make_corr_fig(zmin):
+# def make_corr_fig(zmin):
 
-    zmax = zmin+.15
-    if zmin == .15:
-        placeholder_sigma = 0.01
-    else: 
-        placeholder_sigma = 0.02
-    data = plottools.load_res_indep(path, 'dm','paper_3dval4','ZSPEC',zmin,zmax,'10x10',sigma=0)
-    data2 = plottools.load_res_indep(path,'dm','paper_3dval4','ZSPEC',zmin,zmax,'10x10',sigma=placeholder_sigma)
-    data3 = plottools.load_res_indep(path2,'dm','paper_3dval4','ZREDMAGIC',zmin,zmax,'10x10',sigma=0)
+#     zmax = zmin+.15
+#     if zmin == .15:
+#         placeholder_sigma = 0.01
+#     else: 
+#         placeholder_sigma = 0.02
+#     data = plottools.load_res_indep(path, 'dm','paper_3dval4','ZSPEC',zmin,zmax,'10x10',sigma=0)
+#     data2 = plottools.load_res_indep(path,'dm','paper_3dval4','ZSPEC',zmin,zmax,'10x10',sigma=placeholder_sigma)
+#     data3 = plottools.load_res_indep(path2,'dm','paper_3dval4','ZREDMAGIC',zmin,zmax,'10x10',sigma=0)
     
-    galdata = plottools.load_res_indep(path, 'newbuzzardrm2','paper_3dval4','ZSPEC',zmin,zmax,'10',sigma=0)
-    galdata2 = plottools.load_res_indep(path,'newbuzzardrm2','paper_3dval4','ZSPEC',zmin,zmax,'10',sigma=placeholder_sigma)
-    galdata3 = plottools.load_res_indep(path,'newbuzzardrm2','paper_3dval4','ZREDMAGIC',zmin,zmax,'10',sigma=0)
-    plt.figure()
+#     galdata = plottools.load_res_indep(path, 'newbuzzardrm2','paper_3dval4','ZSPEC',zmin,zmax,'10',sigma=0)
+#     galdata2 = plottools.load_res_indep(path,'newbuzzardrm2','paper_3dval4','ZSPEC',zmin,zmax,'10',sigma=placeholder_sigma)
+#     galdata3 = plottools.load_res_indep(path,'newbuzzardrm2','paper_3dval4','ZREDMAGIC',zmin,zmax,'10',sigma=0)
+#     plt.figure()
     
-    print len(data),len(data2),len(data3)
-    print len(galdata), len(galdata2), len(galdata3)
+#     print len(data),len(data2),len(data3)
+#     print len(galdata), len(galdata2), len(galdata3)
     
-    fig,axarr = plt.subplots(2,3,figsize=(8,7))
+#     fig,axarr = plt.subplots(2,3,figsize=(8,7))
     
-    vmin= -1
-    vmax= 1
-    cmap_choice = 'viridis'
+#     vmin= -1
+#     vmax= 1
+#     cmap_choice = 'viridis'
     
-    axarr[0,0].imshow(np.corrcoef(plottools.compress_dv(galdata['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
-    axarr[0,0].set_title(r'True redshifts')
-    axarr[0,0].set_xticks([.1,.3,.5,.7,.9])
-    axarr[0,0].set_yticks([.1,.3,.5,.7,.9])
-    #axarr[0,0].set_xlabel('v')
-    axarr[0,0].set_ylabel('v')
-    axarr[0,1].imshow(np.corrcoef(plottools.compress_dv(galdata2['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
-    axarr[0,1].set_title(r'Galaxies \\ \\ $\sigma_z = $'+str(placeholder_sigma))
-    #axarr[0,1].set_xlabel('v')
-    #axarr[0,1].set_ylabel('v')
-    axarr[0,1].set_xticks([.1,.3,.5,.7,.9])
-    axarr[0,1].set_yticks([.1,.3,.5,.7,.9])
+#     axarr[0,0].imshow(np.corrcoef(plottools.compress_dv(galdata['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
+#     axarr[0,0].set_title(r'True redshifts')
+#     axarr[0,0].set_xticks([.1,.3,.5,.7,.9])
+#     axarr[0,0].set_yticks([.1,.3,.5,.7,.9])
+#     #axarr[0,0].set_xlabel('v')
+#     axarr[0,0].set_ylabel('v')
+#     axarr[0,1].imshow(np.corrcoef(plottools.compress_dv(galdata2['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
+#     axarr[0,1].set_title(r'Galaxies \\ \\ $\sigma_z = $'+str(placeholder_sigma))
+#     #axarr[0,1].set_xlabel('v')
+#     #axarr[0,1].set_ylabel('v')
+#     axarr[0,1].set_xticks([.1,.3,.5,.7,.9])
+#     axarr[0,1].set_yticks([.1,.3,.5,.7,.9])
     
-    axarr[0,2].imshow(np.corrcoef(plottools.compress_dv(galdata3['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
-    axarr[0,2].set_title(r'RedMaGiC redshifts')
-    #axarr[0,1].set_xlabel('v')
-    #axarr[0,1].set_ylabel('v')
-    axarr[0,2].set_xticks([.1,.3,.5,.7,.9])
-    axarr[0,2].set_yticks([.1,.3,.5,.7,.9])
+#     axarr[0,2].imshow(np.corrcoef(plottools.compress_dv(galdata3['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
+#     axarr[0,2].set_title(r'RedMaGiC redshifts')
+#     #axarr[0,1].set_xlabel('v')
+#     #axarr[0,1].set_ylabel('v')
+#     axarr[0,2].set_xticks([.1,.3,.5,.7,.9])
+#     axarr[0,2].set_yticks([.1,.3,.5,.7,.9])
     
-    axarr[1,0].imshow(np.corrcoef(plottools.compress_dv(data['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
-    axarr[1,0].set_title(r'True redshifts')
-    axarr[1,0].set_xticks([.1,.3,.5,.7,.9])
-    axarr[1,0].set_yticks([.1,.3,.5,.7,.9])
-    axarr[1,0].set_xlabel('v')
-    axarr[1,0].set_ylabel('v')
-    im = axarr[1,1].imshow(np.corrcoef(plottools.compress_dv(data2['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
-    axarr[1,1].set_title(r'Dark Matter \\ \\ $\sigma_z = $'+str(placeholder_sigma))
-    axarr[1,1].set_xlabel('v')
-    #axarr[1,1].set_ylabel('v')
-    axarr[1,1].set_xticks([.1,.3,.5,.7,.9])
-    axarr[1,1].set_yticks([.1,.3,.5,.7,.9])
+#     axarr[1,0].imshow(np.corrcoef(plottools.compress_dv(data['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
+#     axarr[1,0].set_title(r'True redshifts')
+#     axarr[1,0].set_xticks([.1,.3,.5,.7,.9])
+#     axarr[1,0].set_yticks([.1,.3,.5,.7,.9])
+#     axarr[1,0].set_xlabel('v')
+#     axarr[1,0].set_ylabel('v')
+#     im = axarr[1,1].imshow(np.corrcoef(plottools.compress_dv(data2['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
+#     axarr[1,1].set_title(r'Dark Matter \\ \\ $\sigma_z = $'+str(placeholder_sigma))
+#     axarr[1,1].set_xlabel('v')
+#     #axarr[1,1].set_ylabel('v')
+#     axarr[1,1].set_xticks([.1,.3,.5,.7,.9])
+#     axarr[1,1].set_yticks([.1,.3,.5,.7,.9])
     
-    axarr[1,2].imshow(np.corrcoef(plottools.compress_dv(data3['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
-    axarr[1,2].set_title(r'RedMaGiC redshifts')
-    axarr[1,2].set_xlabel('v')
-    #axarr[1,1].set_ylabel('v')
-    axarr[1,2].set_xticks([.1,.3,.5,.7,.9])
-    axarr[1,2].set_yticks([.1,.3,.5,.7,.9])
+#     axarr[1,2].imshow(np.corrcoef(plottools.compress_dv(data3['Q'].values.reshape(-1,10)).T),vmin=vmin,vmax=vmax,origin='lower',extent=(0,1,0,1),cmap=cmap_choice)
+#     axarr[1,2].set_title(r'RedMaGiC redshifts')
+#     axarr[1,2].set_xlabel('v')
+#     #axarr[1,1].set_ylabel('v')
+#     axarr[1,2].set_xticks([.1,.3,.5,.7,.9])
+#     axarr[1,2].set_yticks([.1,.3,.5,.7,.9])
     
-    #fig.colorbar(im, ax=axarr.ravel().tolist(),shrink=.4,aspect=10)
-    #plt.suptitle(str(zmin)+r'$<z<$'+str(zmax))
-    #plt.tight_layout()
-    cbar_ax = fig.add_axes([.97, 0.2, .04, 0.6])
-    fig.colorbar(im, cax=cbar_ax, orientation="vertical")
-    plt.suptitle(str(zmin)+r'$< z <$'+str(zmax))
+#     #fig.colorbar(im, ax=axarr.ravel().tolist(),shrink=.4,aspect=10)
+#     #plt.suptitle(str(zmin)+r'$<z<$'+str(zmax))
+#     #plt.tight_layout()
+#     cbar_ax = fig.add_axes([.97, 0.2, .04, 0.6])
+#     fig.colorbar(im, cax=cbar_ax, orientation="vertical")
+#     plt.suptitle(str(zmin)+r'$< z <$'+str(zmax))
 
-for i,zmin in enumerate([.15,.3,.45,.6]):
-    make_corr_fig(zmin)
-    plt.savefig('./figures/cov_bin'+str(i+1)+'.pdf',dpi=300,bbox_inches='tight')
-    plt.savefig('./figures/cov_bin'+str(i+1)+'.png',dpi=300,bbox_inches='tight')
-    plt.figure()
+# for i,zmin in enumerate([.15,.3,.45,.6]):
+#     make_corr_fig(zmin)
+#     plt.savefig('./figures/cov_bin'+str(i+1)+'.pdf',dpi=300,bbox_inches='tight')
+#     plt.savefig('./figures/cov_bin'+str(i+1)+'.png',dpi=300,bbox_inches='tight')
+#     plt.figure()
 
-# DES Y1 contours (spec+photoz), no 2pt or lazeyras comparison
+# # DES Y1 contours (spec+photoz), no 2pt or lazeyras comparison
 
-is11k = False
-for i,zmin in enumerate([.15,.3,.45,.6]):
-    zmax = zmin+.15
-    cc = chainconsumer.ChainConsumer()
+# is11k = False
+# for i,zmin in enumerate([.15,.3,.45,.6]):
+#     zmax = zmin+.15
+#     cc = chainconsumer.ChainConsumer()
     
-    for sigma in [0]:
-        config_fname = 'paper_3dval4'
-        data1 = plottools.load_res_indep(path,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigma,use_alt_randoms=False)
-        data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZSPEC',zmin,zmax,'10',sigma=sigma,use_alt_randoms=False)
-        red_qdm = plottools.compress_dv(data1['Q'].values.reshape(-1,10))
-        red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
-        samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
-        cc.add_chain(samples.flatchain,parameters=['b1','b2'],name='Spectroscopic Redshifts')
+#     for sigma in [0]:
+#         config_fname = 'paper_3dval4'
+#         data1 = plottools.load_res_indep(path,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigma,use_alt_randoms=False)
+#         data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZSPEC',zmin,zmax,'10',sigma=sigma,use_alt_randoms=False)
+#         red_qdm = plottools.compress_dv(data1['Q'].values.reshape(-1,10))
+#         red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
+#         samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
+#         cc.add_chain(samples.flatchain,parameters=['b1','b2'],name='Spectroscopic Redshifts')
         
-    data1 = plottools.load_res_indep(path2,'dm',config_fname,'ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
-    data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
-    red_qdm = plottools.compress_dv(data1['Q'].values.reshape(-1,10))
-    red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
-    samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
-    cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'RedMaGiC Photometric Redshifts')
+#     data1 = plottools.load_res_indep(path2,'dm',config_fname,'ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
+#     data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
+#     red_qdm = plottools.compress_dv(data1['Q'].values.reshape(-1,10))
+#     red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
+#     samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
+#     cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'RedMaGiC Photometric Redshifts')
     
-    cc.configure(legend_kwargs={"loc": "lower right"},label_font_size=14,tick_font_size=14)
-    figure = cc.plotter.plot(figsize='column',extents=[(0,10),(-10,10)]);
-    axarr = figure.get_axes()
-    figure.axes[2].axvspan(b1_2pt[i]-b1_err_2pt[i], b1_2pt[i]+b1_err_2pt[i], alpha=0.3, color='b')
-    figure.axes[2].axvspan(b1_2pt[i]-2*b1_err_2pt[i], b1_2pt[i]+2*b1_err_2pt[i], alpha=0.3, color='b')
-    plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
+#     cc.configure(legend_kwargs={"loc": "lower right"},label_font_size=14,tick_font_size=14)
+#     figure = cc.plotter.plot(figsize='column',extents=[(0,10),(-10,10)]);
+#     axarr = figure.get_axes()
+#     figure.axes[2].axvspan(b1_2pt[i]-b1_err_2pt[i], b1_2pt[i]+b1_err_2pt[i], alpha=0.3, color='b')
+#     figure.axes[2].axvspan(b1_2pt[i]-2*b1_err_2pt[i], b1_2pt[i]+2*b1_err_2pt[i], alpha=0.3, color='b')
+#     plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
     
-    plt.savefig('./figures/bothy1_bin'+str(i+1)+'_inf.pdf',dpi=300,bbox_inches='tight')
-    plt.savefig('./figures/bothy1_bin'+str(i+1)+'_inf.png',dpi=300,bbox_inches='tight')
-    plt.figure()
+#     plt.savefig('./figures/bothy1_bin'+str(i+1)+'_inf.pdf',dpi=300,bbox_inches='tight')
+#     plt.savefig('./figures/bothy1_bin'+str(i+1)+'_inf.png',dpi=300,bbox_inches='tight')
+#     plt.figure()
     
-# 11k degree contours, 2pt and lazeyras comparison.
+# # 11k degree contours, 2pt and lazeyras comparison.
 
-is11k = True
-for i,zmin in enumerate([.15,.3,.45,.6]):
-    zmax = zmin+.15
-    cc = chainconsumer.ChainConsumer()
+# is11k = True
+# for i,zmin in enumerate([.15,.3,.45,.6]):
+#     zmax = zmin+.15
+#     cc = chainconsumer.ChainConsumer()
     
-    for sigma in [0]:
-        config_fname = 'paper_3dval4'
-        data1 = plottools.load_res_indep(path,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigma,use_alt_randoms=False)
-        data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZSPEC',zmin,zmax,'10',sigma=sigma,use_alt_randoms=False)
-        red_qdm = plottools.compress_dv(data1['Q'].values.reshape(-1,10))
-        red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
-        samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
-        cc.add_chain(samples.flatchain,parameters=['b1','b2'],name='Spectroscopic Redshifts')
+#     for sigma in [0]:
+#         config_fname = 'paper_3dval4'
+#         data1 = plottools.load_res_indep(path,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigma,use_alt_randoms=False)
+#         data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZSPEC',zmin,zmax,'10',sigma=sigma,use_alt_randoms=False)
+#         red_qdm = plottools.compress_dv(data1['Q'].values.reshape(-1,10))
+#         red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
+#         samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
+#         cc.add_chain(samples.flatchain,parameters=['b1','b2'],name='Spectroscopic Redshifts')
 
-    #replace later once RM is fixed:   
-    #data1 = plottools.load_res_indep(path2,'dm',config_fname,'ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
-    if zmin != .15:
-        data1 = plottools.load_res_indep(path2,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigmas_list[i],use_alt_randoms=False)
-    else:
-        data1 = plottools.load_res_indep(path,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigmas_list[i],use_alt_randoms=False)
+#     #replace later once RM is fixed:   
+#     #data1 = plottools.load_res_indep(path2,'dm',config_fname,'ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
+#     if zmin != .15:
+#         data1 = plottools.load_res_indep(path2,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigmas_list[i],use_alt_randoms=False)
+#     else:
+#         data1 = plottools.load_res_indep(path,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=sigmas_list[i],use_alt_randoms=False)
         
-    data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
+#     data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
     
-    red_qdm = plottools.compress_dv(data1['Q'].values.reshape(-1,10))
-    red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
-    samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
-    cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'RedMaGiC Photometric Redshifts')
+#     red_qdm = plottools.compress_dv(data1['Q'].values.reshape(-1,10))
+#     red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
+#     samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
+#     cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'RedMaGiC Photometric Redshifts')
 
-    # add 2pt
-    cc.configure(legend_kwargs={"loc": "lower right"},label_font_size=14,tick_font_size=14)
-    figure = cc.plotter.plot(figsize='column',extents=[(0,4),(-4,4)]);
-    axarr = figure.get_axes()
+#     # add 2pt
+#     cc.configure(legend_kwargs={"loc": "lower right"},label_font_size=14,tick_font_size=14)
+#     figure = cc.plotter.plot(figsize='column',extents=[(0,4),(-4,4)]);
+#     axarr = figure.get_axes()
 
-    figure.axes[2].axvspan(b1_2pt[i]-b1_err_2pt[i], b1_2pt[i]+b1_err_2pt[i], alpha=0.3, color='b')
-    figure.axes[2].axvspan(b1_2pt[i]-2*b1_err_2pt[i], b1_2pt[i]+2*b1_err_2pt[i], alpha=0.3, color='b')
+#     figure.axes[2].axvspan(b1_2pt[i]-b1_err_2pt[i], b1_2pt[i]+b1_err_2pt[i], alpha=0.3, color='b')
+#     figure.axes[2].axvspan(b1_2pt[i]-2*b1_err_2pt[i], b1_2pt[i]+2*b1_err_2pt[i], alpha=0.3, color='b')
 
-    figure.axes[2].plot(np.linspace(0,4,100),plottools.get_lazeyras_schmidt_2015(np.linspace(0,4,100)),label='Lazeyras+Schmidt 2015')
-    figure.axes[2].plot(np.linspace(0,4,100),plottools.get_hoffman_2015(np.linspace(0,4,100)),label='Hoffman 2015')
+#     figure.axes[2].plot(np.linspace(0,4,100),plottools.get_lazeyras_schmidt_2015(np.linspace(0,4,100)),label='Lazeyras+Schmidt 2015')
+#     figure.axes[2].plot(np.linspace(0,4,100),plottools.get_hoffman_2015(np.linspace(0,4,100)),label='Hoffman 2015')
 
-    plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
+#     plt.suptitle(str(zmin)+r'$ < z < $'+str(zmax))
     
-    plt.savefig('./figures/both11k_bin'+str(i+1)+'_inf.pdf',dpi=300,bbox_inches='tight')
-    plt.savefig('./figures/both11k_bin'+str(i+1)+'_inf.png',dpi=300,bbox_inches='tight')
-    plt.figure()
+#     plt.savefig('./figures/both11k_bin'+str(i+1)+'_inf.pdf',dpi=300,bbox_inches='tight')
+#     plt.savefig('./figures/both11k_bin'+str(i+1)+'_inf.png',dpi=300,bbox_inches='tight')
+#     plt.figure()
     
-# tol dv redmagic
-colors = palettable.colorbrewer.sequential.Reds_3.hex_colors
-colors2 = palettable.colorbrewer.sequential.Blues_3.hex_colors
-for i,zmin in enumerate([.15,.3,.45,.6]):
-    zmax = zmin+.15
-    galdata = plottools.load_res_indep(path2,'newbuzzardrm2','fiducial3d_toldown','ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
-    galdata1 = plottools.load_res_indep(path,'newbuzzardrm2','paper_3dval4','ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
-    galdata2 = plottools.load_res_indep(path2,'newbuzzardrm2','fiducial3d_tolup','ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
+# # tol dv redmagic
+# colors = palettable.colorbrewer.sequential.Reds_3.hex_colors
+# colors2 = palettable.colorbrewer.sequential.Blues_3.hex_colors
+# for i,zmin in enumerate([.15,.3,.45,.6]):
+#     zmax = zmin+.15
+#     galdata = plottools.load_res_indep(path2,'newbuzzardrm2','fiducial3d_toldown','ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
+#     galdata1 = plottools.load_res_indep(path,'newbuzzardrm2','paper_3dval4','ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
+#     galdata2 = plottools.load_res_indep(path2,'newbuzzardrm2','fiducial3d_tolup','ZREDMAGIC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
     
-    data = plottools.load_res_indep(path2,'dm','fiducial3d_toldown','ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
-    data1 = plottools.load_res_indep(path2,'dm','paper_3dval4','ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
-    data2 = plottools.load_res_indep(path2,'dm','fiducial3d_tolup','ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
+#     data = plottools.load_res_indep(path2,'dm','fiducial3d_toldown','ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
+#     data1 = plottools.load_res_indep(path2,'dm','paper_3dval4','ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
+#     data2 = plottools.load_res_indep(path2,'dm','fiducial3d_tolup','ZREDMAGIC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
     
-    plottools.plot_dv(data,'Q', offset=0.,indiv_runs=False,color=colors2[0]   ,compressed=True)
-    plottools.plot_dv(data1,'Q', offset=0.01,indiv_runs=False,color=colors2[1],compressed=True)
-    plottools.plot_dv(data2,'Q', offset=0.02,indiv_runs=False,color=colors2[2],compressed=True)
+#     plottools.plot_dv(data,'Q', offset=0.,indiv_runs=False,color=colors2[0]   ,compressed=True)
+#     plottools.plot_dv(data1,'Q', offset=0.01,indiv_runs=False,color=colors2[1],compressed=True)
+#     plottools.plot_dv(data2,'Q', offset=0.02,indiv_runs=False,color=colors2[2],compressed=True)
     
     
-    plottools.plot_dv(galdata,'Q', offset=0.,indiv_runs=False,color=colors[0]   ,label=r'Tolerance = $\pm 2.5 Mpc$' ,compressed=True)
-    plottools.plot_dv(galdata1,'Q', offset=0.01,indiv_runs=False,color=colors[1],label=r'Tolerance = $\pm 5 Mpc$' ,compressed=True)
-    plottools.plot_dv(galdata2,'Q', offset=0.02,indiv_runs=False,color=colors[2],label=r'Tolerance = $\pm 7.5 Mpc$' ,compressed=True)
+#     plottools.plot_dv(galdata,'Q', offset=0.,indiv_runs=False,color=colors[0]   ,label=r'Tolerance = $\pm 2.5 Mpc$' ,compressed=True)
+#     plottools.plot_dv(galdata1,'Q', offset=0.01,indiv_runs=False,color=colors[1],label=r'Tolerance = $\pm 5 Mpc$' ,compressed=True)
+#     plottools.plot_dv(galdata2,'Q', offset=0.02,indiv_runs=False,color=colors[2],label=r'Tolerance = $\pm 7.5 Mpc$' ,compressed=True)
     
-    plt.xlabel('v')
-    plt.ylabel('Q')
-    plt.title(str(zmin)+r'$<z<$'+str(zmax))
-    plt.legend()
-    plt.savefig('./figures/tol_bin'+str(i+1)+'_dvrm.pdf',dpi=300,bbox_inches='tight')
-    plt.savefig('./figures/tol_bin'+str(i+1)+'_dvrm.png',dpi=300,bbox_inches='tight')
-    plt.figure()
+#     plt.xlabel('v')
+#     plt.ylabel('Q')
+#     plt.title(str(zmin)+r'$<z<$'+str(zmax))
+#     plt.legend()
+#     plt.savefig('./figures/tol_bin'+str(i+1)+'_dvrm.pdf',dpi=300,bbox_inches='tight')
+#     plt.savefig('./figures/tol_bin'+str(i+1)+'_dvrm.png',dpi=300,bbox_inches='tight')
+#     plt.figure()
 
     
 # tol inference spec
@@ -296,8 +296,6 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
 is11k = True
 tol_labels = ['2.5','5','7.5']
 for i,zmin in enumerate([.15,.3,.45,.6]):
-    # delete when jobs are finished
-    if zmin == .45: continue
     zmax = zmin+.15
     cc = chainconsumer.ChainConsumer()
     
