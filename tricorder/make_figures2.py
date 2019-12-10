@@ -796,7 +796,7 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
     red_qdm = plottools.compress_dv(data1['Q'].values.reshape(-1,10))
     red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
     samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
-    cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'20 Mpc',color='k',linestyle='--')
+    cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'20 Mpc')
     
     #if zmin == .6:
     config_fname = 'fiducial3d_25Mpc'
@@ -814,7 +814,7 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
     red_qdm = plottools.compress_dv(data1['Q'].values.reshape(-1,10))
     red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
     samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
-    cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'30 Mpc',color='k')
+    cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'30 Mpc')
     
     #if zmin != .45:
     config_fname = 'fiducial3d_35Mpc'
@@ -835,7 +835,6 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
     samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
     cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'40 Mpc')
 
-    
     
     cc.configure(legend_kwargs={"loc": "lower right"},label_font_size=14,tick_font_size=14)
     figure = cc.plotter.plot(figsize='column',extents=[(0,10),(-10,10)]);
