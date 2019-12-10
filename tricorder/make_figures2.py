@@ -826,16 +826,18 @@ for i,zmin in enumerate([.15,.3,.45,.6]):
     samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
     cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'35 Mpc')
 
-    config_fname = 'paper_3dval5'
-    data1 = plottools.load_res_indep(path,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
-    data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZSPEC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
-    print len(data1),len(data2)
-    red_qdm = plottools.compress_dv(data1['Q'].values.reshape(-1,10))
-    red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
-    samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
-    cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'40 Mpc')
+    try:
+        config_fname = 'paper_3dval5'
+        data1 = plottools.load_res_indep(path,'dm',config_fname,'ZSPEC',zmin,zmax,'10x10',sigma=0,use_alt_randoms=False)
+        data2 = plottools.load_res_indep(path,'newbuzzardrm2',config_fname,'ZSPEC',zmin,zmax,'10',sigma=0,use_alt_randoms=False)
+        print len(data1),len(data2)
+        red_qdm = plottools.compress_dv(data1['Q'].values.reshape(-1,10))
+        red_qrm = plottools.compress_dv(data2['Q'].values.reshape(-1,10))
+        samples = plottools.make_inference(red_qdm,red_qrm,is11k=is11k)
+        cc.add_chain(samples.flatchain,parameters=['b1','b2'],name=r'40 Mpc')
+    except:
+        print "not enough finished jobs"
 
-    
     cc.configure(legend_kwargs={"loc": "lower right"},label_font_size=14,tick_font_size=14)
     figure = cc.plotter.plot(figsize='column',extents=[(0,10),(-10,10)]);
     axarr = figure.get_axes()
